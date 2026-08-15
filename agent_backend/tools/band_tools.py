@@ -35,8 +35,20 @@ def read_local_log(limit: int = 50) -> list[dict]:
 
 
 async def post_message(agent_name: str, message: str):
-    """Post a decision/status update. Always logs locally; mirrors to Band if configured."""
+    """Post a decision/status update. Always logs locally; mirrors to the deployed
+    backend when BACKEND_URL is set, and to Band if configured."""
     _log_local(agent_name, message)
+
+    backend_url = os.getenv("BACKEND_URL", "").rstrip("/")
+    if backend_url:
+        try:
+            async with httpx.AsyncClient(timeout=10) as client:
+                await client.post(
+                    f"{backend_url}/api/log",
+                    json={"agent": agent_name, "message": message},
+                )
+        except httpx.HTTPError:
+            pass  # local log already has it
 
     if not BAND_API_KEY:
         return

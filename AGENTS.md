@@ -5,6 +5,9 @@ This file is the entry point for ANY coding agent (Codex reads AGENTS.md; Claude
 ## What this is
 Autonomous dropshipping business (Zero Human Company Hackathon, Aug 15 2026). Real Stripe revenue, real products, agents run everything. Humans only relay credentials and watch.
 
+## Deploying the CRUD backend (3 clicks, any account holder)
+`render.yaml` at repo root is a ready Render Blueprint (rootDir agent_backend). Deploy: render.com → New → Blueprint → this repo → set the `sync:false` env keys from the shared .env → deploy. Then on the laptop set `BACKEND_URL=https://<render-url>` in `agent_backend/.env` — every agent log line dual-writes to the deployed feed, so `CEO_DECISIONS_URL` can point at a permanent URL instead of the rotating tunnel. (Until then, the tunnel serves the feed; do NOT set BACKEND_URL on Render itself.)
+
 ## Full autonomy (the engine)
 `start_autonomous.bat` (Shrinav's machine) runs `supervisor.ps1`: an external PowerShell loop that revives the backend + tunnel and re-prompts a FRESH headless `claude -p` CEO cycle every 15 min. No agent session is the engine — sessions die, the supervisor doesn't. If the tunnel URL rotates, an escalation on `/api/escalations` tells a human to update the dashboard env. Interactive sessions must NOT run their own CEO loops while the supervisor is on (one CEO rule).
 
