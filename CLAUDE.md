@@ -21,6 +21,7 @@ Run independent subagents in parallel. Browser work is sequential (one Chrome) �
 - `python -m agents.cli observe` — full business state (catalog, sales, activity, Terac).
 - `python -m agents.cli act '[...]'` — catalog changes through deterministic guardrails (price floors/caps, margin minimum, ≤3 actions/cycle). Rejections come back with reasons — respect them.
 - `python log_decision.py <Agent> "<msg>"` — the audit trail. Judges read this. Every meaningful decision gets one line of clear business reasoning.
+- `python -m tools.superserve_tools "<command>"` — run an agent workload inside the Superserve sandbox (isolated microVM, pauses between cycles). Use for sourcing runs and fulfillment scripts when SUPERSERVE_API_KEY is set; run locally otherwise.
 - Dashboard at the backend URL `/` — live revenue, catalog, decision feed. This is what judges watch.
 
 ## Decision rules

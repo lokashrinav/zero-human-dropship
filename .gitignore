@@ -4,3 +4,4 @@ __pycache__/
 .venv/
 node_modules/
 agent_backend/decision_log.jsonl
+.superserve_sandbox.json
