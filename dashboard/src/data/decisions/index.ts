@@ -21,6 +21,7 @@ const decisionKinds = new Set<CeoDecision["kind"]>([
 	"listed_product",
 	"removed_product",
 	"changed_promotion",
+	"terac_reorder",
 	"other",
 ]);
 
@@ -35,7 +36,13 @@ const decisionStages = new Set<AutonomousLoopStage>([
 
 const stageForKind = (kind: CeoDecision["kind"]): AutonomousLoopStage => {
 	if (kind === "listed_product" || kind === "changed_copy") return "list";
-	if (kind === "removed_product" || kind === "changed_promotion") return "learn";
+	if (
+		kind === "removed_product" ||
+		kind === "changed_promotion" ||
+		kind === "terac_reorder"
+	) {
+		return "learn";
+	}
 	if (kind === "repriced_product") return "learn";
 	return "source";
 };

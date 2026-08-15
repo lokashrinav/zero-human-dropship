@@ -15,6 +15,7 @@ import type {
 	PanelState,
 	TeracChange,
 	TeracData,
+	TeracRatedProduct,
 	TeracStudy,
 } from "../contracts";
 import { fetchJson } from "../http";
@@ -24,6 +25,7 @@ const changeTypes = new Set<TeracChange["type"]>([
 	"replaced",
 	"price",
 	"copy",
+	"product_order",
 	"other",
 ]);
 
@@ -34,17 +36,29 @@ const parseBusinessItem = (value: unknown): BusinessStateItem | undefined => {
 	if (!id || !name) return undefined;
 
 	const priceMinor = asNonNegativeInteger(value.priceMinor);
+	const position = asNonNegativeInteger(value.position);
 	const currency = asString(value.currency)?.toUpperCase();
 	const copy = asString(value.copy);
 	const active = asBoolean(value.active);
 	return {
 		id,
 		name,
+		...(position !== undefined ? { position } : {}),
 		...(priceMinor !== undefined ? { priceMinor } : {}),
 		...(currency ? { currency } : {}),
 		...(copy ? { copy } : {}),
 		...(active !== undefined ? { active } : {}),
 	};
+};
+
+const parseRatedProduct = (value: unknown): TeracRatedProduct | undefined => {
+	if (!isRecord(value)) return undefined;
+	const id = asString(value.id);
+	const name = asString(value.name);
+	const averageLikelihood = asNumber(value.averageLikelihood);
+	return id && name && averageLikelihood !== undefined
+		? { id, name, averageLikelihood }
+		: undefined;
 };
 
 const parseItems = (value: unknown) =>
@@ -90,6 +104,10 @@ const parseStudy = (value: unknown): TeracStudy | undefined => {
 
 	const rating = asNumber(feedback?.rating);
 	const ratingScale = asNumber(feedback?.ratingScale);
+	const highestRatedProduct = parseRatedProduct(feedback?.highestRatedProduct);
+	const lowestRatedProducts = (asArray(feedback?.lowestRatedProducts) ?? [])
+		.map(parseRatedProduct)
+		.filter((product): product is TeracRatedProduct => product !== undefined);
 	return {
 		id,
 		title,
@@ -103,6 +121,8 @@ const parseStudy = (value: unknown): TeracStudy | undefined => {
 			result: feedbackResult,
 			...(rating !== undefined ? { rating } : {}),
 			...(ratingScale !== undefined ? { ratingScale } : {}),
+			...(highestRatedProduct ? { highestRatedProduct } : {}),
+			...(lowestRatedProducts.length ? { lowestRatedProducts } : {}),
 		},
 		changes: (asArray(value.changes) ?? [])
 			.map(parseChange)

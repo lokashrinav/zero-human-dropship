@@ -19,10 +19,31 @@ type Snapshot = {
   };
   linq: {
     meta: PanelMeta;
-    data: { conversations: number; events: unknown[]; phoneNumber: string | null };
+    data: {
+      conversations: number;
+      recommendations: number;
+      paymentLinksSent: number;
+      events: unknown[];
+      phoneNumber: string | null;
+    };
   };
-  decisions: { meta: PanelMeta; data: { decisions: unknown[] } };
-  terac: { meta: PanelMeta; data: { studies: unknown[] } };
+  decisions: {
+    meta: PanelMeta;
+    data: { decisions: Array<{ id: string; outcome?: string }> };
+  };
+  terac: {
+    meta: PanelMeta;
+    data: {
+      studies: Array<{
+        feedback: {
+          sampleSize: number;
+          highestRatedProduct?: { name: string; averageLikelihood: number };
+          lowestRatedProducts?: Array<{ name: string; averageLikelihood: number }>;
+        };
+        changes: Array<{ description: string }>;
+      }>;
+    };
+  };
   catalog: {
     meta: PanelMeta;
     data: {
@@ -71,11 +92,44 @@ test("aggregate endpoint returns an independently labeled snapshot", async ({ re
     ),
   ).toBe(true);
 
-  expect(snapshot.linq.meta.mode).toBe("pending");
-  expect(snapshot.linq.data.conversations).toBe(0);
-  expect(snapshot.linq.data.events).toEqual([]);
-  expect(snapshot.decisions.data.decisions).toEqual([]);
-  expect(snapshot.terac.data.studies).toEqual([]);
+  if (snapshot.linq.meta.mode === "live") {
+    expect(snapshot.linq.data.phoneNumber).toMatch(/415.?305.?0091/);
+    expect(snapshot.linq.data.conversations).toBeGreaterThanOrEqual(0);
+    expect(snapshot.linq.data.recommendations).toBeGreaterThanOrEqual(0);
+    expect(snapshot.linq.data.paymentLinksSent).toBeGreaterThanOrEqual(0);
+    expect(snapshot.linq.data.events.length).toBeGreaterThan(0);
+  } else {
+    expect(snapshot.linq.data.conversations).toBe(0);
+    expect(snapshot.linq.data.events).toEqual([]);
+  }
+
+  if (snapshot.decisions.meta.mode === "live") {
+    expect(snapshot.decisions.data.decisions.length).toBeGreaterThan(0);
+  } else {
+    expect(snapshot.decisions.data.decisions).toEqual([]);
+  }
+
+  if (snapshot.terac.meta.mode === "live") {
+    const study = snapshot.terac.data.studies[0];
+    expect(study.feedback.sampleSize).toBe(10);
+    expect(study.feedback.highestRatedProduct).toMatchObject({
+      name: "USB-C Fast Charging Cable 6ft",
+      averageLikelihood: 3.9,
+    });
+    expect(study.feedback.lowestRatedProducts).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ name: "Phone Ring Light for Selfies", averageLikelihood: 2.5 }),
+        expect.objectContaining({ name: "Portable Mini Fan USB", averageLikelihood: 2.5 }),
+      ]),
+    );
+    expect(study.changes[0]?.description).toMatch(/USB-C Cable moved from position 2 to 1/i);
+    expect(snapshot.sponsors.find((sponsor) => sponsor.name === "Terac")).toMatchObject({
+      status: "verified",
+      label: "VERIFIED",
+    });
+  } else {
+    expect(snapshot.terac.data.studies).toEqual([]);
+  }
 });
 
 test("never serializes fixture revenue as real revenue", async ({ request }) => {
