@@ -64,6 +64,15 @@ async def handle_payment(session: dict):
     })
 
 
+# ── Decision log for dashboard ─────────────────────────────────
+
+@app.get("/api/decisions")
+async def get_decisions(limit: int = 50):
+    """Agent decision audit trail — the demo dashboard polls this."""
+    from tools.band_tools import read_local_log
+    return read_local_log(limit)
+
+
 # ── Health check ───────────────────────────────────────────────
 
 @app.get("/health")

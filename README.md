@@ -367,6 +367,8 @@ Everything customer-facing. Owns the Chrome browser. No file overlap with `agent
 
 **Browser automation**: claude-in-chrome (one browser, sequential tasks). Used for FB Marketplace + eBay listing only. Product sourcing via CJDropshipping API (no browser needed). Order fulfillment via CJ API.
 
+**Sponsor correction (verified at event)**: Solari (getsolari.com, Pinetree Research — cloud browser/sandbox sessions, `slr_live_` keys) and Superserve (superserve.ai — Firecracker sandboxes) are SEPARATE sponsors. We have a working Solari key; Solari sessions can host agent browser tasks for that prize track.
+
 ## What to Cut If Behind
 1. **MUST** (revenue): Stripe Products + Your Next Store + at least Linq OR FB Marketplace
 2. **MUST** (rules): Terac feedback with visible before/after
