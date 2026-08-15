@@ -89,17 +89,19 @@ async def post_log(entry: dict):
 @app.get("/api/stats")
 async def get_stats():
     """Revenue headline numbers for the dashboard. Zeros gracefully pre-keys."""
-    from tools.stripe_tools import get_sales_summary
+    from tools.stripe_tools import get_recent_charges, get_sales_summary
     try:
         summary = get_sales_summary(since_hours=24)
+        charges = get_recent_charges(limit=100)
         return {
             "gross_revenue_cents": summary.get("gross_revenue_cents", 0),
             "orders": summary.get("orders", 0),
             "units": summary.get("units", 0),
             "by_product": summary.get("by_product", []),
+            "charges": [{"created": c["created"], "amount_cents": c["amount_cents"]} for c in charges],
         }
     except Exception as exc:
-        return {"gross_revenue_cents": 0, "orders": 0, "units": 0, "by_product": [], "error": str(exc)[:200]}
+        return {"gross_revenue_cents": 0, "orders": 0, "units": 0, "by_product": [], "charges": [], "error": str(exc)[:200]}
 
 
 # ── Dashboard (the presentation layer — judges watch this) ─────
