@@ -81,7 +81,10 @@ function Ensure-Tunnel {
 function Run-CeoCycle {
     Log-Supervisor "starting headless CEO cycle"
     try {
-        $p = Start-Process -PassThru -WindowStyle Hidden -WorkingDirectory $Repo claude -ArgumentList "-p", $CyclePrompt, "--dangerously-skip-permissions"
+        # Start-Process joins -ArgumentList with spaces WITHOUT quoting, so a multi-word
+        # prompt reaches claude as separate argv words and -p sees only "Read".
+        # Embed explicit quotes around the prompt.
+        $p = Start-Process -PassThru -WindowStyle Hidden -WorkingDirectory $Repo claude -ArgumentList "-p", "`"$CyclePrompt`"", "--dangerously-skip-permissions"
         if (-not ($p.WaitForExit($CycleTimeoutMinutes * 60 * 1000))) {
             Stop-Process -Id $p.Id -Force -ErrorAction SilentlyContinue
             Log-Supervisor "cycle timed out after $CycleTimeoutMinutes min - killed, continuing"
