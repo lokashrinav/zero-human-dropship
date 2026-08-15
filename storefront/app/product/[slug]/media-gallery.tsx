@@ -25,9 +25,10 @@ type MediaGalleryProps = {
 	images: string[];
 	productName: string;
 	variants: Variant[];
+	disclosure?: string;
 };
 
-export function MediaGallery({ images, productName, variants }: MediaGalleryProps) {
+export function MediaGallery({ images, productName, variants, disclosure }: MediaGalleryProps) {
 	const searchParams = useSearchParams();
 	const [selectedIndex, setSelectedIndex] = useState(0);
 	const [isZoomed, setIsZoomed] = useState(false);
@@ -209,6 +210,7 @@ export function MediaGallery({ images, productName, variants }: MediaGalleryProp
 					))}
 				</div>
 			)}
+			{disclosure && <p className="text-xs leading-relaxed text-muted-foreground">{disclosure}</p>}
 		</section>
 	);
 }

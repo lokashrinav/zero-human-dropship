@@ -68,6 +68,11 @@ export async function ProductCard({
 						Secure Stripe checkout
 					</span>
 				)}
+				{primaryImage && catalogPurchase?.imageKind === "visualization" && (
+					<span className="absolute bottom-2.5 left-2.5 z-10 rounded-full border border-white/70 bg-white/90 px-2.5 py-1 text-[0.55rem] font-semibold uppercase tracking-[0.1em] text-neutral-700 shadow-sm backdrop-blur-md sm:bottom-3 sm:left-3">
+						Product visualization
+					</span>
+				)}
 				{singleVariant && (
 					<QuickAddButton
 						variantId={singleVariant.id}

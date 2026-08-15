@@ -1,6 +1,7 @@
 import { ArrowDownRight, Check, MessageCircleMore, PackageOpen, ShieldCheck, Sparkles } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { getCatalogPurchase } from "@/lib/catalog";
 import { commerce } from "@/lib/commerce";
 import { formatMoney } from "@/lib/money";
 import { getStoreConfig } from "@/lib/store-config";
@@ -32,6 +33,7 @@ export async function Hero() {
 			})
 		: null;
 	const featuredImage = featuredProduct?.images[0] ?? featuredProduct?.variants[0]?.images[0] ?? null;
+	const featuredPurchase = featuredProduct ? getCatalogPurchase(featuredProduct) : null;
 
 	return (
 		<section className="hero-field relative isolate overflow-hidden border-b border-border lg:pb-8">
@@ -108,6 +110,11 @@ export async function Hero() {
 									</div>
 								)}
 								<div className="absolute inset-0 bg-linear-to-t from-black/80 via-transparent to-black/15" />
+								{featuredImage && featuredPurchase?.imageKind === "visualization" && (
+									<span className="absolute bottom-24 left-6 rounded-full border border-white/70 bg-white/90 px-2.5 py-1 text-[0.55rem] font-semibold uppercase tracking-[0.1em] text-neutral-700 shadow-sm backdrop-blur-md">
+										Product visualization
+									</span>
+								)}
 								<div className="absolute left-6 top-6 flex items-center gap-2 rounded-full border border-white/10 bg-black/45 px-3 py-1.5 text-[0.65rem] uppercase tracking-[0.2em] text-white/75 backdrop-blur-md">
 									<span className="size-1.5 rounded-full bg-lime-300 shadow-[0_0_12px_rgba(190,242,100,0.9)]" />
 									Featured product

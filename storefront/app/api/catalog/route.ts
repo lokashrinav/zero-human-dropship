@@ -6,6 +6,7 @@ export function GET() {
 			id: product.id,
 			name: product.name,
 			images: product.images,
+			image_kind: product.image_kind,
 			stripe_id: product.stripe_id,
 			payment_link: product.payment_link,
 			price: product.price,

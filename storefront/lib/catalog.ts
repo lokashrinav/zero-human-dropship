@@ -14,6 +14,7 @@ export type CatalogEntry = {
 	summary: string;
 	description: string;
 	images: string[];
+	image_kind: "source" | "visualization";
 	stripe_id: string | null;
 	payment_link: string | null;
 	cost?: number;
@@ -22,18 +23,23 @@ export type CatalogEntry = {
 	mode: "development" | "live";
 };
 
-type RawCatalogEntry = Omit<CatalogEntry, "id" | "slug" | "summary" | "description" | "active" | "mode"> & {
+type RawCatalogEntry = Omit<
+	CatalogEntry,
+	"id" | "slug" | "summary" | "description" | "active" | "mode" | "image_kind"
+> & {
 	id?: string;
 	slug?: string;
 	summary?: string;
 	description?: string;
 	active?: boolean;
 	mode?: CatalogEntry["mode"];
+	image_kind?: unknown;
 };
 
 export type CatalogProduct = NonNullable<APIProductGetByIdResult> & {
 	catalogMode: CatalogEntry["mode"];
 	paymentLink: string | null;
+	imageKind: CatalogEntry["image_kind"];
 };
 
 const isStripePaymentLink = (value: string | null) => {
@@ -62,6 +68,7 @@ const normalizeEntry = (entry: RawCatalogEntry): CatalogEntry => ({
 		entry.description?.trim() ||
 		"Product details and fulfillment terms are confirmed before purchase.",
 	description: entry.description?.trim() || entry.summary?.trim() || "",
+	image_kind: entry.image_kind === "visualization" ? "visualization" : "source",
 	active: entry.active ?? true,
 	mode:
 		(entry.mode === "live" || entry.active === true) &&
@@ -140,6 +147,7 @@ const toCommerceProduct = (entry: CatalogEntry, index: number) => {
 		volumePricingTiers: [],
 		catalogMode: entry.mode,
 		paymentLink: entry.payment_link,
+		imageKind: entry.image_kind,
 	} as unknown as CatalogProduct;
 };
 
@@ -182,7 +190,9 @@ export const getCatalogPurchase = (product: unknown) => {
 	const catalogMode = product.catalogMode === "live" ? "live" : "development";
 	const paymentLink =
 		"paymentLink" in product && typeof product.paymentLink === "string" ? product.paymentLink : null;
-	return { catalogMode, paymentLink } as const;
+	const imageKind =
+		"imageKind" in product && product.imageKind === "visualization" ? "visualization" : "source";
+	return { catalogMode, paymentLink, imageKind } as const;
 };
 
 export const getCatalogStatus = () => ({

@@ -23,6 +23,7 @@ type StripeProduct = {
 	description: string | null;
 	images: string[];
 	livemode: boolean;
+	metadata: Record<string, string>;
 	name: string;
 };
 type StripePrice = {
@@ -221,6 +222,7 @@ const catalog = await Promise.all(
 			id: product.id,
 			name: product.name,
 			images: product.images,
+			image_kind: product.metadata.image_kind === "visualization" ? "visualization" : "source",
 			stripe_id: product.id,
 			payment_link: paymentLink.url,
 			price: (price.unit_amount ?? 0) / 100,

@@ -193,7 +193,16 @@ const ProductDetails = async ({ params }: { params: Promise<{ slug: string }> })
 				{/* Left: Image Gallery (sticky on desktop) */}
 				{allImages.length > 0 ? (
 					<Suspense fallback={<GallerySkeleton />}>
-						<MediaGallery images={allImages} productName={product.name} variants={product.variants} />
+						<MediaGallery
+							images={allImages}
+							productName={product.name}
+							variants={product.variants}
+							disclosure={
+								catalogPurchase?.imageKind === "visualization"
+									? "Product visualization. Exact appearance may vary."
+									: undefined
+							}
+						/>
 					</Suspense>
 				) : (
 					<div className="grid aspect-square place-items-center rounded-2xl border border-border bg-[radial-gradient(circle_at_center,rgba(190,242,100,0.16),transparent_46%)] text-center text-white/50 lg:sticky lg:top-24 lg:self-start">

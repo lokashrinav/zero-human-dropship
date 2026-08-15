@@ -43,6 +43,13 @@ const nextConfig: NextConfig = {
 				pathname: "/lokashrinav/zero-human-dropship/master/product_images/**",
 				search: "",
 			},
+			{
+				protocol: "https",
+				hostname: "raw.githubusercontent.com",
+				port: "",
+				pathname: "/lokashrinav/zero-human-dropship/codex/b-conversion-final/product_images/**",
+				search: "",
+			},
 			{ protocol: "https", hostname: "*.public.blob.vercel-storage.com" },
 			{ protocol: "https", hostname: "yns.store" },
 			{ protocol: "https", hostname: "**.yns.store" },
