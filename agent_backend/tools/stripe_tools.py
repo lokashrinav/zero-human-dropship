@@ -170,16 +170,10 @@ def update_price(product_id: str, new_price_cents: int) -> dict:
         },
     )
 
-    for old_price in old_prices:
-        if old_price.id != new_price.id:
-            stripe.Price.modify(old_price.id, active=False)
-    if old_link_id and old_link_id != new_link.id:
-        try:
-            stripe.PaymentLink.modify(old_link_id, active=False)
-        except stripe.error.StripeError:
-            # The new price/link is already live; stale legacy metadata should not
-            # roll back a successful reprice.
-            pass
+    # The deployed storefront serves a build-time catalog.json with the OLD
+    # payment link. Deactivating it would turn live storefront/FB traffic into
+    # dead checkout links, so the old link stays active (at the old price)
+    # until the storefront re-syncs. Old prices also stay active for that link.
 
     return {
         "product_id": product_id,
@@ -187,6 +181,9 @@ def update_price(product_id: str, new_price_cents: int) -> dict:
         "price_cents": new_price_cents,
         "payment_link_id": new_link.id,
         "payment_link_url": new_link.url,
+        "old_payment_link_id": old_link_id,
+        "old_prices_kept_active": [p.id for p in old_prices if p.id != new_price.id],
+        "note": "storefront re-sync needed: run storefront/scripts/sync-stripe-catalog.ts + redeploy, then old link can be retired",
     }
 
 
