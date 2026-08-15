@@ -29,7 +29,13 @@ Autonomous dropshipping business (Zero Human Company Hackathon, Aug 15 2026). Re
 **Hard rule: exactly ONE CEO session at a time.** Everyone else proposes catalog changes by logging to the decision feed (`python agent_backend/log_decision.py <Agent> "<proposal>"` locally, or `POST <tunnel>/api/log` with `{"agent": "...", "message": "..."}` from other machines). The CEO acts on proposals next cycle.
 
 ## Revenue levers ranked (teammate optimization targets)
-1. **Linq inbound agent deploy** (`linq_agent/`) — storefront's "Text our AI shopping agent" section is a dead placeholder; number +1 415-305-0091 verified. Deploy on Render → $2,500 Linq + $900 Render tracks + a live sales channel.
+1. **Linq inbound agent deploy** (`linq_agent/`) — THE current blocker (LINQ_BASE_URL). Exact steps:
+   a. Render → New → Blueprint → this repo → `linq_agent/render.yaml` (Docker; no local Jac needed)
+   b. Env: `LINQ_API_KEY` (from shared .env), `CATALOG_URL=https://storefront-omega-three.vercel.app/api/catalog`, `PRODUCTION_MODE=true`
+   c. After first deploy: `POST https://api.linqapp.com/api/partner/v3/webhook-subscriptions` (Bearer LINQ_API_KEY) with the service URL `https://<render-url>/webhooks/linq?version=2026-02-03`, events `message.received` → capture the returned signing secret → set `LINQ_WEBHOOK_SECRET` env → redeploy
+   d. Set `LINQ_BASE_URL=<render-url>` on the dashboard Vercel env (one-liner in HANDOFF.md) and un-hide the storefront CTA
+   e. ⚠️ CONTRACT CHECK: `storefront/app/api/catalog/route.ts` does NOT emit `cost`, and linq_agent's production catalog contract shows a `cost` field — verify the Jac validator accepts rows without `cost` (or add cost to the route) BEFORE relying on the deploy
+   f. Test: text +1 415-305-0091 → agent must reply with a recommendation + real payment link
 2. **Storefront catalog re-sync** — picks up product images (attached in Stripe, biggest conversion fix) — then update FB listing prices for Cooling Pad ($10.99) and Earbuds ($9.49).
 3. **Conversion polish**: trust signals near Buy buttons, Terac "panel-approved" badges (real data in `terac/aggregated_feedback.json`), mobile checkout friction.
 4. **Bundles**: create multi-SKU Stripe products at higher AOV (propose to CEO or coordinate — creates catalog entries).
