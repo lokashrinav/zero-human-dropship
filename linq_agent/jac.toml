@@ -1,0 +1,26 @@
+[project]
+name = "linq-autonomous-sales-agent"
+version = "0.1.0"
+description = "Jac-first inbound Linq iMessage autonomous sales agent"
+entry-point = "sales_agent.jac"
+jac-version = ">=0.34.7,<0.35"
+kind = "service"
+
+[dependencies]
+fastapi = "==0.116.1"
+httpx = "==0.28.1"
+uvicorn = "==0.35.0"
+"render-sdk" = ">=0.6.0,<1"
+
+[byllm.model]
+default_model = "claude-sonnet-4-6"
+
+[byllm.call_params]
+temperature = 0.1
+max_output_retries = 2
+
+[test]
+verbose = true
+
+[check.lint]
+select = ["default"]

@@ -1,0 +1,100 @@
+{
+  "timestamp": "2026-08-15T19:54:17Z",
+  "catalogUrl": "https://storefront-omega-three.vercel.app/api/catalog",
+  "source": "Live production storefront catalog fetched before Terac recruitment",
+  "immutable": true,
+  "ordering": [
+    "prod_V4wnv0bVngAJGz",
+    "prod_V4wmEGnnY8szaJ",
+    "prod_V4wmSLEPJ5wd8P",
+    "prod_V4wmdOvODTvZcK",
+    "prod_V4wmnzsAReKvAG",
+    "prod_V4wm18Zg9gyCVO",
+    "prod_V4wmS1EtdtMG4f",
+    "prod_V4wmmLWzk8OOqN",
+    "prod_V4wmCiXp5BsA1G",
+    "prod_V4wmYiqQI4dLrs"
+  ],
+  "products": [
+    {
+      "position": 1,
+      "id": "prod_V4wnv0bVngAJGz",
+      "name": "Laptop Cooling Pad with Fan",
+      "price": 8.99,
+      "description": "Slim laptop cooling pad with quiet fan. Fits up to 15.6 inches. USB powered. Adjustable height.",
+      "active": true
+    },
+    {
+      "position": 2,
+      "id": "prod_V4wmEGnnY8szaJ",
+      "name": "USB-C Fast Charging Cable 6ft",
+      "price": 4.99,
+      "description": "Braided nylon USB-C cable. Fast charging up to 60W. 6-foot length. Durable connectors. Works with Samsung, Pixel, iPad.",
+      "active": true
+    },
+    {
+      "position": 3,
+      "id": "prod_V4wmSLEPJ5wd8P",
+      "name": "Screen Cleaner Spray Kit",
+      "price": 3.99,
+      "description": "Streak-free screen cleaner for phones, laptops, tablets. Includes microfiber cloth. Travel-sized.",
+      "active": true
+    },
+    {
+      "position": 4,
+      "id": "prod_V4wmdOvODTvZcK",
+      "name": "Foldable Phone Stand Adjustable",
+      "price": 5.99,
+      "description": "Aluminum alloy foldable phone and tablet stand. Adjustable angle. Anti-slip pads. Folds flat for travel.",
+      "active": true
+    },
+    {
+      "position": 5,
+      "id": "prod_V4wmnzsAReKvAG",
+      "name": "Cable Organizer Clips 10-Pack",
+      "price": 3.49,
+      "description": "Keep your desk clean. Self-adhesive cable management clips. Pack of 10. Works on wood, glass, and plastic.",
+      "active": true
+    },
+    {
+      "position": 6,
+      "id": "prod_V4wm18Zg9gyCVO",
+      "name": "Phone Ring Light for Selfies",
+      "price": 3.99,
+      "description": "Clip-on ring light for your phone. 3 brightness levels. Rechargeable. Perfect for selfies, video calls, and TikTok.",
+      "active": true
+    },
+    {
+      "position": 7,
+      "id": "prod_V4wmS1EtdtMG4f",
+      "name": "Wireless Earbuds with Charging Case",
+      "price": 7.99,
+      "description": "True wireless Bluetooth earbuds with noise isolation. 20-hour battery with charging case. Touch controls. Compatible with iPhone and Android.",
+      "active": true
+    },
+    {
+      "position": 8,
+      "id": "prod_V4wmmLWzk8OOqN",
+      "name": "Portable Mini Fan USB",
+      "price": 4.99,
+      "description": "Compact USB desk fan with 3 speeds. Whisper quiet. Perfect for office, dorm, or travel. USB-C powered.",
+      "active": true
+    },
+    {
+      "position": 9,
+      "id": "prod_V4wmCiXp5BsA1G",
+      "name": "Magnetic Phone Mount for Car",
+      "price": 4.99,
+      "description": "Ultra-strong magnetic car phone holder. Sticks to any dashboard or vent. Works with all phones. 360-degree rotation.",
+      "active": true
+    },
+    {
+      "position": 10,
+      "id": "prod_V4wmYiqQI4dLrs",
+      "name": "LED Strip Lights RGB 16 Colors",
+      "price": 5.99,
+      "description": "Color-changing LED strip lights with remote control. 16 colors, multiple modes. Perfect for bedroom, gaming setup, or dorm room. USB powered.",
+      "active": true
+    }
+  ]
+}

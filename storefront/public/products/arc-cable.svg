@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1200" role="img" aria-labelledby="title desc">
+  <title id="title">Arc Cable Kit</title>
+  <desc id="desc">Abstract coiled cable kit on a dark graphite surface.</desc>
+  <defs><linearGradient id="bg" x2="1" y2="1"><stop stop-color="#1b201d"/><stop offset="1" stop-color="#070909"/></linearGradient><linearGradient id="wire" x2="1"><stop stop-color="#caff55"/><stop offset=".5" stop-color="#f1f4ee"/><stop offset="1" stop-color="#68736d"/></linearGradient></defs>
+  <rect width="1200" height="1200" fill="url(#bg)"/>
+  <circle cx="600" cy="550" r="310" fill="none" stroke="#0a0c0b" stroke-width="100" opacity=".7"/>
+  <circle cx="600" cy="550" r="280" fill="none" stroke="url(#wire)" stroke-width="52" stroke-dasharray="1480 300" stroke-linecap="round"/>
+  <g transform="translate(706 226) rotate(34)"><rect width="132" height="230" rx="30" fill="#d7ddd7"/><rect x="32" y="-54" width="68" height="80" rx="15" fill="#8d9991"/></g>
+  <g transform="translate(300 750) rotate(-44)"><rect width="132" height="230" rx="30" fill="#b9ff52"/><rect x="32" y="204" width="68" height="80" rx="15" fill="#78846f"/></g>
+  <text x="72" y="1095" fill="#eaf0e9" font-family="system-ui,sans-serif" font-size="42" letter-spacing="9">ARC / 02</text>
+</svg>

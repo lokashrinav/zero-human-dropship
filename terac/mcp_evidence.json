@@ -1,0 +1,62 @@
+{
+  "mcpServer": "terac",
+  "toolsInvoked": [
+    {
+      "tool": "mcp__terac__terac_get_context",
+      "timestamp": null,
+      "timestampNote": "Terac did not return an invocation timestamp",
+      "result": "Authenticated organization context retrieved"
+    },
+    {
+      "tool": "mcp__terac__terac_create_opportunity",
+      "timestamp": "2026-08-15T19:55:37.888Z",
+      "result": "Draft study created"
+    },
+    {
+      "tool": "mcp__terac__terac_get_opportunity",
+      "timestamp": "2026-08-15T19:56:06Z",
+      "result": "Draft study status and price verified"
+    },
+    {
+      "tool": "mcp__terac__terac_launch_draft_opportunity",
+      "timestamp": "2026-08-15T19:59:36.142Z",
+      "result": "Study launched and recruitment started"
+    }
+  ],
+  "studyId": "w14sbyed2iixiz76o5ass608",
+  "studyTitle": "Real product purchase consideration study",
+  "createdAt": "2026-08-15T19:55:37.888Z",
+  "primaryInvocationTimestamp": "2026-08-15T19:55:37.888Z",
+  "primaryInvocationTimestampSource": "Terac opportunity created_at",
+  "launchTimestamp": "2026-08-15T19:59:36.142Z",
+  "targetAudience": "Worldwide general adult population; adults 18+ pass the required age screener; no geographic, professional, gender, or prior-purchase hard filters",
+  "targetResponseCount": 10,
+  "status": "active",
+  "responseCount": 0,
+  "latestFetchTimestamp": "2026-08-15T19:59:36.142Z",
+  "estimatedDurationMinutes": 7,
+  "pricing": {
+    "currency": "usd",
+    "costPerParticipantCents": 750,
+    "totalCostCents": 7500,
+    "organizationBalanceCentsAtDraft": 2500,
+    "additionalBalanceRequiredCents": 5000
+  },
+  "review": {
+    "draftEditorUrl": "https://terac.com/zero-human-dropship-msusi2w8/default-project-els56czpojv0q5l5yduyo3vk/opportunities/create?id=w14sbyed2iixiz76o5ass608",
+    "recruitmentWindowEndsAt": "2026-08-20T19:55:37.917Z",
+    "paymentMode": "self_report",
+    "autoInviteQualifiedApplicants": true,
+    "aiScreeningInterviewRequiredByTerac": true
+  },
+  "launchApproval": {
+    "confirmed": true,
+    "confirmedAt": "2026-08-15T19:58:15Z",
+    "fundingCheckedAt": "2026-08-15T19:58:15Z",
+    "liveBalanceCents": 12500,
+    "launchBlockedByInsufficientBalance": false
+  },
+  "submissionsDashboardUrl": "https://terac.com/zero-human-dropship-msusi2w8/default-project-els56czpojv0q5l5yduyo3vk/opportunities/w14sbyed2iixiz76o5ass608/submissions",
+  "catalogSnapshot": "study_catalog_snapshot.json",
+  "containsRespondentPii": false
+}

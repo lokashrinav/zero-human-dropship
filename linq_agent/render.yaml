@@ -1,0 +1,35 @@
+services:
+  - type: web
+    name: linq-autonomous-sales-agent
+    runtime: docker
+    plan: starter
+    rootDir: .
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /healthz
+    disk:
+      name: linq-agent-data
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      - key: LINQ_API_KEY
+        sync: false
+      - key: LINQ_WEBHOOK_SECRET
+        sync: false
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: BAND_GATE_ENABLED
+        value: "false"
+      - key: BAND_GATE_URL
+        sync: false
+      - key: PUBLIC_STORE_URL
+        sync: false
+      - key: PRODUCTION_MODE
+        value: "true"
+      - key: CATALOG_URL
+        sync: false
+      - key: CATALOG_PATH
+        value: /var/data/linq-agent/catalog.json
+      - key: EVENT_SINK_URL
+        sync: false
+      - key: DATA_DIR
+        value: /var/data/linq-agent
