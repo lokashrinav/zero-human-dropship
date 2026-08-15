@@ -1,5 +1,42 @@
 # Zero Human Hackathon — Autonomous Dropshipping Business
 
+## FINAL HOURS PLAN (updated ~2:00 PM) — revenue + tools-used-well
+
+Ranked by **prize $ × feasibility × revenue impact**. ~4.5 hours left.
+
+### Tier 1 — execute perfectly
+1. **Linq inbound sales agent, deployed on Render** ($2,500 Linq + counts toward $900 Render + revenue channel)
+   - Storefront already advertises "Text our AI shopping agent" (placeholder); number `+1 415-305-0091` verified
+   - Deploy handler → judges text the number live → agent recommends from real catalog → sends Stripe Payment Link → revenue
+   - Creative layer: iMessage App card product carousel + conversational **bundle upsells** ("cable + stand + organizer, $12.99")
+2. **Product images via Replicate FLUX** (~30 min once key exists; 5-min signup)
+   - Every product currently shows "Product image coming soon" — worst conversion leak on the site
+   - FLUX renders in consistent brand style for all 10 → push to Stripe → storefront sync picks them up
+   - Doubles as the content-generation demo
+3. **Replay QA on the storefront** ($1,500 — cheapest prize per minute)
+   - `REPLAY_CHECKLIST.md` already written; run it, fix 1–2 findings, keep the artifact for judges
+
+### Tier 2 — if Tier 1 lands
+4. **Superserve** ($1,500): integration code written + tested to key guard; one signup + one real sandboxed sourcing run = done
+5. **Terac human-task dispatch, one real launch**: the creative inversion — *the company hires humans for what agents can't do* (e.g., CJ seller signup). `request_human_task()` is built; one dispatch makes it real
+6. **CEO bundle play** (free, pure revenue): CEO creates a real "Desk Setup Bundle" Stripe product from existing SKUs at higher AOV — autonomous merchandising, logged on the public decision feed
+
+### Deliberately skipped
+Band (signup broken — local audit trail covers coordination), eBay/Mercari (zero Stripe revenue, browser time cost), additional Terac surveys.
+
+### Needed from operators
+Replicate key (#2), Superserve signup (#4). Everything else runs without new credentials.
+
+### Already live (proof state)
+- Stripe: 10 real products, panel-driven reprices executed autonomously
+- Terac: completed study (n=10) → storefront reorder + CEO reprices, full before/after; human-task dispatch capability built
+- Public decision feed via tunnel → dashboard `CEO_DECISIONS_URL`
+- Solari cloud browsers verified (storefront audit ran through one)
+- Pioneer: verified real inference run (GPT-OSS 120B + GLiNER2)
+- FB Marketplace: listings going up via claude-in-chrome
+
+---
+
 ## Context
 Hackathon: August 15, 2026, 10:45 AM – 6:45 PM (8 hours, selling window ~4 hrs). Two people, each running a Claude Code agent in parallel. Hackathon tracks revenue via Stripe restricted API key. Must use Terac MCP.
 
