@@ -1,0 +1,219 @@
+{
+	"updatedAt": "2026-08-15T20:26:16Z",
+	"studies": [
+		{
+			"id": "w14sbyed2iixiz76o5ass608",
+			"title": "Which of these products would you actually consider buying?",
+			"capturedAt": "2026-08-15T20:23:58.124Z",
+			"before": {
+				"summary": "Original production order captured before Terac recruitment.",
+				"items": [
+					{
+						"id": "prod_V4wnv0bVngAJGz",
+						"name": "Laptop Cooling Pad with Fan",
+						"position": 1,
+						"priceMinor": 899,
+						"currency": "USD",
+						"copy": "Slim laptop cooling pad with quiet fan. Fits up to 15.6 inches. USB powered. Adjustable height.",
+						"active": true
+					},
+					{
+						"id": "prod_V4wmEGnnY8szaJ",
+						"name": "USB-C Fast Charging Cable 6ft",
+						"position": 2,
+						"priceMinor": 499,
+						"currency": "USD",
+						"copy": "Braided nylon USB-C cable. Fast charging up to 60W. 6-foot length. Durable connectors. Works with Samsung, Pixel, iPad.",
+						"active": true
+					},
+					{
+						"id": "prod_V4wmSLEPJ5wd8P",
+						"name": "Screen Cleaner Spray Kit",
+						"position": 3,
+						"priceMinor": 399,
+						"currency": "USD",
+						"copy": "Streak-free screen cleaner for phones, laptops, tablets. Includes microfiber cloth. Travel-sized.",
+						"active": true
+					},
+					{
+						"id": "prod_V4wmdOvODTvZcK",
+						"name": "Foldable Phone Stand Adjustable",
+						"position": 4,
+						"priceMinor": 599,
+						"currency": "USD",
+						"copy": "Aluminum alloy foldable phone and tablet stand. Adjustable angle. Anti-slip pads. Folds flat for travel.",
+						"active": true
+					},
+					{
+						"id": "prod_V4wmnzsAReKvAG",
+						"name": "Cable Organizer Clips 10-Pack",
+						"position": 5,
+						"priceMinor": 349,
+						"currency": "USD",
+						"copy": "Keep your desk clean. Self-adhesive cable management clips. Pack of 10. Works on wood, glass, and plastic.",
+						"active": true
+					},
+					{
+						"id": "prod_V4wm18Zg9gyCVO",
+						"name": "Phone Ring Light for Selfies",
+						"position": 6,
+						"priceMinor": 399,
+						"currency": "USD",
+						"copy": "Clip-on ring light for your phone. 3 brightness levels. Rechargeable. Perfect for selfies, video calls, and TikTok.",
+						"active": true
+					},
+					{
+						"id": "prod_V4wmS1EtdtMG4f",
+						"name": "Wireless Earbuds with Charging Case",
+						"position": 7,
+						"priceMinor": 799,
+						"currency": "USD",
+						"copy": "True wireless Bluetooth earbuds with noise isolation. 20-hour battery with charging case. Touch controls. Compatible with iPhone and Android.",
+						"active": true
+					},
+					{
+						"id": "prod_V4wmmLWzk8OOqN",
+						"name": "Portable Mini Fan USB",
+						"position": 8,
+						"priceMinor": 499,
+						"currency": "USD",
+						"copy": "Compact USB desk fan with 3 speeds. Whisper quiet. Perfect for office, dorm, or travel. USB-C powered.",
+						"active": true
+					},
+					{
+						"id": "prod_V4wmCiXp5BsA1G",
+						"name": "Magnetic Phone Mount for Car",
+						"position": 9,
+						"priceMinor": 499,
+						"currency": "USD",
+						"copy": "Ultra-strong magnetic car phone holder. Sticks to any dashboard or vent. Works with all phones. 360-degree rotation.",
+						"active": true
+					},
+					{
+						"id": "prod_V4wmYiqQI4dLrs",
+						"name": "LED Strip Lights RGB 16 Colors",
+						"position": 10,
+						"priceMinor": 599,
+						"currency": "USD",
+						"copy": "Color-changing LED strip lights with remote control. 16 colors, multiple modes. Perfect for bedroom, gaming setup, or dorm room. USB powered.",
+						"active": true
+					}
+				]
+			},
+			"feedback": {
+				"sampleSize": 10,
+				"result": "Across 100 real purchase-likelihood ratings, the overall mean was 3.13/5. USB-C Cable ranked first at 3.9/5; Laptop Cooling Pad ranked second at 3.8/5 and received the most most-likely selections (3). Usefulness was selected by 9 respondents and attractive price by 7. This small panel is directional, not statistically significant.",
+				"rating": 3.13,
+				"ratingScale": 5,
+				"highestRatedProduct": {
+					"id": "prod_V4wmEGnnY8szaJ",
+					"name": "USB-C Fast Charging Cable 6ft",
+					"averageLikelihood": 3.9
+				},
+				"lowestRatedProducts": [
+					{
+						"id": "prod_V4wm18Zg9gyCVO",
+						"name": "Phone Ring Light for Selfies",
+						"averageLikelihood": 2.5
+					},
+					{
+						"id": "prod_V4wmmLWzk8OOqN",
+						"name": "Portable Mini Fan USB",
+						"averageLikelihood": 2.5
+					}
+				]
+			},
+			"changes": [
+				{
+					"type": "product_order",
+					"description": "Applied the approved-response ranking to all 10 products; USB-C Cable moved from position 2 to 1 and Magnetic Phone Mount moved from position 9 to 3."
+				}
+			],
+			"after": {
+				"summary": "Production catalog reordered from approved Terac evidence; products, prices, copy, availability, and checkout links are unchanged.",
+				"items": [
+					{
+						"id": "prod_V4wmEGnnY8szaJ",
+						"name": "USB-C Fast Charging Cable 6ft",
+						"position": 1,
+						"priceMinor": 499,
+						"currency": "USD",
+						"active": true
+					},
+					{
+						"id": "prod_V4wnv0bVngAJGz",
+						"name": "Laptop Cooling Pad with Fan",
+						"position": 2,
+						"priceMinor": 899,
+						"currency": "USD",
+						"active": true
+					},
+					{
+						"id": "prod_V4wmCiXp5BsA1G",
+						"name": "Magnetic Phone Mount for Car",
+						"position": 3,
+						"priceMinor": 499,
+						"currency": "USD",
+						"active": true
+					},
+					{
+						"id": "prod_V4wmS1EtdtMG4f",
+						"name": "Wireless Earbuds with Charging Case",
+						"position": 4,
+						"priceMinor": 799,
+						"currency": "USD",
+						"active": true
+					},
+					{
+						"id": "prod_V4wmSLEPJ5wd8P",
+						"name": "Screen Cleaner Spray Kit",
+						"position": 5,
+						"priceMinor": 399,
+						"currency": "USD",
+						"active": true
+					},
+					{
+						"id": "prod_V4wmnzsAReKvAG",
+						"name": "Cable Organizer Clips 10-Pack",
+						"position": 6,
+						"priceMinor": 349,
+						"currency": "USD",
+						"active": true
+					},
+					{
+						"id": "prod_V4wmYiqQI4dLrs",
+						"name": "LED Strip Lights RGB 16 Colors",
+						"position": 7,
+						"priceMinor": 599,
+						"currency": "USD",
+						"active": true
+					},
+					{
+						"id": "prod_V4wmdOvODTvZcK",
+						"name": "Foldable Phone Stand Adjustable",
+						"position": 8,
+						"priceMinor": 599,
+						"currency": "USD",
+						"active": true
+					},
+					{
+						"id": "prod_V4wm18Zg9gyCVO",
+						"name": "Phone Ring Light for Selfies",
+						"position": 9,
+						"priceMinor": 399,
+						"currency": "USD",
+						"active": true
+					},
+					{
+						"id": "prod_V4wmmLWzk8OOqN",
+						"name": "Portable Mini Fan USB",
+						"position": 10,
+						"priceMinor": 499,
+						"currency": "USD",
+						"active": true
+					}
+				]
+			}
+		}
+	]
+}

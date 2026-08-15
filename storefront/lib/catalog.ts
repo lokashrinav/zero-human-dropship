@@ -4,6 +4,8 @@ import type {
 	APIProductsBrowseResult,
 } from "commerce-kit";
 import catalogJson from "@/catalog.json";
+import { orderProductsByIdRanking } from "@/lib/product-ranking";
+import teracRanking from "@/terac-ranking.json";
 
 export type CatalogEntry = {
 	id: string;
@@ -70,7 +72,10 @@ const normalizeEntry = (entry: RawCatalogEntry): CatalogEntry => ({
 	payment_link: isStripePaymentLink(entry.payment_link) ? entry.payment_link : null,
 });
 
-export const catalog = (catalogJson as RawCatalogEntry[]).map(normalizeEntry).filter((entry) => entry.active);
+export const catalog = orderProductsByIdRanking(
+	(catalogJson as RawCatalogEntry[]).map(normalizeEntry).filter((entry) => entry.active),
+	teracRanking.productIds,
+);
 
 const toCommerceProduct = (entry: CatalogEntry, index: number) => {
 	const now = "2026-08-15T00:00:00.000Z";

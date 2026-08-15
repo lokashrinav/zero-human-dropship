@@ -63,6 +63,7 @@ export function SearchInput() {
 								ref={iconInputRef}
 								type="search"
 								name="q"
+								aria-label="Search products"
 								placeholder="Search products"
 								value={c.query}
 								onChange={(e) => c.setQuery(e.target.value)}
@@ -109,6 +110,7 @@ export function SearchInput() {
 								ref={inlineInputRef}
 								type="search"
 								name="q"
+								aria-label="Search products"
 								placeholder="Search products"
 								value={c.query}
 								onChange={(e) => {

@@ -1,0 +1,183 @@
+{
+  "studyId": "w14sbyed2iixiz76o5ass608",
+  "status": "fulfilled",
+  "sampleSize": 10,
+  "capturedAt": "2026-08-15T20:23:58.124Z",
+  "aggregatedAt": "2026-08-15T20:26:16Z",
+  "validation": {
+    "allApproved": true,
+    "completeResponses": 10,
+    "eachProductHasTenRatings": true,
+    "eachProductHasTenPriceResponses": true
+  },
+  "ageDistribution": {
+    "18–24": 2,
+    "25–34": 5,
+    "35–44": 2,
+    "45–54": 1
+  },
+  "reasonCounts": {
+    "The product would be useful to me": 9,
+    "The price feels attractive": 7,
+    "The features or specifications fit my needs": 4,
+    "I already buy products like this": 2,
+    "It sounds durable or well made": 1
+  },
+  "products": [
+    {
+      "id": "prod_V4wnv0bVngAJGz",
+      "name": "Laptop Cooling Pad with Fan",
+      "originalPosition": 1,
+      "ratingCount": 10,
+      "averageLikelihood": 3.8,
+      "mostLikely": 3,
+      "leastLikely": 1,
+      "priceSentiment": {
+        "tooExpensive": 1,
+        "fair": 2,
+        "surprisinglyCheap": 7
+      }
+    },
+    {
+      "id": "prod_V4wmEGnnY8szaJ",
+      "name": "USB-C Fast Charging Cable 6ft",
+      "originalPosition": 2,
+      "ratingCount": 10,
+      "averageLikelihood": 3.9,
+      "mostLikely": 1,
+      "leastLikely": 0,
+      "priceSentiment": {
+        "tooExpensive": 0,
+        "fair": 5,
+        "surprisinglyCheap": 5
+      }
+    },
+    {
+      "id": "prod_V4wmSLEPJ5wd8P",
+      "name": "Screen Cleaner Spray Kit",
+      "originalPosition": 3,
+      "ratingCount": 10,
+      "averageLikelihood": 3.1,
+      "mostLikely": 1,
+      "leastLikely": 1,
+      "priceSentiment": {
+        "tooExpensive": 3,
+        "fair": 5,
+        "surprisinglyCheap": 2
+      }
+    },
+    {
+      "id": "prod_V4wmdOvODTvZcK",
+      "name": "Foldable Phone Stand Adjustable",
+      "originalPosition": 4,
+      "ratingCount": 10,
+      "averageLikelihood": 2.9,
+      "mostLikely": 1,
+      "leastLikely": 1,
+      "priceSentiment": {
+        "tooExpensive": 2,
+        "fair": 8,
+        "surprisinglyCheap": 0
+      }
+    },
+    {
+      "id": "prod_V4wmnzsAReKvAG",
+      "name": "Cable Organizer Clips 10-Pack",
+      "originalPosition": 5,
+      "ratingCount": 10,
+      "averageLikelihood": 3.1,
+      "mostLikely": 1,
+      "leastLikely": 1,
+      "priceSentiment": {
+        "tooExpensive": 3,
+        "fair": 5,
+        "surprisinglyCheap": 2
+      }
+    },
+    {
+      "id": "prod_V4wm18Zg9gyCVO",
+      "name": "Phone Ring Light for Selfies",
+      "originalPosition": 6,
+      "ratingCount": 10,
+      "averageLikelihood": 2.5,
+      "mostLikely": 1,
+      "leastLikely": 3,
+      "priceSentiment": {
+        "tooExpensive": 1,
+        "fair": 6,
+        "surprisinglyCheap": 3
+      }
+    },
+    {
+      "id": "prod_V4wmS1EtdtMG4f",
+      "name": "Wireless Earbuds with Charging Case",
+      "originalPosition": 7,
+      "ratingCount": 10,
+      "averageLikelihood": 3.1,
+      "mostLikely": 2,
+      "leastLikely": 3,
+      "priceSentiment": {
+        "tooExpensive": 1,
+        "fair": 3,
+        "surprisinglyCheap": 6
+      }
+    },
+    {
+      "id": "prod_V4wmmLWzk8OOqN",
+      "name": "Portable Mini Fan USB",
+      "originalPosition": 8,
+      "ratingCount": 10,
+      "averageLikelihood": 2.5,
+      "mostLikely": 0,
+      "leastLikely": 0,
+      "priceSentiment": {
+        "tooExpensive": 2,
+        "fair": 8,
+        "surprisinglyCheap": 0
+      }
+    },
+    {
+      "id": "prod_V4wmCiXp5BsA1G",
+      "name": "Magnetic Phone Mount for Car",
+      "originalPosition": 9,
+      "ratingCount": 10,
+      "averageLikelihood": 3.4,
+      "mostLikely": 0,
+      "leastLikely": 0,
+      "priceSentiment": {
+        "tooExpensive": 1,
+        "fair": 8,
+        "surprisinglyCheap": 1
+      }
+    },
+    {
+      "id": "prod_V4wmYiqQI4dLrs",
+      "name": "LED Strip Lights RGB 16 Colors",
+      "originalPosition": 10,
+      "ratingCount": 10,
+      "averageLikelihood": 3.0,
+      "mostLikely": 0,
+      "leastLikely": 0,
+      "priceSentiment": {
+        "tooExpensive": 3,
+        "fair": 4,
+        "surprisinglyCheap": 3
+      }
+    }
+  ],
+  "ranking": [
+    "prod_V4wmEGnnY8szaJ",
+    "prod_V4wnv0bVngAJGz",
+    "prod_V4wmCiXp5BsA1G",
+    "prod_V4wmS1EtdtMG4f",
+    "prod_V4wmSLEPJ5wd8P",
+    "prod_V4wmnzsAReKvAG",
+    "prod_V4wmYiqQI4dLrs",
+    "prod_V4wmdOvODTvZcK",
+    "prod_V4wm18Zg9gyCVO",
+    "prod_V4wmmLWzk8OOqN"
+  ],
+  "rankingMethod": "Average purchase likelihood descending; ties broken by most-likely selections descending, least-likely selections ascending, then original storefront position.",
+  "interpretation": "In this small 10-person panel, the USB-C cable had the highest average purchase likelihood (3.9/5). The laptop cooling pad followed at 3.8/5 and received the most most-likely selections (3). The phone ring light and portable mini fan tied for the lowest average (2.5/5). This hackathon-sized panel is directional evidence, not a statistically significant market estimate.",
+  "containsRespondentPii": false
+}

@@ -22,7 +22,8 @@ function buildSortHref(
 	} else {
 		params.set("sort", value);
 	}
-	return params.size ? `${pathname}?${params}` : pathname;
+	const queryString = params.toString();
+	return queryString ? `${pathname}?${queryString}` : pathname;
 }
 
 /** Inline sort links for desktop. Reads the current sort from the URL (client-side). */

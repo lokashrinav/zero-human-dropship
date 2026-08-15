@@ -1,0 +1,43 @@
+{
+  "timestamp": "2026-08-15T20:31:12Z",
+  "decisionAppliedAt": "2026-08-15T20:26:16Z",
+  "productionVerifiedAt": "2026-08-15T20:31:12Z",
+  "productionDeploymentId": "dpl_6T2YKTQZv9oywZj596hsyHT9uMQy",
+  "catalogUrl": "https://storefront-omega-three.vercel.app/api/catalog",
+  "studyId": "w14sbyed2iixiz76o5ass608",
+  "sampleSize": 10,
+  "evidence": {
+    "highestRated": "USB-C Fast Charging Cable 6ft — 3.9/5 average",
+    "secondRated": "Laptop Cooling Pad with Fan — 3.8/5 average and 3 most-likely selections",
+    "rankingMethod": "Average purchase likelihood descending; ties broken by most-likely selections descending, least-likely selections ascending, then original storefront position.",
+    "aggregateFile": "aggregated_feedback.json"
+  },
+  "change": {
+    "type": "product_order",
+    "description": "Applied the approved-response ranking to all 10 products. No product, price, description, active state, or Stripe Payment Link changed."
+  },
+  "ordering": [
+    "prod_V4wmEGnnY8szaJ",
+    "prod_V4wnv0bVngAJGz",
+    "prod_V4wmCiXp5BsA1G",
+    "prod_V4wmS1EtdtMG4f",
+    "prod_V4wmSLEPJ5wd8P",
+    "prod_V4wmnzsAReKvAG",
+    "prod_V4wmYiqQI4dLrs",
+    "prod_V4wmdOvODTvZcK",
+    "prod_V4wm18Zg9gyCVO",
+    "prod_V4wmmLWzk8OOqN"
+  ],
+  "products": [
+    { "position": 1, "id": "prod_V4wmEGnnY8szaJ", "name": "USB-C Fast Charging Cable 6ft", "price": 4.99, "active": true },
+    { "position": 2, "id": "prod_V4wnv0bVngAJGz", "name": "Laptop Cooling Pad with Fan", "price": 8.99, "active": true },
+    { "position": 3, "id": "prod_V4wmCiXp5BsA1G", "name": "Magnetic Phone Mount for Car", "price": 4.99, "active": true },
+    { "position": 4, "id": "prod_V4wmS1EtdtMG4f", "name": "Wireless Earbuds with Charging Case", "price": 7.99, "active": true },
+    { "position": 5, "id": "prod_V4wmSLEPJ5wd8P", "name": "Screen Cleaner Spray Kit", "price": 3.99, "active": true },
+    { "position": 6, "id": "prod_V4wmnzsAReKvAG", "name": "Cable Organizer Clips 10-Pack", "price": 3.49, "active": true },
+    { "position": 7, "id": "prod_V4wmYiqQI4dLrs", "name": "LED Strip Lights RGB 16 Colors", "price": 5.99, "active": true },
+    { "position": 8, "id": "prod_V4wmdOvODTvZcK", "name": "Foldable Phone Stand Adjustable", "price": 5.99, "active": true },
+    { "position": 9, "id": "prod_V4wm18Zg9gyCVO", "name": "Phone Ring Light for Selfies", "price": 3.99, "active": true },
+    { "position": 10, "id": "prod_V4wmmLWzk8OOqN", "name": "Portable Mini Fan USB", "price": 4.99, "active": true }
+  ]
+}

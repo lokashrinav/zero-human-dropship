@@ -21,6 +21,11 @@
       "tool": "mcp__terac__terac_launch_draft_opportunity",
       "timestamp": "2026-08-15T19:59:36.142Z",
       "result": "Study launched and recruitment started"
+    },
+    {
+      "tool": "mcp__terac__terac_get_submissions",
+      "timestamp": "2026-08-15T20:25:09Z",
+      "result": "Ten approved submissions retrieved for aggregation"
     }
   ],
   "studyId": "w14sbyed2iixiz76o5ass608",
@@ -31,9 +36,13 @@
   "launchTimestamp": "2026-08-15T19:59:36.142Z",
   "targetAudience": "Worldwide general adult population; adults 18+ pass the required age screener; no geographic, professional, gender, or prior-purchase hard filters",
   "targetResponseCount": 10,
-  "status": "active",
-  "responseCount": 0,
-  "latestFetchTimestamp": "2026-08-15T19:59:36.142Z",
+  "status": "fulfilled",
+  "responseCount": 10,
+  "provisionalScreeningResponseCount": 27,
+  "qualityScreenPassedCount": 12,
+  "latestFetchTimestamp": "2026-08-15T20:31:48Z",
+  "resultsCapturedAt": "2026-08-15T20:23:58.124Z",
+  "aggregateFile": "aggregated_feedback.json",
   "estimatedDurationMinutes": 7,
   "pricing": {
     "currency": "usd",
@@ -57,6 +66,14 @@
     "launchBlockedByInsufficientBalance": false
   },
   "submissionsDashboardUrl": "https://terac.com/zero-human-dropship-msusi2w8/default-project-els56czpojv0q5l5yduyo3vk/opportunities/w14sbyed2iixiz76o5ass608/submissions",
+  "decisionFile": "../storefront/ceo-decisions.json",
+  "afterSnapshot": "after.json",
+  "publicEndpoints": {
+    "verifiedAt": "2026-08-15T20:31:12Z",
+    "teracFeedbackUrl": "https://storefront-omega-three.vercel.app/api/terac-feedback",
+    "ceoDecisionsUrl": "https://storefront-omega-three.vercel.app/api/ceo-decisions",
+    "httpStatus": 200
+  },
   "catalogSnapshot": "study_catalog_snapshot.json",
   "containsRespondentPii": false
 }

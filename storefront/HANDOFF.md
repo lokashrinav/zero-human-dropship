@@ -3,7 +3,7 @@
 ## LIVE
 
 - Production URL: https://storefront-omega-three.vercel.app
-- Deployment: `dpl_DQijhQkXZD4dAu1bf8t1Qpcn3aKx` (`READY`, production)
+- Deployment: `dpl_6T2YKTQZv9oywZj596hsyHT9uMQy` (`READY`, production)
 - Git repo/path: `/Users/aradhyamishra/zero-human-dropship-master/storefront`
 
 ## WORKING
@@ -14,6 +14,8 @@
 - Product pages link directly to the matching secure Stripe checkout. Demo products, fixture prices, and fixture imagery are not presented as real.
 - Linq CTA reads `NEXT_PUBLIC_LINQ_PHONE` or `NEXT_PUBLIC_SALES_AGENT_URL` and remains disabled until one is configured.
 - Shipping and returns disclosures are available at `/shipping` and `/returns`.
+- Terac study `w14sbyed2iixiz76o5ass608` fulfilled with 10 approved responses. The catalog is deterministically reordered from the approved-response ranking; no commerce values changed.
+- Public evidence feeds are live at `/api/terac-feedback` and `/api/ceo-decisions`.
 
 ## VERIFIED
 
@@ -21,6 +23,7 @@
 - Deployed browser: mobile homepage → Laptop Cooling Pad with Fan → its live Stripe Checkout; the checkout visibly rendered email, full name, US country, address, city, ZIP, state, and payment sections. No payment was submitted.
 - QA: production build; Biome; TypeScript; 36/36 tests; no mobile overflow at 390 px; storefront console 0 errors; `/`, `/products`, product, `/api/catalog`, `/shipping`, and `/returns` return HTTP 200.
 - Security: `.env.local` is git-ignored with mode 0600; source scan found no live key value; `/api/catalog` exposes only the approved safe fields.
+- Terac deployment: 43/43 tests, production build, prerendered header, mobile QA at 390×844, zero production console errors, 10 active products, 10 distinct real Payment Links, and HTTP 200 for both evidence feeds.
 
 ## CATALOG SYNC
 

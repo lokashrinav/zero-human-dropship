@@ -1,0 +1,15 @@
+{
+	"updatedAt": "2026-08-15T20:26:16Z",
+	"decisions": [
+		{
+			"id": "ceo_terac_w14sbyed2iixiz76o5ass608_20260815T202616Z",
+			"timestamp": "2026-08-15T20:26:16Z",
+			"agent": "CEO AGENT",
+			"kind": "terac_reorder",
+			"title": "REORDERED PRODUCT CATALOG",
+			"reason": "Ten approved Terac respondents rated every live product. USB-C Cable had the highest average purchase likelihood at 3.9/5; Laptop Cooling Pad followed at 3.8/5 and had the most most-likely selections (3). The ordering follows average rating, then the documented deterministic tie-breakers. The panel is directional and not statistically significant.",
+			"action": "Moved USB-C Fast Charging Cable from position 2 to 1, Magnetic Phone Mount from 9 to 3, Wireless Earbuds from 7 to 4, and reordered all remaining products by the approved-response ranking without changing prices or checkout links.",
+			"stage": "learn"
+		}
+	]
+}

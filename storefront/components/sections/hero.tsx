@@ -34,7 +34,7 @@ export async function Hero() {
 	const featuredImage = featuredProduct?.images[0] ?? featuredProduct?.variants[0]?.images[0] ?? null;
 
 	return (
-		<section className="hero-field relative isolate overflow-hidden border-b border-border">
+		<section className="hero-field relative isolate overflow-hidden border-b border-border lg:pb-8">
 			<div className="pointer-events-none absolute inset-0" aria-hidden="true">
 				<div className="hero-orb absolute -right-36 -top-20 size-[28rem] rounded-full sm:size-[40rem]" />
 				<div className="hero-grid absolute inset-0 opacity-40" />

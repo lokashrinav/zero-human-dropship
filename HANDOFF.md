@@ -1,6 +1,6 @@
 # ZERO HUMAN — Judge Dashboard Handoff
 
-Checkpoint: 2026-08-15 12:56 PM America/Los_Angeles  
+Checkpoint: 2026-08-15 1:31 PM America/Los_Angeles
 Production deployment: `dpl_7kcuApC3HR24wMJ8WFuzSBszz8Vu`
 
 ## Dashboard
@@ -19,8 +19,8 @@ Production deployment: `dpl_7kcuApC3HR24wMJ8WFuzSBszz8Vu`
 - Stripe revenue: **WAITING** — revenue and orders remain `null`. Vercel would not export the storefront's sensitive encrypted key, so the dashboard still needs either its own server-only `STRIPE_SECRET_KEY` or an attested `STRIPE_REVENUE_URL`. Products and Payment Links are not counted as revenue.
 - Pioneer: **VERIFIED REAL RUN** — GPT-OSS 120B inference PASS, Fastino GLiNER2 validation PASS, three-product pipeline PASS, top ranking `demo-cable (95)`, verified `2026-08-15T19:20:56.289815Z`. This is historical evidence, not a live Pioneer service.
 - Linq: **DEPLOYMENT PENDING** — real account and public phone `+1 415-305-0091` are verified; no public base URL, registered webhook, real inbound event, or real outbound event exists yet. Runtime counters/events are zero.
-- Terac: **LIVE / RECRUITING** — the real Terac MCP launched study `w14sbyed2iixiz76o5ass608` at `2026-08-15T19:59:36.142Z` for 10 adults to evaluate all 10 live products. Initial submission count: 0. The immutable catalog snapshot is in `terac/before.json`; safe MCP evidence is in `terac/mcp_evidence.json`. Monitor real responses at https://terac.com/zero-human-dropship-msusi2w8/default-project-els56czpojv0q5l5yduyo3vk/opportunities/w14sbyed2iixiz76o5ass608/submissions. No `TERAC_FEEDBACK_URL` exists until real responses are collected and applied.
-- Person A CEO decisions: **PENDING** — no real decision feed was found. The dashboard renders zero decisions and no outcomes.
+- Terac: **FULFILLED / LIVE EVIDENCE** — real Terac MCP study `w14sbyed2iixiz76o5ass608` produced 10/10 approved responses. USB-C Cable ranked first at 3.9/5; Laptop Cooling Pad ranked second at 3.8/5 and had the most most-likely selections (3). The immutable before snapshot, aggregate, after snapshot, and MCP audit live in `terac/`. Public feed: https://storefront-omega-three.vercel.app/api/terac-feedback.
+- Person A CEO decisions: **LIVE** — the data-backed `terac_reorder` decision moved USB-C Cable from #2 to #1 and Magnetic Phone Mount from #9 to #3 without changing prices, Payment Links, shipping, products, or claimed outcomes. Public feed: https://storefront-omega-three.vercel.app/api/ceo-decisions.
 - Band: **DISABLED** — intentionally not part of the active loop and not treated as an error.
 - Render: **PENDING** — no public Linq deployment exists.
 - Replay: **PENDING** — Playwright QA passed, but no actual Replay verification artifact/endpoint exists.
@@ -36,8 +36,8 @@ The credential-free evidence adapter is `dashboard/src/data/pioneer/index.ts`. I
 All integration variables are server-side. Never prefix them with `NEXT_PUBLIC_`.
 
 - Linq one-line follow-up after a real deployment exists: `cd /Users/aradhyamishra/zero-human-dropship-master/dashboard && printf '%s' '<LINQ_BASE_URL>' | npx vercel env add LINQ_BASE_URL production --yes && npx vercel deploy --prod --yes`
-- Terac one-line follow-up after the real study endpoint exists: `cd /Users/aradhyamishra/zero-human-dropship-master/dashboard && printf '%s' '<TERAC_FEEDBACK_URL>' | npx vercel env add TERAC_FEEDBACK_URL production --yes && npx vercel deploy --prod --yes`
-- CEO one-line follow-up after Person A exposes the feed: `cd /Users/aradhyamishra/zero-human-dropship-master/dashboard && printf '%s' '<CEO_DECISIONS_URL>' | npx vercel env add CEO_DECISIONS_URL production --yes && npx vercel deploy --prod --yes`
+- Terac one-line follow-up: `cd /Users/aradhyamishra/zero-human-dropship-master/dashboard && printf '%s' 'https://storefront-omega-three.vercel.app/api/terac-feedback' | npx vercel env add TERAC_FEEDBACK_URL production --yes && npx vercel deploy --prod --yes`
+- CEO one-line follow-up: `cd /Users/aradhyamishra/zero-human-dropship-master/dashboard && printf '%s' 'https://storefront-omega-three.vercel.app/api/ceo-decisions' | npx vercel env add CEO_DECISIONS_URL production --yes && npx vercel deploy --prod --yes`
 - Stripe revenue one-line follow-up with a dedicated server-side key: `cd /Users/aradhyamishra/zero-human-dropship-master/dashboard && printf '%s' '<STRIPE_SECRET_KEY>' | npx vercel env add STRIPE_SECRET_KEY production --sensitive --yes && npx vercel deploy --prod --yes`
 
 The Linq adapter will call `GET /api/status` and `GET /api/events?cursor=0&limit=100`. Exact response contracts, catalog variants, Terac input, and revenue attestation are in [`dashboard/INTEGRATION_CONTRACTS.md`](dashboard/INTEGRATION_CONTRACTS.md).
