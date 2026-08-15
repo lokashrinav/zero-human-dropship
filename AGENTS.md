@@ -40,6 +40,7 @@ Autonomous dropshipping business (Zero Human Company Hackathon, Aug 15 2026). Re
 3. **Conversion polish**: trust signals near Buy buttons, Terac "panel-approved" badges (real data in `terac/aggregated_feedback.json`), mobile checkout friction.
 4. **Bundles**: create multi-SKU Stripe products at higher AOV (propose to CEO or coordinate — creates catalog entries).
 5. **Replay QA** on the storefront (checklist in `REPLAY_CHECKLIST.md`) — $1,500 track, fix what it finds.
+6. **Perflo agent wallet** ($500+$200, NEW track) — agent holds a balance and pays per-call over x402 for services it needs mid-task (target: image/creative gen or product research), inside a human-armed spend cap + allowlist. Bar is high: "take Perflo out and the project should break" — the paid call's result must be a real dependency, not a badge. Connect: hosted MCP `https://mcp.perflo.xyz` or `npx @perflo/cli onboard`; docs docs.perflo.ai. Research + integration in progress on Shrinav's machine.
 
 ## Guardrails (enforced in code — don't fight them)
 Reprice/drop go through `agents/cli.py act`: min price 250c, ≥30% margin over cost, ≤35% price change per cycle, ≤3 actions per cycle, never drop the last/selling product. Old payment links stay ACTIVE on reprice (storefront serves a baked catalog — deactivating would dead-link live traffic). Full decision rules in `CLAUDE.md`.
