@@ -5,6 +5,9 @@ This file is the entry point for ANY coding agent (Codex reads AGENTS.md; Claude
 ## What this is
 Autonomous dropshipping business (Zero Human Company Hackathon, Aug 15 2026). Real Stripe revenue, real products, agents run everything. Humans only relay credentials and watch.
 
+## Full autonomy (the engine)
+`start_autonomous.bat` (Shrinav's machine) runs `supervisor.ps1`: an external PowerShell loop that revives the backend + tunnel and re-prompts a FRESH headless `claude -p` CEO cycle every 15 min. No agent session is the engine — sessions die, the supervisor doesn't. If the tunnel URL rotates, an escalation on `/api/escalations` tells a human to update the dashboard env. Interactive sessions must NOT run their own CEO loops while the supervisor is on (one CEO rule).
+
 ## Boot (fresh machine)
 1. `git clone https://github.com/lokashrinav/zero-human-dropship && cd zero-human-dropship`
 2. `pip install -r agent_backend/requirements.txt`

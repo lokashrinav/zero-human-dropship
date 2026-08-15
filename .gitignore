@@ -10,3 +10,6 @@ fulfillment/orders_ledger.json
 fulfillment/manual_orders.log
 agent_backend/revenue_sprint/*.json
 agent_backend/revenue_sprint.sqlite3
+agent_backend/tunnel_url.txt
+agent_backend/tunnel.log
+agent_backend/escalations.jsonl
