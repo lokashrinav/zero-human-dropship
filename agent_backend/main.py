@@ -73,6 +73,19 @@ async def get_decisions(limit: int = 50):
     return read_local_log(limit)
 
 
+@app.post("/api/log")
+async def post_log(entry: dict):
+    """Remote log write — lets Person B's Linq handler (or any service on
+    another machine) append to the same audit trail the dashboard shows."""
+    from tools.band_tools import post_message
+    agent = str(entry.get("agent", "Unknown"))[:40]
+    message = str(entry.get("message", ""))[:2000]
+    if not message:
+        raise HTTPException(status_code=422, detail="message is required")
+    await post_message(agent, message)
+    return {"status": "logged"}
+
+
 @app.get("/api/stats")
 async def get_stats():
     """Revenue headline numbers for the dashboard. Zeros gracefully pre-keys."""
