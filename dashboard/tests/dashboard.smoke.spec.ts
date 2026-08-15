@@ -35,14 +35,35 @@ test("renders the complete judge story with truthful data provenance", async ({ 
     await expect(metricRegion.getByText(new RegExp(`^${metric}$`, "i"))).toBeVisible();
   }
 
-  await expect(page.getByText(/^SOURCE$/i)).toBeVisible();
-  await expect(page.getByText(/^VALIDATE WITH HUMANS$/i)).toBeVisible();
-  await expect(page.getByText(/^FULFILL$/i)).toBeVisible();
-  await expect(page.getByText(/^LEARN$/i)).toBeVisible();
+  const workflow = page.getByLabel("Autonomous commerce workflow");
+  await expect(workflow.getByText(/^SOURCE$/i)).toBeVisible();
+  await expect(workflow.getByText(/^VALIDATE WITH HUMANS$/i)).toBeVisible();
+  await expect(workflow.getByText(/^FULFILL$/i)).toBeVisible();
+  await expect(workflow.getByText(/^LEARN$/i)).toBeVisible();
 
   await expect(page.getByText(/before human feedback/i).first()).toBeVisible();
   await expect(page.getByText(/terac feedback/i).first()).toBeVisible();
   await expect(page.getByText(/autonomous change/i).first()).toBeVisible();
+
+  const teracLive = await page.getByText(/10 human responses/i).count();
+  if (teracLive > 0) {
+    await expect(page.getByText(/USB-C Fast Charging Cable 6ft/i).first()).toBeVisible();
+    await expect(page.getByText(/Phone Ring Light for Selfies/i).first()).toBeVisible();
+    await expect(page.getByText(/Portable Mini Fan USB/i).first()).toBeVisible();
+  }
+
+  const linqLive = await page.getByText(/^Sales agent online$/i).count();
+  if (linqLive > 0) {
+    const inboundVisible = await page.getByText(/^INBOUND MESSAGE$/i).count();
+    const checkoutVisible = await page.getByText(/^CHECKOUT LINK SENT$/i).count();
+    if (checkoutVisible > 0) {
+      await expect(page.getByText(/^INBOUND MESSAGE$/i)).toBeVisible();
+      await expect(page.getByText(/^INTENT DETECTED$/i)).toBeVisible();
+      await expect(page.getByText(/^PRODUCT SELECTED$/i)).toBeVisible();
+    } else if (inboundVisible === 0) {
+      await expect(page.getByText(/^Waiting for inbound$/i)).toBeVisible();
+    }
+  }
 
   const bodyText = await page.locator("body").innerText();
   const showsRealRevenue = /Stripe\s*[—:-]?\s*REAL REVENUE/i.test(bodyText);

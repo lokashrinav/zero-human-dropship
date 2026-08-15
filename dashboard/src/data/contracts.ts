@@ -70,6 +70,7 @@ export type CeoDecision = {
 		| "listed_product"
 		| "removed_product"
 		| "changed_promotion"
+		| "terac_reorder"
 		| "other";
 	reason: string;
 	action: string;
@@ -84,6 +85,7 @@ export type DecisionsData = {
 export type BusinessStateItem = {
 	id: string;
 	name: string;
+	position?: number;
 	priceMinor?: number;
 	currency?: string;
 	copy?: string;
@@ -91,8 +93,14 @@ export type BusinessStateItem = {
 };
 
 export type TeracChange = {
-	type: "removed" | "replaced" | "price" | "copy" | "other";
+	type: "removed" | "replaced" | "price" | "copy" | "product_order" | "other";
 	description: string;
+};
+
+export type TeracRatedProduct = {
+	id: string;
+	name: string;
+	averageLikelihood: number;
 };
 
 export type TeracStudy = {
@@ -108,6 +116,8 @@ export type TeracStudy = {
 		result: string;
 		rating?: number;
 		ratingScale?: number;
+		highestRatedProduct?: TeracRatedProduct;
+		lowestRatedProducts?: TeracRatedProduct[];
 	};
 	changes: TeracChange[];
 	after: {

@@ -118,7 +118,7 @@ export const getSponsorProofs = async (
 							"Verified live Stripe products and checkout links. Revenue remains separate until a successful live payment exists.",
 					} satisfies SponsorProof
 				: sourceProof("Stripe", "REAL REVENUE", panels.revenue);
-	const linq = sourceProof("Linq", "AI SALES", panels.linq);
+	const linq = sourceProof("Linq", "LIVE", panels.linq);
 	if (linq.status === "pending") {
 		linq.label = "DEPLOYMENT PENDING";
 		linq.detail = panels.linq.meta.detail;
@@ -132,9 +132,19 @@ export const getSponsorProofs = async (
 				? "Band remains intentionally disabled; configured values are not probed."
 				: "Band is intentionally disabled and is not part of the active company loop.",
 	};
+	const terac: SponsorProof =
+		panels.terac.meta.mode === "live"
+			? {
+					name: "Terac",
+					status: "verified",
+					label: "VERIFIED",
+					summary: "REAL HUMAN FEEDBACK",
+					detail: panels.terac.meta.detail,
+				}
+			: sourceProof("Terac", "REAL HUMAN FEEDBACK", panels.terac);
 
 	return [
-		sourceProof("Terac", "HUMAN FEEDBACK ACTIVE", panels.terac),
+		terac,
 		stripe,
 		getPioneerProof(),
 		linq,
