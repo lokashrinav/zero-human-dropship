@@ -46,13 +46,27 @@ def balance() -> dict:
     return _run("balance")
 
 
-def do_task(query: str, max_price_usd: float | None = None) -> dict:
+# Verified live x402 vendors (each price read from an actual 402 response,
+# Base mainnet USDC). do-task routes automatically; these are for
+# check_contract() / targeted fetch and for budgeting:
+#   image gen:  api.delx.ai/api/v1/x402/image-budget            $0.005
+#               image.gedx402.com/v1/image/flux-1-schnell       $0.01
+#               402claw.cloud/api/x402/nano-banana-pro          $0.15 (quality)
+#   search:     api.exa.ai/search                               $0.007
+#               x402.tavily.com/search                          $0.01
+# A full research+creative loop costs about a penny. $5 funds ~500 creatives.
+
+
+def do_task(query: str, confirm: bool = False) -> dict:
     """Run a task through Perflo: backend picks the best-fit x402 vendor and PAYS
     for the call from the agent balance (inside the human-armed cap). The result
-    exists only because the payment cleared — that is the point."""
+    exists only because the payment cleared — that is the point.
+
+    If the backend flags the spend as needing approval (the judge-visible
+    enforcement: CONFIRMATION_REQUIRED), re-run with confirm=True."""
     args = ["do-task", query]
-    if max_price_usd is not None:
-        args += ["--max-price", str(max_price_usd)]
+    if confirm:
+        args.append("--confirm")
     return _run(*args, timeout=600)
 
 
