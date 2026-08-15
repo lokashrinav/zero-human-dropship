@@ -2,7 +2,10 @@
 	{
 		"id": "prod_V4wnv0bVngAJGz",
 		"name": "Laptop Cooling Pad with Fan",
-		"images": [],
+		"images": [
+			"https://raw.githubusercontent.com/lokashrinav/zero-human-dropship/codex/b-conversion-final/product_images/cooling_pad.png"
+		],
+		"image_kind": "visualization",
 		"stripe_id": "prod_V4wnv0bVngAJGz",
 		"payment_link": "https://buy.stripe.com/28EcN7eBg9xteN32PYaZi0c",
 		"price": 10.99,
@@ -12,7 +15,10 @@
 	{
 		"id": "prod_V4wmEGnnY8szaJ",
 		"name": "USB-C Fast Charging Cable 6ft",
-		"images": [],
+		"images": [
+			"https://raw.githubusercontent.com/lokashrinav/zero-human-dropship/codex/b-conversion-final/product_images/usbc_cable.png"
+		],
+		"image_kind": "visualization",
 		"stripe_id": "prod_V4wmEGnnY8szaJ",
 		"payment_link": "https://buy.stripe.com/eVq4gB1OucJFcEVaiqaZi09",
 		"price": 4.99,
@@ -22,7 +28,10 @@
 	{
 		"id": "prod_V4wmSLEPJ5wd8P",
 		"name": "Screen Cleaner Spray Kit",
-		"images": [],
+		"images": [
+			"https://raw.githubusercontent.com/lokashrinav/zero-human-dropship/codex/b-conversion-final/product_images/screen_cleaner.png"
+		],
+		"image_kind": "visualization",
 		"stripe_id": "prod_V4wmSLEPJ5wd8P",
 		"payment_link": "https://buy.stripe.com/28E8wR50G5hd0WdgGOaZi0b",
 		"price": 2.99,
@@ -32,7 +41,10 @@
 	{
 		"id": "prod_V4wmdOvODTvZcK",
 		"name": "Foldable Phone Stand Adjustable",
-		"images": [],
+		"images": [
+			"https://raw.githubusercontent.com/lokashrinav/zero-human-dropship/codex/b-conversion-final/product_images/phone_stand.png"
+		],
+		"image_kind": "visualization",
 		"stripe_id": "prod_V4wmdOvODTvZcK",
 		"payment_link": "https://buy.stripe.com/eVqdRbal0fVRfR78aiaZi07",
 		"price": 5.99,
@@ -42,7 +54,10 @@
 	{
 		"id": "prod_V4wmnzsAReKvAG",
 		"name": "Cable Organizer Clips 10-Pack",
-		"images": [],
+		"images": [
+			"https://raw.githubusercontent.com/lokashrinav/zero-human-dropship/codex/b-conversion-final/product_images/cable_clips.png"
+		],
+		"image_kind": "visualization",
 		"stripe_id": "prod_V4wmnzsAReKvAG",
 		"payment_link": "https://buy.stripe.com/28E5kF2Sy6lh5ct3U2aZi06",
 		"price": 3.49,
@@ -52,7 +67,10 @@
 	{
 		"id": "prod_V4wm18Zg9gyCVO",
 		"name": "Phone Ring Light for Selfies",
-		"images": [],
+		"images": [
+			"https://raw.githubusercontent.com/lokashrinav/zero-human-dropship/codex/b-conversion-final/product_images/ring_light.png"
+		],
+		"image_kind": "visualization",
 		"stripe_id": "prod_V4wm18Zg9gyCVO",
 		"payment_link": "https://buy.stripe.com/7sYbJ33WC9xtbAReyGaZi05",
 		"price": 3.99,
@@ -62,7 +80,10 @@
 	{
 		"id": "prod_V4wmS1EtdtMG4f",
 		"name": "Wireless Earbuds with Charging Case",
-		"images": [],
+		"images": [
+			"https://raw.githubusercontent.com/lokashrinav/zero-human-dropship/codex/b-conversion-final/product_images/earbuds.png"
+		],
+		"image_kind": "visualization",
 		"stripe_id": "prod_V4wmS1EtdtMG4f",
 		"payment_link": "https://buy.stripe.com/7sY5kF78OdNJ20h8aiaZi0d",
 		"price": 9.49,
@@ -72,7 +93,10 @@
 	{
 		"id": "prod_V4wmmLWzk8OOqN",
 		"name": "Portable Mini Fan USB",
-		"images": [],
+		"images": [
+			"https://raw.githubusercontent.com/lokashrinav/zero-human-dropship/codex/b-conversion-final/product_images/mini_fan.png"
+		],
+		"image_kind": "visualization",
 		"stripe_id": "prod_V4wmmLWzk8OOqN",
 		"payment_link": "https://buy.stripe.com/6oU6oJbp46lh20hgGOaZi03",
 		"price": 4.99,
@@ -82,7 +106,10 @@
 	{
 		"id": "prod_V4wmCiXp5BsA1G",
 		"name": "Magnetic Phone Mount for Car",
-		"images": [],
+		"images": [
+			"https://raw.githubusercontent.com/lokashrinav/zero-human-dropship/codex/b-conversion-final/product_images/phone_mount.png"
+		],
+		"image_kind": "visualization",
 		"stripe_id": "prod_V4wmCiXp5BsA1G",
 		"payment_link": "https://buy.stripe.com/6oU3cxfFkeRN20h2PYaZi02",
 		"price": 4.99,
@@ -92,7 +119,10 @@
 	{
 		"id": "prod_V4wmYiqQI4dLrs",
 		"name": "LED Strip Lights RGB 16 Colors",
-		"images": [],
+		"images": [
+			"https://raw.githubusercontent.com/lokashrinav/zero-human-dropship/codex/b-conversion-final/product_images/led_strip.png"
+		],
+		"image_kind": "visualization",
 		"stripe_id": "prod_V4wmYiqQI4dLrs",
 		"payment_link": "https://buy.stripe.com/7sYfZjbp49xt8oFaiqaZi01",
 		"price": 5.99,

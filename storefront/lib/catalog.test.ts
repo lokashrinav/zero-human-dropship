@@ -17,4 +17,18 @@ describe("Terac-ranked catalog", () => {
 			),
 		).toBe(true);
 	});
+
+	test("uses one labeled, reachable-format visualization per product", () => {
+		expect(
+			catalog.every(
+				({ image_kind, images }) =>
+					image_kind === "visualization" &&
+					images.length === 1 &&
+					images[0]?.startsWith(
+						"https://raw.githubusercontent.com/lokashrinav/zero-human-dropship/codex/b-conversion-final/product_images/",
+					) &&
+					images[0].endsWith(".png"),
+			),
+		).toBe(true);
+	});
 });
