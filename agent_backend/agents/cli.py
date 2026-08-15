@@ -16,6 +16,7 @@ agents/ceo.py (anthropic API loop) remains as the headless fallback.
 
 import asyncio
 import json
+import os
 import sys
 
 from dotenv import load_dotenv
@@ -32,13 +33,48 @@ from tools.band_tools import post_message, read_recent_posts  # noqa: E402
 from tools.stripe_tools import get_sales_summary, list_products  # noqa: E402
 
 
-async def observe() -> dict:
-    import os
+STORE_CATALOG_URL = "https://storefront-omega-three.vercel.app/api/catalog"
 
-    products, sales = await asyncio.gather(
-        asyncio.to_thread(list_products),
-        asyncio.to_thread(get_sales_summary, max(1, _env_int("CEO_SALES_WINDOW_HOURS", 24))),
-    )
+
+async def _catalog_fallback() -> list[dict]:
+    """Read-only catalog from the live storefront when no Stripe key is set.
+    Lets the CEO observe (not reprice) before credentials land."""
+    import httpx
+
+    async with httpx.AsyncClient(timeout=15) as client:
+        resp = await client.get(os.getenv("STORE_CATALOG_URL", STORE_CATALOG_URL))
+        resp.raise_for_status()
+        items = resp.json()
+    return [
+        {
+            "product_id": p.get("stripe_id", p.get("id", "")),
+            "name": p.get("name", ""),
+            "description": p.get("description", ""),
+            "images": p.get("images", []),
+            "price_cents": int(round(float(p.get("price", 0)) * 100)),
+            "price_id": "",
+            "payment_link_url": p.get("payment_link", ""),
+            "cost_cents": 0,  # unknown without Stripe metadata
+            "cj_product_id": "",
+            "read_only": True,
+        }
+        for p in items
+        if p.get("active", True)
+    ]
+
+
+async def observe() -> dict:
+    catalog_source = "stripe"
+    try:
+        products, sales = await asyncio.gather(
+            asyncio.to_thread(list_products),
+            asyncio.to_thread(get_sales_summary, max(1, _env_int("CEO_SALES_WINDOW_HOURS", 24))),
+        )
+    except RuntimeError:  # STRIPE_SECRET_KEY not configured
+        products = await _catalog_fallback()
+        sales = {"orders": 0, "gross_revenue_cents": 0, "units": 0, "by_product": [],
+                 "note": "no Stripe key — revenue unavailable, catalog read-only from storefront"}
+        catalog_source = "storefront_catalog(read_only)"
     band_posts = await read_recent_posts(limit=30)
 
     feedback: list[dict] = []
@@ -52,6 +88,7 @@ async def observe() -> dict:
             feedback = [{"error": f"Terac read failed: {exc}"}]
 
     return {
+        "catalog_source": catalog_source,
         "context": _build_context(products, sales, band_posts, feedback, trigger="claude-code"),
         "products": products,
         "sales": sales,
@@ -62,7 +99,15 @@ async def observe() -> dict:
 
 async def act(raw_actions: str, dry_run: bool) -> dict:
     decisions = parse_decisions(raw_actions)
-    products = await asyncio.to_thread(list_products)
+    try:
+        products = await asyncio.to_thread(list_products)
+    except RuntimeError:
+        # No Stripe key: catalog is read-only. Only log-style actions make sense;
+        # guardrails will reject product mutations against this catalog anyway.
+        products = await _catalog_fallback()
+        dry_run = dry_run or any(
+            d.get("action") in {"drop_product", "reprice"} for d in decisions
+        )
     results = await execute_decisions(decisions, products, execute_actions=not dry_run)
     summary = {"mode": "dry_run" if dry_run else "execute", "actions": results}
     await post_message("CEO", f"Claude Code cycle:\n{json.dumps(summary, separators=(',', ':'))}")

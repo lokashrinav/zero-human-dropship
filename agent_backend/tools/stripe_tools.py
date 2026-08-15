@@ -14,6 +14,17 @@ def _require_api_key() -> None:
         raise RuntimeError("STRIPE_SECRET_KEY is not configured")
 
 
+def _meta_get(obj, key: str, default=""):
+    """Safe key access for StripeObject, which is not a dict in newer stripe versions."""
+    if obj is None:
+        return default
+    try:
+        return obj[key]
+    except (KeyError, TypeError):
+        return default
+
+
+
 def _create_payment_link(price_id: str):
     return stripe.PaymentLink.create(
         line_items=[{"price": price_id, "quantity": 1}],
@@ -77,7 +88,7 @@ def create_product(
 
 def _payment_link_for_product(product, price_id: str) -> tuple[str, str]:
     """Return (link id, URL), supporting products created before metadata existed."""
-    link_id = product.metadata.get("payment_link_id", "")
+    link_id = _meta_get(product.metadata, "payment_link_id", "")
     if link_id:
         try:
             link = stripe.PaymentLink.retrieve(link_id)
@@ -101,7 +112,7 @@ def list_products() -> list[dict]:
     products = stripe.Product.list(active=True, limit=100)
     result = []
     for product in products.data:
-        price_id = product.metadata.get("current_price_id", "")
+        price_id = _meta_get(product.metadata, "current_price_id", "")
         price = None
         if price_id:
             try:
@@ -128,8 +139,8 @@ def list_products() -> list[dict]:
                 "price_id": price.id,
                 "payment_link_id": link_id,
                 "payment_link_url": link_url,
-                "cost_cents": int(product.metadata.get("cost_cents", 0)),
-                "cj_product_id": product.metadata.get("cj_product_id", ""),
+                "cost_cents": int(_meta_get(product.metadata, "cost_cents", 0)),
+                "cj_product_id": _meta_get(product.metadata, "cj_product_id", ""),
             }
         )
     return result
@@ -139,7 +150,7 @@ def update_price(product_id: str, new_price_cents: int) -> dict:
     """Create a new price and checkout link, then retire the previous versions."""
     _require_api_key()
     product = stripe.Product.retrieve(product_id)
-    old_link_id = product.metadata.get("payment_link_id", "")
+    old_link_id = _meta_get(product.metadata, "payment_link_id", "")
     old_prices = list(stripe.Price.list(product=product_id, active=True).auto_paging_iter())
 
     new_price = stripe.Price.create(
@@ -183,7 +194,7 @@ def deactivate_product(product_id: str) -> None:
     """Deactivate a product and its agent-managed payment link."""
     _require_api_key()
     product = stripe.Product.retrieve(product_id)
-    link_id = product.metadata.get("payment_link_id", "")
+    link_id = _meta_get(product.metadata, "payment_link_id", "")
     if link_id:
         try:
             stripe.PaymentLink.modify(link_id, active=False)
@@ -203,7 +214,7 @@ def get_recent_charges(limit: int = 20) -> list[dict]:
             "created": charge.created,
             "description": charge.description,
             "paid": charge.paid,
-            "product_description": charge.metadata.get("product", ""),
+            "product_description": _meta_get(charge.metadata, "product", ""),
         }
         for charge in charges.data
         if charge.paid
