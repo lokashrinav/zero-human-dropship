@@ -78,6 +78,31 @@ function Ensure-Tunnel {
     }
 }
 
+function Ensure-FulfillmentDaemon {
+    $running = Get-CimInstance Win32_Process -Filter "Name='python.exe'" -ErrorAction SilentlyContinue |
+        Where-Object { $_.CommandLine -like "*fulfillment*pipeline.py*daemon*" }
+    if ($running) { return }
+    Log-Supervisor "fulfillment daemon dead - restarting"
+    $env:PYTHONIOENCODING = "utf-8"
+    Start-Process -WindowStyle Hidden -WorkingDirectory $Repo python -ArgumentList "fulfillment\pipeline.py", "daemon"
+}
+
+function Run-OpsCycle {
+    Log-Supervisor "starting headless Ops cycle"
+    try {
+        $prompt = "Read OPS_CYCLE.md in the repo root and execute exactly one cycle per its instructions."
+        $p = Start-Process -PassThru -WindowStyle Hidden -WorkingDirectory $Repo claude -ArgumentList "-p", "`"$prompt`"", "--dangerously-skip-permissions"
+        if (-not ($p.WaitForExit($CycleTimeoutMinutes * 60 * 1000))) {
+            Stop-Process -Id $p.Id -Force -ErrorAction SilentlyContinue
+            Log-Supervisor "ops cycle timed out - killed, continuing"
+        } else {
+            Log-Supervisor "ops cycle finished (exit $($p.ExitCode))"
+        }
+    } catch {
+        Log-Supervisor "ops cycle launch failed: $($_.Exception.Message)"
+    }
+}
+
 function Run-CeoCycle {
     Log-Supervisor "starting headless CEO cycle"
     try {
@@ -100,6 +125,8 @@ Log-Supervisor "SUPERVISOR ONLINE - cycle every $CycleMinutes min. The business 
 while ($true) {
     try { Ensure-Backend } catch { Log-Supervisor "Ensure-Backend error: $($_.Exception.Message)" }
     try { Ensure-Tunnel } catch { Log-Supervisor "Ensure-Tunnel error: $($_.Exception.Message)" }
+    try { Ensure-FulfillmentDaemon } catch { Log-Supervisor "Ensure-FulfillmentDaemon error: $($_.Exception.Message)" }
     try { Run-CeoCycle } catch { Log-Supervisor "Run-CeoCycle error: $($_.Exception.Message)" }
+    try { Run-OpsCycle } catch { Log-Supervisor "Run-OpsCycle error: $($_.Exception.Message)" }
     Start-Sleep -Seconds ($CycleMinutes * 60)
 }
