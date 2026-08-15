@@ -34,5 +34,11 @@ Run independent subagents in parallel. Browser work is sequential (one Chrome) �
 When ANY agent hits a step agents can't complete — account creation, phone/email verification, CAPTCHA walls, identity checks, seller-account approvals — do NOT retry into a ban and do NOT give up. Dispatch a human via Terac:
 `tools.terac_tools.request_human_task(title, instructions, deliverable)` — write instructions as exact numbered steps with every needed value inline (emails, names, addresses to use), and define the deliverable precisely (e.g., "confirmation code shown after signup" / "the API key from the dashboard"). Poll `list_submissions(opportunity_id)` for the result, log the dispatch + outcome to the decision feed, and continue the pipeline once the deliverable lands. The operator's local Chrome is the fallback for tasks needing OUR logged-in identity (FB, eBay).
 
+## Merged operating picture (revenue-sprint session, ~2:45 PM)
+- **FB Marketplace: 10/10 listings LIVE** (posted via claude-in-chrome earlier). `fb_post.py` / `auto_accept.py` helpers at repo root.
+- **Fulfillment: `fulfillment/pipeline.py`** — Stripe→CJ daemon (`status|links|match|daemon`), CJ auth WORKING (token cached). Unfulfillable orders land in `manual_orders.log`, never dropped. Run `match` once to build `product_map.json` before relying on the daemon.
+- **Attribution: `agent_backend/revenue_sprint/`** — tracked redirect links + checkout conversion attribution, mounted in main.py (`/api/revenue/*`).
+- **`product_images/`** — 10 product JPGs ready to attach to Stripe products / storefront.
+
 ## Money map (why revenue only counts via Stripe)
 Our store + Stripe Payment Links + Linq iMessage = revenue. FB Marketplace = traffic funnel (link the store, never raw payment links there). eBay = demo breadth only.

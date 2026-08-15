@@ -3,6 +3,7 @@ import os
 import stripe
 from fastapi import FastAPI, Request, HTTPException
 from dotenv import load_dotenv
+from revenue_sprint.router import router as revenue_router
 
 load_dotenv()
 
@@ -10,6 +11,7 @@ stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
 WEBHOOK_SECRET = os.getenv("STRIPE_WEBHOOK_SECRET", "")
 
 app = FastAPI(title="Zero Human Dropship — Agent Backend")
+app.include_router(revenue_router)
 
 
 # ── Integration endpoint for Person B ──────────────────────────
@@ -39,6 +41,11 @@ async def stripe_webhook(request: Request):
 
     if event["type"] == "checkout.session.completed":
         session = event["data"]["object"]
+        from revenue_sprint import get_tracker
+
+        # Attribution is local and idempotent. Sessions not created from a
+        # revenue-sprint link are ignored.
+        get_tracker().record_checkout_conversion(dict(session))
         await handle_payment(session)
 
     return {"status": "ok"}

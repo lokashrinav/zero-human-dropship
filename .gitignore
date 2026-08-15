@@ -5,3 +5,7 @@ __pycache__/
 node_modules/
 agent_backend/decision_log.jsonl
 .superserve_sandbox.json
+fulfillment/cj_token.json
+fulfillment/orders_ledger.json
+fulfillment/manual_orders.log
+agent_backend/revenue_sprint/*.json
