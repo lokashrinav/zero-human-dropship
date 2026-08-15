@@ -80,6 +80,13 @@ async def get_decisions(limit: int = 50):
     return read_local_log(limit)
 
 
+@app.get("/api/escalations")
+async def get_escalations():
+    """Open human-needed items. The business keeps running; humans drain this."""
+    from tools.escalation_tools import open_escalations
+    return open_escalations()
+
+
 @app.post("/api/log")
 async def post_log(entry: dict):
     """Remote log write — lets Person B's Linq handler (or any service on

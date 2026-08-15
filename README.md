@@ -86,6 +86,7 @@ Hackathon: August 15, 2026, 10:45 AM – 6:45 PM (8 hours, selling window ~4 hrs
 | Best use of Band | $500 | CEO dispatches, agents report, full decision audit trail |
 | Best use of Pioneer | $500 | Pioneer-hosted open-weight model generates product descriptions |
 | Best use of Render | $500+$300+$100 | Linq webhook handler + store deployed via Render Workflows |
+| Best use of Perflo | $500+$200 | Growth agent PAYS per-call (x402) for creative/search services it needs mid-task, under a human-armed spend cap — remove Perflo and creative pipeline breaks |
 
 ## How We Actually Get Sales
 

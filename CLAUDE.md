@@ -30,6 +30,17 @@ Run independent subagents in parallel. Browser work is sequential (one Chrome) �
 - Optimize gross profit and learning speed, not activity volume.
 - Escalation: repeated Stripe/CJ failures, or irreversible high-stakes calls → log the situation, take `no_action`, a human reads the log.
 
+## NEVER STOP — the core invariant
+The business runs continuously. No agent, ever, halts the operation because something is blocked:
+1. **Blocked on a human-only step** (credential, login/2FA, payment approval, account action)? File it and move on:
+   `python -m tools.escalation_tools raise <Agent> "<what is blocked>" "<exact step a human takes to unblock>"`
+   The escalation lands on the decision feed + `/api/escalations`. Do NOT wait on it — pick up the next task.
+2. **Blocked on an outsourceable step**? Dispatch a Terac human (`request_human_task`) instead of escalating, then continue.
+3. **A tool/service fails repeatedly**? Log it, use the fallback path if one exists, park the task, continue. Retry parked items at the start of each cycle; check whether open escalations got resolved (`python -m tools.escalation_tools list`).
+4. **End of every cycle = schedule the next one.** A CEO session must never end a cycle without re-arming its own wakeup. If the backend or tunnel is dead, restart them as part of the cycle.
+5. Errors are information, not stop signs. The ONLY thing that stops this business is a human typing stop.
+6. **Headless cycles** (`claude -p`, launched by `supervisor.ps1`): do your ONE cycle and exit. Never self-schedule wakeups, never start servers/tunnels/long loops — the external supervisor owns process lifecycle and re-runs you every cycle.
+
 ## Human-gated steps → dispatch a Terac human (primary Terac use)
 When ANY agent hits a step agents can't complete — account creation, phone/email verification, CAPTCHA walls, identity checks, seller-account approvals — do NOT retry into a ban and do NOT give up. Dispatch a human via Terac:
 `tools.terac_tools.request_human_task(title, instructions, deliverable)` — write instructions as exact numbered steps with every needed value inline (emails, names, addresses to use), and define the deliverable precisely (e.g., "confirmation code shown after signup" / "the API key from the dashboard"). Poll `list_submissions(opportunity_id)` for the result, log the dispatch + outcome to the decision feed, and continue the pipeline once the deliverable lands. The operator's local Chrome is the fallback for tasks needing OUR logged-in identity (FB, eBay).
