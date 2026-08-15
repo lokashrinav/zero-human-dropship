@@ -88,6 +88,13 @@ const eventIcons: Partial<Record<LinqEvent["type"], Icon>> = {
   feedback_received: UsersRound,
 };
 
+const linqFlowMilestones = new Set<LinqEvent["type"]>([
+  "inbound_message",
+  "sales_agent",
+  "product_selected",
+  "payment_link_sent",
+]);
+
 const formatMoney = (minor: number | null | undefined, currency = "USD") => {
   if (minor === null || minor === undefined) return "—";
   try {
@@ -247,6 +254,7 @@ function DecisionFeed({ snapshot }: { snapshot: DashboardSnapshot }) {
 function LinqFlow({ snapshot }: { snapshot: DashboardSnapshot }) {
   const { data, meta } = snapshot.linq;
   const flow = [...data.events]
+    .filter((event) => linqFlowMilestones.has(event.type))
     .sort((left, right) => Date.parse(left.timestamp) - Date.parse(right.timestamp))
     .slice(-4);
   const connected = meta.mode === "live";
@@ -292,8 +300,10 @@ function LinqFlow({ snapshot }: { snapshot: DashboardSnapshot }) {
 }
 
 function TeracProof({ study, meta }: { study?: TeracStudy; meta: IntegrationMeta }) {
-  const before = study?.before.items[0];
   const after = study?.after.items[0];
+  const before = study?.before.items.find((item) => item.id === after?.id) ?? study?.before.items[0];
+  const preferred = study?.feedback.highestRatedProduct;
+  const lowest = study?.feedback.lowestRatedProducts;
   const changeSummary = study?.changes.map((change) => change.description).join(" · ") || "Waiting for autonomous change";
   return (
     <section className="panel terac-panel" id="human-feedback" aria-labelledby="terac-title">
@@ -310,6 +320,7 @@ function TeracProof({ study, meta }: { study?: TeracStudy; meta: IntegrationMeta
           <p>Before human feedback</p>
           <strong>{before?.name ?? study?.before.summary ?? "Waiting for baseline"}</strong>
           <dl>
+            <div><dt>Position</dt><dd>{before?.position ? `#${before.position}` : "—"}</dd></div>
             <div><dt>Price</dt><dd>{formatMoney(before?.priceMinor, before?.currency)}</dd></div>
             <div><dt>Copy</dt><dd>{before?.copy ?? "—"}</dd></div>
           </dl>
@@ -321,8 +332,9 @@ function TeracProof({ study, meta }: { study?: TeracStudy; meta: IntegrationMeta
           <p>Terac feedback</p>
           <strong>{study ? `${study.feedback.sampleSize} human responses` : "Waiting for panel"}</strong>
           <dl>
-            <div><dt>Result</dt><dd>{study?.feedback.result ?? "—"}</dd></div>
-            <div><dt>Rating</dt><dd>{study?.feedback.rating !== undefined ? `${study.feedback.rating}/${study.feedback.ratingScale ?? 5}` : "—"}</dd></div>
+            <div><dt>Preferred</dt><dd>{preferred ? `${preferred.name} · ${preferred.averageLikelihood}/${study?.feedback.ratingScale ?? 5}` : study?.feedback.result ?? "—"}</dd></div>
+            <div><dt>Lowest</dt><dd>{lowest?.length ? lowest.map((product) => `${product.name} · ${product.averageLikelihood}/${study?.feedback.ratingScale ?? 5}`).join(" · ") : "—"}</dd></div>
+            <div><dt>Overall</dt><dd>{study?.feedback.rating !== undefined ? `${study.feedback.rating}/${study.feedback.ratingScale ?? 5}` : "—"}</dd></div>
           </dl>
         </article>
         <ChevronRight className="proof-chain__arrow" aria-hidden="true" />
@@ -343,6 +355,7 @@ function TeracProof({ study, meta }: { study?: TeracStudy; meta: IntegrationMeta
           <p>After</p>
           <strong>{after?.name ?? study?.after.summary ?? "Waiting for updated state"}</strong>
           <dl>
+            <div><dt>Position</dt><dd>{after?.position ? `#${after.position}` : "—"}</dd></div>
             <div><dt>Price</dt><dd>{formatMoney(after?.priceMinor, after?.currency)}</dd></div>
             <div>
               <dt>Status</dt>

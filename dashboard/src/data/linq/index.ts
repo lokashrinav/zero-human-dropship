@@ -138,8 +138,12 @@ const parseStatus = (payload: unknown) => {
 	const paymentLinksSent = asNonNegativeInteger(status.paymentLinksSent);
 	const updatedAt = asIsoDate(status.updatedAt);
 	const phone = isRecord(status.phoneNumber) ? status.phoneNumber : undefined;
+	const rawPhoneNumber = phone?.public === true ? asString(phone.display) : undefined;
+	const phoneDigits = rawPhoneNumber?.replace(/\D/g, "");
 	const phoneNumber =
-		phone?.public === true ? (asString(phone.display) ?? null) : null;
+		phoneDigits?.length === 11 && phoneDigits.startsWith("1")
+			? `+1 ${phoneDigits.slice(1, 4)}-${phoneDigits.slice(4, 7)}-${phoneDigits.slice(7)}`
+			: (rawPhoneNumber ?? null);
 
 	if (
 		online === undefined ||
