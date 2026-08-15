@@ -6,7 +6,7 @@ import os
 import anthropic
 from tools.stripe_tools import list_products, get_recent_charges, update_price, deactivate_product
 from tools.band_tools import post_message, read_recent_posts
-from tools.terac_tools import get_study_results
+from tools.terac_tools import list_submissions
 
 
 client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))

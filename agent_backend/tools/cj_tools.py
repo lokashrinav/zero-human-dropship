@@ -1,7 +1,7 @@
 import httpx
 import os
 
-CJ_BASE = "https://developers.cjdropshipping.com/api/v2"
+CJ_BASE = "https://developers.cjdropshipping.com/api2.0/v1"
 _token = None
 
 
@@ -12,9 +12,11 @@ async def _get_token() -> str:
     async with httpx.AsyncClient() as client:
         resp = await client.post(f"{CJ_BASE}/authentication/getAccessToken", json={
             "email": os.getenv("CJ_EMAIL"),
-            "password": os.getenv("CJ_API_KEY"),
+            "apiKey": os.getenv("CJ_API_KEY"),
         })
         data = resp.json()
+        if not data.get("data"):
+            raise RuntimeError(f"CJ auth failed: {data}")
         _token = data["data"]["accessToken"]
         return _token
 
@@ -79,7 +81,7 @@ async def place_order(product_id: str, variant_id: str, shipping: dict) -> dict:
     """Place order with CJ. shipping = {name, phone, country, province, city, address, zip}"""
     async with httpx.AsyncClient() as client:
         resp = await client.post(
-            f"{CJ_BASE}/shopping/order/createOrder",
+            f"{CJ_BASE}/shopping/order/createOrderV2",
             headers=await _headers(),
             json={
                 "products": [{"pid": product_id, "vid": variant_id, "quantity": 1}],

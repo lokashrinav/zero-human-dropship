@@ -47,17 +47,21 @@ async def stripe_webhook(request: Request):
 async def handle_payment(session: dict):
     """On successful payment: log to Band, trigger CJ fulfillment."""
     from tools.band_tools import post_message
+    from agents.ops import fulfill_order
 
     amount = session.get("amount_total", 0) / 100
     customer_email = session.get("customer_details", {}).get("email", "")
-    shipping = session.get("shipping_details", {})
 
     await post_message("OpsAgent", f"Payment received: ${amount:.2f} from {customer_email}")
 
-    if shipping and shipping.get("address"):
-        addr = shipping["address"]
-        # TODO: match line items to CJ product IDs and call cj_tools.place_order
-        await post_message("OpsAgent", f"Shipping to: {addr.get('city', '')}, {addr.get('state', '')}")
+    session_full = stripe.checkout.Session.retrieve(session["id"], expand=["line_items.data.price.product"])
+    await fulfill_order({
+        "shipping_details": session.get("shipping_details", {}),
+        "line_items": {"data": [
+            {"price": {"product": li.price.product.id}}
+            for li in session_full.line_items.data
+        ]},
+    })
 
 
 # ── Health check ───────────────────────────────────────────────
