@@ -30,5 +30,9 @@ Run independent subagents in parallel. Browser work is sequential (one Chrome) �
 - Optimize gross profit and learning speed, not activity volume.
 - Escalation: repeated Stripe/CJ failures, or irreversible high-stakes calls → log the situation, take `no_action`, a human reads the log.
 
+## Human-gated steps → dispatch a Terac human (primary Terac use)
+When ANY agent hits a step agents can't complete — account creation, phone/email verification, CAPTCHA walls, identity checks, seller-account approvals — do NOT retry into a ban and do NOT give up. Dispatch a human via Terac:
+`tools.terac_tools.request_human_task(title, instructions, deliverable)` — write instructions as exact numbered steps with every needed value inline (emails, names, addresses to use), and define the deliverable precisely (e.g., "confirmation code shown after signup" / "the API key from the dashboard"). Poll `list_submissions(opportunity_id)` for the result, log the dispatch + outcome to the decision feed, and continue the pipeline once the deliverable lands. The operator's local Chrome is the fallback for tasks needing OUR logged-in identity (FB, eBay).
+
 ## Money map (why revenue only counts via Stripe)
 Our store + Stripe Payment Links + Linq iMessage = revenue. FB Marketplace = traffic funnel (link the store, never raw payment links there). eBay = demo breadth only.
