@@ -23,7 +23,7 @@ export function AiSalesCta() {
 					<div>
 						<p className="eyebrow text-lime-300">Your personal product scout</p>
 						<h2 id="ai-sales-title" className="mt-2 text-2xl font-semibold tracking-[-0.04em] sm:text-3xl">
-							Text our AI shopping agent for a personalized deal
+							Text our AI shopping agent for help choosing
 						</h2>
 						<p className="mt-2 max-w-2xl text-sm leading-6 text-white/60 sm:text-base">
 							Tell it what you need and your budget. It will help narrow the catalog—without the hard sell.
@@ -35,7 +35,7 @@ export function AiSalesCta() {
 						href={agentHref}
 						className="mt-6 inline-flex h-12 w-full items-center justify-center gap-2 rounded-full bg-lime-300 px-6 text-sm font-semibold text-neutral-950 transition hover:bg-lime-200 lg:mt-0 lg:w-auto"
 					>
-						Text our AI agent
+						Text our AI shopping agent
 						<ArrowUpRight className="size-4" aria-hidden="true" />
 					</a>
 				) : (

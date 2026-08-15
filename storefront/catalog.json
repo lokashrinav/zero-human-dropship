@@ -4,8 +4,8 @@
 		"name": "Laptop Cooling Pad with Fan",
 		"images": [],
 		"stripe_id": "prod_V4wnv0bVngAJGz",
-		"payment_link": "https://buy.stripe.com/8x2aEZal07pl34l76eaZi0a",
-		"price": 8.99,
+		"payment_link": "https://buy.stripe.com/28EcN7eBg9xteN32PYaZi0c",
+		"price": 10.99,
 		"description": "Slim laptop cooling pad with quiet fan. Fits up to 15.6 inches. USB powered. Adjustable height.",
 		"active": true
 	},
@@ -24,8 +24,8 @@
 		"name": "Screen Cleaner Spray Kit",
 		"images": [],
 		"stripe_id": "prod_V4wmSLEPJ5wd8P",
-		"payment_link": "https://buy.stripe.com/aFaeVfeBgaBxcEVaiqaZi08",
-		"price": 3.99,
+		"payment_link": "https://buy.stripe.com/28E8wR50G5hd0WdgGOaZi0b",
+		"price": 2.99,
 		"description": "Streak-free screen cleaner for phones, laptops, tablets. Includes microfiber cloth. Travel-sized.",
 		"active": true
 	},
@@ -64,8 +64,8 @@
 		"name": "Wireless Earbuds with Charging Case",
 		"images": [],
 		"stripe_id": "prod_V4wmS1EtdtMG4f",
-		"payment_link": "https://buy.stripe.com/dRmeVfeBg10X0Wd62aaZi04",
-		"price": 7.99,
+		"payment_link": "https://buy.stripe.com/7sY5kF78OdNJ20h8aiaZi0d",
+		"price": 9.49,
 		"description": "True wireless Bluetooth earbuds with noise isolation. 20-hour battery with charging case. Touch controls. Compatible with iPhone and Android.",
 		"active": true
 	},

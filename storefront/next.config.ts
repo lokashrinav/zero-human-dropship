@@ -36,6 +36,13 @@ const nextConfig: NextConfig = {
 		// Store media lives on Vercel Blob (per-store subdomain) and the YNS platform hosts.
 		// A "**" wildcard would make the image optimizer an open proxy for any https URL.
 		remotePatterns: [
+			{
+				protocol: "https",
+				hostname: "raw.githubusercontent.com",
+				port: "",
+				pathname: "/lokashrinav/zero-human-dropship/master/product_images/**",
+				search: "",
+			},
 			{ protocol: "https", hostname: "*.public.blob.vercel-storage.com" },
 			{ protocol: "https", hostname: "yns.store" },
 			{ protocol: "https", hostname: "**.yns.store" },

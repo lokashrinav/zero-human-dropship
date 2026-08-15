@@ -68,7 +68,7 @@ export async function Hero() {
 								className="inline-flex h-13 items-center justify-center gap-2 rounded-full border border-white/12 bg-white/5 px-7 text-sm font-semibold text-white transition hover:border-white/20 hover:bg-white/10"
 							>
 								<MessageCircleMore className="size-4" />
-								Text our AI agent
+								Text our AI shopping agent
 							</a>
 						) : null}
 					</div>
