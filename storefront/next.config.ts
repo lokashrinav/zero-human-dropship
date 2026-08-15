@@ -45,6 +45,13 @@ const nextConfig: NextConfig = {
 			},
 			{
 				protocol: "https",
+				hostname: "m.media-amazon.com",
+				port: "",
+				pathname: "/images/I/**",
+				search: "",
+			},
+			{
+				protocol: "https",
 				hostname: "raw.githubusercontent.com",
 				port: "",
 				pathname: "/lokashrinav/zero-human-dropship/codex/b-conversion-final/product_images/**",

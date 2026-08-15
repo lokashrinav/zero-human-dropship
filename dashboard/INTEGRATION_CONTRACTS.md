@@ -40,6 +40,11 @@ must return:
 `validate`, `list`, `sell`, `fulfill`, or `learn`. `outcome` is optional and is
 only rendered when this source supplies it. Do not send an estimated outcome.
 
+The adapter also accepts Person A's append-only decision-log array with
+`ts`, `time`, `agent`, and `message`. Only entries whose `agent` is exactly
+`CEO` are rendered as CEO decisions; operational and proposal entries remain
+outside the CEO panel.
+
 ## Person A: catalog
 
 The production default is

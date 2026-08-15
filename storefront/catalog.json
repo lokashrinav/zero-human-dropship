@@ -2,9 +2,7 @@
 	{
 		"id": "prod_V4wnv0bVngAJGz",
 		"name": "Laptop Cooling Pad with Fan",
-		"images": [
-			"https://raw.githubusercontent.com/lokashrinav/zero-human-dropship/codex/b-conversion-final/product_images/cooling_pad.png"
-		],
+		"images": ["https://m.media-amazon.com/images/I/81U4owbo2qL._AC_SL1500_.jpg"],
 		"image_kind": "visualization",
 		"stripe_id": "prod_V4wnv0bVngAJGz",
 		"payment_link": "https://buy.stripe.com/28EcN7eBg9xteN32PYaZi0c",
@@ -15,9 +13,7 @@
 	{
 		"id": "prod_V4wmEGnnY8szaJ",
 		"name": "USB-C Fast Charging Cable 6ft",
-		"images": [
-			"https://raw.githubusercontent.com/lokashrinav/zero-human-dropship/codex/b-conversion-final/product_images/usbc_cable.png"
-		],
+		"images": ["https://m.media-amazon.com/images/I/61IsIYfFn6L._AC_SL1500_.jpg"],
 		"image_kind": "visualization",
 		"stripe_id": "prod_V4wmEGnnY8szaJ",
 		"payment_link": "https://buy.stripe.com/eVq4gB1OucJFcEVaiqaZi09",
@@ -28,9 +24,7 @@
 	{
 		"id": "prod_V4wmSLEPJ5wd8P",
 		"name": "Screen Cleaner Spray Kit",
-		"images": [
-			"https://raw.githubusercontent.com/lokashrinav/zero-human-dropship/codex/b-conversion-final/product_images/screen_cleaner.png"
-		],
+		"images": ["https://m.media-amazon.com/images/I/61UjsY%2BsH%2BL._AC_SL1500_.jpg"],
 		"image_kind": "visualization",
 		"stripe_id": "prod_V4wmSLEPJ5wd8P",
 		"payment_link": "https://buy.stripe.com/28E8wR50G5hd0WdgGOaZi0b",
@@ -41,9 +35,7 @@
 	{
 		"id": "prod_V4wmdOvODTvZcK",
 		"name": "Foldable Phone Stand Adjustable",
-		"images": [
-			"https://raw.githubusercontent.com/lokashrinav/zero-human-dropship/codex/b-conversion-final/product_images/phone_stand.png"
-		],
+		"images": ["https://m.media-amazon.com/images/I/61MUTv70XtL._AC_SL1500_.jpg"],
 		"image_kind": "visualization",
 		"stripe_id": "prod_V4wmdOvODTvZcK",
 		"payment_link": "https://buy.stripe.com/eVqdRbal0fVRfR78aiaZi07",
@@ -54,9 +46,7 @@
 	{
 		"id": "prod_V4wmnzsAReKvAG",
 		"name": "Cable Organizer Clips 10-Pack",
-		"images": [
-			"https://raw.githubusercontent.com/lokashrinav/zero-human-dropship/codex/b-conversion-final/product_images/cable_clips.png"
-		],
+		"images": ["https://m.media-amazon.com/images/I/61TOtuaD3iL._AC_SL1500_.jpg"],
 		"image_kind": "visualization",
 		"stripe_id": "prod_V4wmnzsAReKvAG",
 		"payment_link": "https://buy.stripe.com/28E5kF2Sy6lh5ct3U2aZi06",
@@ -67,9 +57,7 @@
 	{
 		"id": "prod_V4wm18Zg9gyCVO",
 		"name": "Phone Ring Light for Selfies",
-		"images": [
-			"https://raw.githubusercontent.com/lokashrinav/zero-human-dropship/codex/b-conversion-final/product_images/ring_light.png"
-		],
+		"images": ["https://m.media-amazon.com/images/I/71hN9sJhVcL._AC_SL1500_.jpg"],
 		"image_kind": "visualization",
 		"stripe_id": "prod_V4wm18Zg9gyCVO",
 		"payment_link": "https://buy.stripe.com/7sYbJ33WC9xtbAReyGaZi05",
@@ -80,9 +68,7 @@
 	{
 		"id": "prod_V4wmS1EtdtMG4f",
 		"name": "Wireless Earbuds with Charging Case",
-		"images": [
-			"https://raw.githubusercontent.com/lokashrinav/zero-human-dropship/codex/b-conversion-final/product_images/earbuds.png"
-		],
+		"images": ["https://m.media-amazon.com/images/I/61ew91jFpJL._AC_SX679_.jpg"],
 		"image_kind": "visualization",
 		"stripe_id": "prod_V4wmS1EtdtMG4f",
 		"payment_link": "https://buy.stripe.com/7sY5kF78OdNJ20h8aiaZi0d",
@@ -93,9 +79,7 @@
 	{
 		"id": "prod_V4wmmLWzk8OOqN",
 		"name": "Portable Mini Fan USB",
-		"images": [
-			"https://raw.githubusercontent.com/lokashrinav/zero-human-dropship/codex/b-conversion-final/product_images/mini_fan.png"
-		],
+		"images": ["https://m.media-amazon.com/images/I/715rs8CtYNL._AC_SL1500_.jpg"],
 		"image_kind": "visualization",
 		"stripe_id": "prod_V4wmmLWzk8OOqN",
 		"payment_link": "https://buy.stripe.com/6oU6oJbp46lh20hgGOaZi03",
@@ -106,9 +90,7 @@
 	{
 		"id": "prod_V4wmCiXp5BsA1G",
 		"name": "Magnetic Phone Mount for Car",
-		"images": [
-			"https://raw.githubusercontent.com/lokashrinav/zero-human-dropship/codex/b-conversion-final/product_images/phone_mount.png"
-		],
+		"images": ["https://m.media-amazon.com/images/I/71Ukm%2BPixdL._AC_SL1500_.jpg"],
 		"image_kind": "visualization",
 		"stripe_id": "prod_V4wmCiXp5BsA1G",
 		"payment_link": "https://buy.stripe.com/6oU3cxfFkeRN20h2PYaZi02",
@@ -119,9 +101,7 @@
 	{
 		"id": "prod_V4wmYiqQI4dLrs",
 		"name": "LED Strip Lights RGB 16 Colors",
-		"images": [
-			"https://raw.githubusercontent.com/lokashrinav/zero-human-dropship/codex/b-conversion-final/product_images/led_strip.png"
-		],
+		"images": ["https://m.media-amazon.com/images/I/71w93GveAqL._AC_SL1500_.jpg"],
 		"image_kind": "visualization",
 		"stripe_id": "prod_V4wmYiqQI4dLrs",
 		"payment_link": "https://buy.stripe.com/7sYfZjbp49xt8oFaiqaZi01",

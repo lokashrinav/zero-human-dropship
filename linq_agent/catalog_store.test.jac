@@ -20,6 +20,21 @@ test "production catalog may omit internal cost" {
 }
 
 
+test "production catalog rejects missing trusted price or payment link" {
+    for broken_row in [
+        """[{"name":"Fixture","images":[],"stripe_id":"prod_fixture","payment_link":"https://buy.stripe.com/test_fixture","description":"Missing price.","active":true}]""",
+        """[{"name":"Fixture","images":[],"stripe_id":"prod_fixture","price":9.5,"description":"Missing link.","active":true}]"""
+    ] {
+        try {
+            _ = validate_catalog_text(broken_row, require_active=True);
+            assert False , "production catalog must reject missing trusted commerce fields";
+        } except ValueError {
+            assert True;
+        }
+    }
+}
+
+
 test "empty checkout link rejects normal catalog" {
     try {
         _ = validate_catalog_text(

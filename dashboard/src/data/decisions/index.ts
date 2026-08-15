@@ -1,6 +1,7 @@
 import {
 	asArray,
 	asIsoDate,
+	asNumber,
 	asString,
 	getErrorMessage,
 	integrationMeta,
@@ -53,17 +54,36 @@ const parseDecision = (value: unknown): CeoDecision | undefined => {
 		rawStage && decisionStages.has(rawStage) ? rawStage : stageForKind(kind);
 	const outcome = asString(value.outcome);
 
-	if (!id || !timestamp || !reason || !action) return undefined;
+	if (id && timestamp && reason && action) {
+		return {
+			id,
+			timestamp,
+			agent: asString(value.agent) ?? "CEO AGENT",
+			title: asString(value.title) ?? kind.replaceAll("_", " ").toUpperCase(),
+			kind,
+			reason,
+			action,
+			...(outcome ? { outcome } : {}),
+			stage,
+		};
+	}
+
+	const legacyAgent = asString(value.agent);
+	const legacyMessage = asString(value.message);
+	const legacySeconds = asNumber(value.ts);
+	if (legacyAgent !== "CEO" || !legacyMessage || legacySeconds === undefined) {
+		return undefined;
+	}
+
 	return {
-		id,
-		timestamp,
-		agent: asString(value.agent) ?? "CEO AGENT",
-		title: asString(value.title) ?? kind.replaceAll("_", " ").toUpperCase(),
-		kind,
-		reason,
-		action,
-		...(outcome ? { outcome } : {}),
-		stage,
+		id: `ceo-log-${Math.round(legacySeconds * 1_000)}`,
+		timestamp: new Date(legacySeconds * 1_000).toISOString(),
+		agent: legacyAgent,
+		title: "CEO DECISION",
+		kind: "other",
+		reason: "Person A CEO decision feed entry.",
+		action: legacyMessage,
+		stage: "source",
 	};
 };
 
