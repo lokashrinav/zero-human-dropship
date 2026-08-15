@@ -9,3 +9,4 @@ fulfillment/cj_token.json
 fulfillment/orders_ledger.json
 fulfillment/manual_orders.log
 agent_backend/revenue_sprint/*.json
+agent_backend/revenue_sprint.sqlite3
