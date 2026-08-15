@@ -1,6 +1,6 @@
 # REVENUE SPRINT — LIVE
 
-Updated: 2026-08-15 15:04 PDT
+Updated: 2026-08-15 15:07 PDT
 Operator: Person B revenue acquisition
 CEO owner: Person A only — this document does not authorize catalog, price, ordering, or strategy mutations.
 
@@ -8,7 +8,7 @@ CEO owner: Person A only — this document does not authorize catalog, price, or
 
 - Store: https://storefront-omega-three.vercel.app/
 - Catalog: https://storefront-omega-three.vercel.app/api/catalog
-- Linq: +1 415-305-0091
+- Linq number: +1 415-305-0091 — **HOLD distribution; service deployment and real inbound handling are not verified**
 - Attribution base: https://without-thinks-harvest-huge.trycloudflare.com
 - Attribution stats: https://without-thinks-harvest-huge.trycloudflare.com/api/revenue/stats
 - Revenue stats: https://without-thinks-harvest-huge.trycloudflare.com/api/stats
@@ -37,7 +37,7 @@ The live recommender selected the Laptop Cooling Pad for newly initialized chann
 | nextdoor_if_eligible | https://without-thinks-harvest-huge.trycloudflare.com/r/9f12804e11a4 |
 | facebook_if_eligible | https://without-thinks-harvest-huge.trycloudflare.com/r/46b48346907b |
 | local_group_if_allowed | https://without-thinks-harvest-huge.trycloudflare.com/r/ecea93b29d6b |
-| linq | https://without-thinks-harvest-huge.trycloudflare.com/r/2f68c6a195bd |
+| linq | https://without-thinks-harvest-huge.trycloudflare.com/r/2f68c6a195bd — initialized but **HOLD until Linq is live-verified** |
 
 ## Fifteen individualized referral links
 
@@ -87,15 +87,15 @@ Replace `NN` with the matching number/link row above.
 
 Close friend:
 
-> we built a real autonomous store today for a hackathon 😭 most items are under $10. if you actually want something, shop here: https://without-thinks-harvest-huge.trycloudflare.com/r/5e593f181748 — or text +1 415-305-0091 with your budget and the bot picks for you
+> we built a real autonomous store today for a hackathon 😭 most items are under $10. if you actually want something, shop here: https://without-thinks-harvest-huge.trycloudflare.com/r/5e593f181748
 
 Parent/adult contact:
 
-> We launched a real autonomous store for today's hackathon. If there is something you would genuinely use, you can shop here: https://without-thinks-harvest-huge.trycloudflare.com/r/5e593f181748. You can also text +1 415-305-0091 with a budget for grounded options.
+> We launched a real autonomous store for today's hackathon. If there is something you would genuinely use, you can shop here: https://without-thinks-harvest-huge.trycloudflare.com/r/5e593f181748.
 
 Group chat:
 
-> hackathon store is live 😭 most items are under $10. only buy if you genuinely want something: https://without-thinks-harvest-huge.trycloudflare.com/r/5e593f181748 — the AI picker is +1 415-305-0091
+> hackathon store is live 😭 most items are under $10. only buy if you genuinely want something: https://without-thinks-harvest-huge.trycloudflare.com/r/5e593f181748
 
 Teammate referral:
 
@@ -103,15 +103,15 @@ Teammate referral:
 
 Local community:
 
-> Transparent commercial post: we built this small autonomous store today for a hackathon. Most products are under $10 and ship through the normal checkout flow. Shop only if something is genuinely useful: https://storefront-omega-three.vercel.app/. Text +1 415-305-0091 with a budget if you want the shopping agent to narrow it down.
+> Transparent commercial post: we built this small autonomous store today for a hackathon. Most products are under $10 and ship through the normal checkout flow. Shop only if something is genuinely useful: https://storefront-omega-three.vercel.app/.
 
-## Linq closer
+## Linq closer — HOLD
 
-Primary CTA:
+Do not advertise the Linq CTA yet. The source-of-truth handoff confirms that no public deployment URL or Linq credential was injected and that a real inbound message was not completed. Resume only after the owning teammate verifies an online `/api/status`, configures the webhook, and completes one real inbound reply test. When verified, the intended CTA is:
 
 > Not sure what to pick? Text our AI shopping agent your budget: +1 415-305-0091
 
-Funnel: buyer need → Linq → 1–3 catalog-grounded options → real product page → explicit buyer intent → Stripe. Linq is inbound-only; do not cold-message random people.
+Intended funnel: buyer need → Linq → 1–3 catalog-grounded options → real product page → explicit buyer intent → Stripe. Linq remains inbound-only; never cold-message random people.
 
 ## Buyer-intent queue
 
@@ -172,7 +172,7 @@ No money has been spent. Referral commissions are contingent liabilities only an
 
 1. Send referrals 01–15 to 15 distinct trusted people who can reach genuine buyers.
 2. Send the warm DM link to close contacts who might genuinely want a cooling pad.
-3. Keep the store and Linq number together in every warm message.
+3. Use the tracked storefront link only until the Linq service passes its live inbound verification.
 4. Do not ask anyone to manufacture a purchase.
 5. Report the identity-to-referral-code mapping privately; do not commit personal contact information here.
 
@@ -185,3 +185,4 @@ No money has been spent. Referral commissions are contingent liabilities only an
 - 15:01 PDT — confirmed $0 genuine third-party revenue; excluded the documented self-test.
 - 15:04 PDT — rechecked all 21 campaigns: 0 clicks, 0 paid conversions, $0 attributed revenue.
 - 15:04 PDT — activated a 15-minute live-watch heartbeat for the remaining three-hour sprint window.
+- 15:07 PDT — audited the Linq source-of-truth handoff; held the phone CTA because deployment, webhook, and real inbound handling are not yet verified.
