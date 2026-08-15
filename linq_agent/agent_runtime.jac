@@ -15,6 +15,7 @@ import from sales_logic {
     Product,
     SalesPlan,
     build_sales_plan,
+    price_text,
     product_by_id,
     rank_products
 }
@@ -60,6 +61,28 @@ def _data_dir -> Path {
 def _production_mode -> bool {
     configured = os.getenv("PRODUCTION_MODE") or "";
     return configured.strip().casefold() == "true";
+}
+
+
+def _public_store_url -> str {
+    configured = os.getenv("PUBLIC_STORE_URL") or "";
+    store_url = configured.strip().rstrip("/");
+    if not store_url {
+        if _production_mode() {
+            raise ValueError("PUBLIC_STORE_URL is required in production mode");
+        }
+        return "";
+    }
+    parsed = urlparse(store_url);
+    if parsed.scheme != "https"
+    or not parsed.hostname
+    or parsed.username is not None
+    or parsed.password is not None
+    or parsed.query
+    or parsed.fragment {
+        raise ValueError("PUBLIC_STORE_URL must be an absolute HTTPS origin");
+    }
+    return store_url;
 }
 
 
@@ -256,7 +279,8 @@ def _load_remote_catalog(catalog_url: str) -> CatalogSnapshot {
         raw_text,
         source_path="catalog_url",
         allow_non_transactional=False,
-        require_active=_production_mode()
+        require_active=_production_mode(),
+        public_store_url=_public_store_url()
     );
 }
 
@@ -379,7 +403,11 @@ def refresh_catalog(force: bool = False) -> dict[str, object] {
                 "error": "catalog_validation_failed"
             };
         }
-        candidate = load_catalog_file(str(path), production_mode=_production_mode());
+        candidate = load_catalog_file(
+            str(path),
+            production_mode=_production_mode(),
+            public_store_url=_public_store_url()
+        );
         with STATE_LOCK {
             ACTIVE_CATALOG = candidate;
             ACTIVE_CATALOG_MTIME_NS = current_mtime;
@@ -884,9 +912,16 @@ def _send_text_reply(
 }
 
 
-def _send_checkout_link(
-    chat_id: str, product: Product, idempotency_key: str, use_experience: bool
+def _send_product_action(
+    chat_id: str,
+    product: Product,
+    idempotency_key: str,
+    use_experience: bool,
+    direct_checkout: bool
 ) -> dict[str, object] {
+    target_url = product.payment_link if direct_checkout else product.product_url;
+    action_verb = "Buy" if direct_checkout else "View";
+    action_title = f"{action_verb} {product.name} — {price_text(product.price_cents)}";
     if use_experience {
         return _send_message(
             chat_id,
@@ -894,10 +929,7 @@ def _send_checkout_link(
                 "experience": {
                     "name": "link",
                     "action": "open",
-                    "params": {
-                        "url": product.payment_link,
-                        "title": f"Buy {product.name}"[:64]
-                    }
+                    "params": {"url": target_url, "title": action_title[:64]}
                 },
                 "idempotency_key": idempotency_key[:255]
             }
@@ -906,7 +938,7 @@ def _send_checkout_link(
     return _send_message(
         chat_id,
         {
-            "parts": [{"type": "link", "value": product.payment_link}],
+            "parts": [{"type": "link", "value": target_url}],
             "idempotency_key": idempotency_key[:255]
         }
     );
@@ -1094,12 +1126,6 @@ def _apply_band_gate(
         _record_product_selected(
             plan, conversation_id, inbound_message_id, attempt=1, method="initial"
         );
-        _append_event(
-            "band_review_skipped",
-            conversation_id=conversation_id,
-            inbound_message_id=inbound_message_id,
-            data={"reason": "band_gate_disabled", "product_ids": plan.product_ids}
-        );
         return BandFlowResult(plan=plan, status="disabled");
     }
 
@@ -1132,7 +1158,7 @@ def _apply_band_gate(
     fallback = build_sales_plan(
         message, remaining, last_product_ids=previous_ids, model_proposal=None
     );
-    if not fallback.product_ids or not fallback.should_send_checkout {
+    if not fallback.product_ids {
         _append_event(
             "band_review_failed_closed",
             conversation_id=conversation_id,
@@ -1192,7 +1218,6 @@ def _process_pending_event_impl(event_id: str) -> dict[str, object] {
     raw_message_id = job.get("message_id");
     raw_message = job.get("message_text");
     raw_health = job.get("health_status");
-    raw_service = job.get("service");
     if not isinstance(raw_chat_id, str)
     or not isinstance(raw_conversation_id, str)
     or not isinstance(raw_message_id, str)
@@ -1205,7 +1230,6 @@ def _process_pending_event_impl(event_id: str) -> dict[str, object] {
         return {"processed": False, "reason": "malformed_pending_event"};
     }
     health_status = raw_health if isinstance(raw_health, str) else "UNKNOWN";
-    service = raw_service if isinstance(raw_service, str) else "unknown";
     with STATE_LOCK {
         states = _conversation_states();
         state = _conversation_state(states, raw_conversation_id);
@@ -1351,19 +1375,18 @@ def _process_pending_event_impl(event_id: str) -> dict[str, object] {
     primary = product_by_id(products, plan.product_ids[0])
         if plan.product_ids
         else None;
-    use_experience = bool(
-        LINK_EXPERIENCE_AVAILABLE
-        and service == "iMessage"
+    should_send_product_page = bool(
+        plan.intent == Intent.PRODUCT_SEARCH
         and primary is not None
-        and plan.should_send_checkout
+        and primary.product_url
+        and not plan.should_send_checkout
     );
-    reply_text = plan.reply_text;
-    if use_experience and primary is not None {
-        reply_text = f"{reply_text}\nVerified checkout: {primary.payment_link}";
-    }
+    # Live iMessage rendered link/open as a non-actionable title bubble.
+    # Keep using Linq's documented link part until that client behavior changes.
+    use_experience = False;
     try {
         text_response = _send_text_reply(
-            raw_chat_id, reply_text, f"{event_id}:recommendation"
+            raw_chat_id, plan.reply_text, f"{event_id}:recommendation"
         );
         if plan.product_ids {
             _append_event(
@@ -1373,34 +1396,59 @@ def _process_pending_event_impl(event_id: str) -> dict[str, object] {
                 data={
                     "product_ids": plan.product_ids,
                     "primary_product_id": plan.product_ids[0],
+                    "product_url": primary.product_url if primary is not None else "",
                     "send_status": "accepted",
                     "trace_id": text_response.get("_trace_id") or ""
                 }
             );
         }
         checkout_sent = False;
-        if plan.should_send_checkout
+        product_page_sent = False;
+        if (plan.should_send_checkout or should_send_product_page)
         and primary is not None
         and health_status != "AT_RISK" {
-            checkout_response = _send_checkout_link(
+            action_response = _send_product_action(
                 raw_chat_id,
                 primary,
-                f"{event_id}:checkout",
-                use_experience=use_experience
+                f"{event_id}:checkout"
+                    if plan.should_send_checkout
+                    else f"{event_id}:product-page",
+                use_experience=use_experience,
+                direct_checkout=plan.should_send_checkout
             );
-            checkout_sent = True;
-            _append_event(
-                "checkout_link_sent",
-                conversation_id=raw_conversation_id,
-                inbound_message_id=raw_message_id,
-                data={
-                    "product_id": primary.stripe_id,
-                    "payment_link": primary.payment_link,
-                    "channel": "linq_experience" if use_experience else "imessage_link",
-                    "send_status": "accepted",
-                    "trace_id": checkout_response.get("_trace_id") or ""
-                }
-            );
+            if plan.should_send_checkout {
+                checkout_sent = True;
+                _append_event(
+                    "checkout_link_sent",
+                    conversation_id=raw_conversation_id,
+                    inbound_message_id=raw_message_id,
+                    data={
+                        "product_id": primary.stripe_id,
+                        "payment_link": primary.payment_link,
+                        "channel": "linq_experience"
+                            if use_experience
+                            else "imessage_link",
+                        "send_status": "accepted",
+                        "trace_id": action_response.get("_trace_id") or ""
+                    }
+                );
+            } else {
+                product_page_sent = True;
+                _append_event(
+                    "product_page_sent",
+                    conversation_id=raw_conversation_id,
+                    inbound_message_id=raw_message_id,
+                    data={
+                        "product_id": primary.stripe_id,
+                        "product_url": primary.product_url,
+                        "channel": "linq_experience"
+                            if use_experience
+                            else "imessage_link",
+                        "send_status": "accepted",
+                        "trace_id": action_response.get("_trace_id") or ""
+                    }
+                );
+            }
         }
     } except Exception as error {
         code = str(error);
@@ -1439,7 +1487,8 @@ def _process_pending_event_impl(event_id: str) -> dict[str, object] {
         "intent": plan.intent,
         "product_ids": plan.product_ids,
         "checkout_sent": checkout_sent,
-        "imessage_card": use_experience and checkout_sent,
+        "product_page_sent": product_page_sent,
+        "imessage_card": use_experience and (checkout_sent or product_page_sent),
         "band_gate_status": band_flow.status
     };
 }

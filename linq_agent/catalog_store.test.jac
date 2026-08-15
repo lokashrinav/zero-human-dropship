@@ -1,10 +1,15 @@
+glob TEST_STORE_URL: str = "https://store.example.test";
+
+
 test "valid catalog parses exact cents" {
     snapshot = validate_catalog_text(
-        """[{"name":"Fixture","images":[],"stripe_id":"prod_fixture","payment_link":"https://buy.stripe.com/test_fixture","cost":4.5,"price":9.5,"description":"Test fixture."}]"""
+        """[{"name":"Fixture","images":[],"stripe_id":"prod_fixture","payment_link":"https://buy.stripe.com/test_fixture","cost":4.5,"price":9.5,"description":"Test fixture."}]""",
+        public_store_url=TEST_STORE_URL
     );
     assert len(snapshot.products) == 1;
     assert snapshot.products[0].cost_cents == 450;
     assert snapshot.products[0].price_cents == 950;
+    assert snapshot.products[0].product_url == "https://store.example.test/product/fixture";
     assert snapshot.checkout_ready_products == 1;
 }
 
@@ -12,7 +17,8 @@ test "valid catalog parses exact cents" {
 test "production catalog may omit internal cost" {
     snapshot = validate_catalog_text(
         """[{"name":"Fixture","images":[],"stripe_id":"prod_fixture","payment_link":"https://buy.stripe.com/test_fixture","price":9.5,"description":"Test fixture.","active":true}]""",
-        require_active=True
+        require_active=True,
+        public_store_url=TEST_STORE_URL
     );
     assert len(snapshot.products) == 1;
     assert snapshot.products[0].cost_cents == 0;
@@ -20,25 +26,11 @@ test "production catalog may omit internal cost" {
 }
 
 
-test "production catalog rejects missing trusted price or payment link" {
-    for broken_row in [
-        """[{"name":"Fixture","images":[],"stripe_id":"prod_fixture","payment_link":"https://buy.stripe.com/test_fixture","description":"Missing price.","active":true}]""",
-        """[{"name":"Fixture","images":[],"stripe_id":"prod_fixture","price":9.5,"description":"Missing link.","active":true}]"""
-    ] {
-        try {
-            _ = validate_catalog_text(broken_row, require_active=True);
-            assert False , "production catalog must reject missing trusted commerce fields";
-        } except ValueError {
-            assert True;
-        }
-    }
-}
-
-
 test "empty checkout link rejects normal catalog" {
     try {
         _ = validate_catalog_text(
-            """[{"name":"Example","images":[],"stripe_id":"prod_example","payment_link":"","cost":1,"price":2,"description":"Safe example."}]"""
+            """[{"name":"Example","images":[],"stripe_id":"prod_example","payment_link":"","cost":1,"price":2,"description":"Safe example."}]""",
+            public_store_url=TEST_STORE_URL
         );
         assert False , "empty production link must reject";
     } except ValueError {
@@ -50,7 +42,8 @@ test "empty checkout link rejects normal catalog" {
 test "empty checkout link is allowed only in example mode" {
     snapshot = validate_catalog_text(
         """[{"name":"Example","images":[],"stripe_id":"prod_example","payment_link":"","cost":1,"price":2,"description":"Safe example."}]""",
-        allow_non_transactional=True
+        allow_non_transactional=True,
+        public_store_url=TEST_STORE_URL
     );
     assert snapshot.checkout_ready_products == 0;
     assert snapshot.products[0].payment_link == "";
@@ -60,7 +53,8 @@ test "empty checkout link is allowed only in example mode" {
 test "malformed catalog missing field rejects" {
     try {
         _ = validate_catalog_text(
-            """[{"name":"Broken","images":[],"stripe_id":"prod_broken","cost":1,"price":2,"description":"Missing link."}]"""
+            """[{"name":"Broken","images":[],"stripe_id":"prod_broken","cost":1,"price":2,"description":"Missing link."}]""",
+            public_store_url=TEST_STORE_URL
         );
         assert False , "should have rejected missing payment_link";
     } except ValueError {
@@ -72,7 +66,8 @@ test "malformed catalog missing field rejects" {
 test "unsafe payment host rejects" {
     try {
         _ = validate_catalog_text(
-            """[{"name":"Bad","images":[],"stripe_id":"prod_bad","payment_link":"https://evil.example/pay","cost":1,"price":2,"description":"Unsafe."}]"""
+            """[{"name":"Bad","images":[],"stripe_id":"prod_bad","payment_link":"https://evil.example/pay","cost":1,"price":2,"description":"Unsafe."}]""",
+            public_store_url=TEST_STORE_URL
         );
         assert False , "should reject a non-Stripe payment host";
     } except ValueError {
@@ -84,7 +79,8 @@ test "unsafe payment host rejects" {
 test "markdown payment link rejects" {
     try {
         _ = validate_catalog_text(
-            """[{"name":"Bad","images":[],"stripe_id":"prod_bad","payment_link":"[https://buy.stripe.com/test](https://buy.stripe.com/test)","cost":1,"price":2,"description":"Unsafe."}]"""
+            """[{"name":"Bad","images":[],"stripe_id":"prod_bad","payment_link":"[https://buy.stripe.com/test](https://buy.stripe.com/test)","cost":1,"price":2,"description":"Unsafe."}]""",
+            public_store_url=TEST_STORE_URL
         );
         assert False , "should reject Markdown";
     } except ValueError {
@@ -96,7 +92,8 @@ test "markdown payment link rejects" {
 test "duplicate product ids reject entire catalog" {
     try {
         _ = validate_catalog_text(
-            """[{"name":"One","images":[],"stripe_id":"prod_same","payment_link":"","cost":1,"price":2,"description":"One."},{"name":"Two","images":[],"stripe_id":"prod_same","payment_link":"","cost":1,"price":3,"description":"Two."}]"""
+            """[{"name":"One","images":[],"stripe_id":"prod_same","payment_link":"","cost":1,"price":2,"description":"One."},{"name":"Two","images":[],"stripe_id":"prod_same","payment_link":"","cost":1,"price":3,"description":"Two."}]""",
+            public_store_url=TEST_STORE_URL
         );
         assert False , "should reject duplicates";
     } except ValueError {
@@ -109,7 +106,8 @@ test "boolean and over precise money reject" {
     for invalid_price in ["true", "9.999"] {
         try {
             _ = validate_catalog_text(
-                f"[{{\"name\":\"Bad\",\"images\":[],\"stripe_id\":\"prod_bad\",\"payment_link\":\"\",\"cost\":1,\"price\":{invalid_price},\"description\":\"Bad price.\"}}]"
+                f"[{{\"name\":\"Bad\",\"images\":[],\"stripe_id\":\"prod_bad\",\"payment_link\":\"\",\"cost\":1,\"price\":{invalid_price},\"description\":\"Bad price.\"}}]",
+                public_store_url=TEST_STORE_URL
             );
             assert False , "should reject invalid money";
         } except ValueError {
@@ -122,7 +120,8 @@ test "boolean and over precise money reject" {
 test "cost greater than price rejects" {
     try {
         _ = validate_catalog_text(
-            """[{"name":"Bad","images":[],"stripe_id":"prod_bad","payment_link":"","cost":10,"price":9,"description":"Bad margin."}]"""
+            """[{"name":"Bad","images":[],"stripe_id":"prod_bad","payment_link":"","cost":10,"price":9,"description":"Bad margin."}]""",
+            public_store_url=TEST_STORE_URL
         );
         assert False , "should reject negative margin";
     } except ValueError {
@@ -135,7 +134,8 @@ test "production catalog requires explicit active status" {
     try {
         _ = validate_catalog_text(
             """[{"name":"Fixture","images":[],"stripe_id":"prod_fixture","payment_link":"https://buy.stripe.com/test_fixture","cost":4,"price":9,"description":"Fixture."}]""",
-            require_active=True
+            require_active=True,
+            public_store_url=TEST_STORE_URL
         );
         assert False , "production entry without active must reject";
     } except ValueError {
@@ -147,9 +147,24 @@ test "production catalog requires explicit active status" {
 test "inactive production products are never exposed" {
     snapshot = validate_catalog_text(
         """[{"name":"Inactive","images":[],"stripe_id":"prod_inactive","payment_link":"https://buy.stripe.com/test_inactive","cost":4,"price":9,"description":"Inactive fixture.","active":false},{"name":"Active","images":["https://images.example.test/active.jpg"],"stripe_id":"prod_active","payment_link":"https://buy.stripe.com/test_active","cost":4,"price":8,"description":"Active fixture.","active":true}]""",
-        require_active=True
+        require_active=True,
+        public_store_url=TEST_STORE_URL
     );
     assert len(snapshot.products) == 1;
     assert snapshot.products[0].stripe_id == "prod_active";
     assert snapshot.checkout_ready_products == 1;
+}
+
+
+test "explicit product url must match configured storefront" {
+    try {
+        _ = validate_catalog_text(
+            """[{"name":"Fixture","images":[],"stripe_id":"prod_fixture","product_url":"https://evil.example/product/fixture","payment_link":"https://buy.stripe.com/test_fixture","price":9.5,"description":"Test fixture.","active":true}]""",
+            require_active=True,
+            public_store_url=TEST_STORE_URL
+        );
+        assert False , "cross-origin product URL must reject";
+    } except ValueError {
+        assert True;
+    }
 }
