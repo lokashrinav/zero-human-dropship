@@ -9,7 +9,7 @@ Updated: 2026-08-15
 - P0 webhook, deterministic recommendation, storefront product action, explicit-intent checkout, durable idempotency, last-known-good catalog reload, and event APIs are implemented.
 - Optional Jac-owned Band Business Gate is implemented, disabled by default, and fail-closed when enabled.
 - Jac compilation and automated discovery/purchase-intent paths pass against the 10-product production catalog.
-- The live service is `https://zero-human-linq-agent.onrender.com`; Linq Partner v3 authentication, the signed webhook subscription, real inbound messaging, and trusted outbound checkout were verified before this UX patch.
+- The live service is `https://zero-human-linq-agent.onrender.com`; Linq Partner v3 authentication, the signed webhook subscription, and real inbound messaging are verified. The production catalog exposes 10 validated checkout-ready products. A real post-UX discovery selected `LED Strip Lights RGB 16 Colors` and sent its HTTP-200 storefront page.
 
 ## Non-negotiable contracts
 
@@ -92,9 +92,7 @@ Local processing is at-least-once across a crash window. Each Linq send has a st
 
 ## Remaining live verification
 
-- Redeploy this UX checkpoint to the existing Render service.
-- Send one discovery iMessage and verify the trusted storefront `product_url` action plus `product_page_sent`.
-- Reply “I'll take it” and verify the trusted Stripe `payment_link` plus `checkout_link_sent`.
+- Reply “I'll take it” in the same real conversation and verify the trusted Stripe `payment_link` plus `checkout_link_sent`.
 - Keep `BAND_GATE_ENABLED=false`; disabled Band emits no `band_*` events.
 
 ## Verified locally

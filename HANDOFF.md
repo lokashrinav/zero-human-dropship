@@ -1,6 +1,6 @@
 # ZERO HUMAN — Judge Dashboard Handoff
 
-Checkpoint: 2026-08-15 1:31 PM America/Los_Angeles
+Checkpoint: 2026-08-15 2:45 PM America/Los_Angeles
 Production deployment: `dpl_7kcuApC3HR24wMJ8WFuzSBszz8Vu`
 
 ## Dashboard
@@ -18,11 +18,11 @@ Production deployment: `dpl_7kcuApC3HR24wMJ8WFuzSBszz8Vu`
 - Stripe commerce: **REAL COMMERCE** — catalog and checkout links are live.
 - Stripe revenue: **WAITING** — revenue and orders remain `null`. Vercel would not export the storefront's sensitive encrypted key, so the dashboard still needs either its own server-only `STRIPE_SECRET_KEY` or an attested `STRIPE_REVENUE_URL`. Products and Payment Links are not counted as revenue.
 - Pioneer: **VERIFIED REAL RUN** — GPT-OSS 120B inference PASS, Fastino GLiNER2 validation PASS, three-product pipeline PASS, top ranking `demo-cable (95)`, verified `2026-08-15T19:20:56.289815Z`. This is historical evidence, not a live Pioneer service.
-- Linq: **DEPLOYMENT PENDING** — real account and public phone `+1 415-305-0091` are verified; no public base URL, registered webhook, real inbound event, or real outbound event exists yet. Runtime counters/events are zero.
+- Linq: **LIVE** — https://zero-human-linq-agent.onrender.com serves the Jac-first agent for public phone `+1 415-305-0091`. Partner v3 authentication and the active signed `message.received` webhook subscription are verified. A real inbound request selected the catalog's `LED Strip Lights RGB 16 Colors`, sent the grounded recommendation, and opened the HTTP-200 storefront product page. The follow-up explicit-purchase text is still required to verify the direct trusted Stripe-link send after the UX update.
 - Terac: **FULFILLED / LIVE EVIDENCE** — real Terac MCP study `w14sbyed2iixiz76o5ass608` produced 10/10 approved responses. USB-C Cable ranked first at 3.9/5; Laptop Cooling Pad ranked second at 3.8/5 and had the most most-likely selections (3). The immutable before snapshot, aggregate, after snapshot, and MCP audit live in `terac/`. Public feed: https://storefront-omega-three.vercel.app/api/terac-feedback.
 - Person A CEO decisions: **LIVE** — the data-backed `terac_reorder` decision moved USB-C Cable from #2 to #1 and Magnetic Phone Mount from #9 to #3 without changing prices, Payment Links, shipping, products, or claimed outcomes. Public feed: https://storefront-omega-three.vercel.app/api/ceo-decisions.
 - Band: **DISABLED** — intentionally not part of the active loop and not treated as an error.
-- Render: **PENDING** — no public Linq deployment exists.
+- Render: **LIVE** — Linq health, status, and cursor-paginated event endpoints return HTTP 200 publicly.
 - Replay: **PENDING** — Playwright QA passed, but no actual Replay verification artifact/endpoint exists.
 
 No unavailable source falls back to fabricated conversations, decisions, Terac results, revenue, or catalog values. A failed panel degrades independently and cannot blank the dashboard.
@@ -35,7 +35,7 @@ The credential-free evidence adapter is `dashboard/src/data/pioneer/index.ts`. I
 
 All integration variables are server-side. Never prefix them with `NEXT_PUBLIC_`.
 
-- Linq one-line follow-up after a real deployment exists: `cd /Users/aradhyamishra/zero-human-dropship-master/dashboard && printf '%s' '<LINQ_BASE_URL>' | npx vercel env add LINQ_BASE_URL production --yes && npx vercel deploy --prod --yes`
+- Linq dashboard source: `LINQ_BASE_URL=https://zero-human-linq-agent.onrender.com`. The public contracts are `GET /api/status` and `GET /api/events?cursor=0&limit=100`.
 - Terac one-line follow-up: `cd /Users/aradhyamishra/zero-human-dropship-master/dashboard && printf '%s' 'https://storefront-omega-three.vercel.app/api/terac-feedback' | npx vercel env add TERAC_FEEDBACK_URL production --yes && npx vercel deploy --prod --yes`
 - CEO one-line follow-up: `cd /Users/aradhyamishra/zero-human-dropship-master/dashboard && printf '%s' 'https://storefront-omega-three.vercel.app/api/ceo-decisions' | npx vercel env add CEO_DECISIONS_URL production --yes && npx vercel deploy --prod --yes`
 - Stripe revenue one-line follow-up with a dedicated server-side key: `cd /Users/aradhyamishra/zero-human-dropship-master/dashboard && printf '%s' '<STRIPE_SECRET_KEY>' | npx vercel env add STRIPE_SECRET_KEY production --sensitive --yes && npx vercel deploy --prod --yes`
