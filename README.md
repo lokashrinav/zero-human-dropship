@@ -54,9 +54,9 @@ Hackathon: August 15, 2026, 10:45 AM – 6:45 PM (8 hours, selling window ~4 hrs
 
 1. **FB Marketplace as traffic funnel** — List trending products. Include "Order online: [our store link]" or Stripe Payment Link in description. FB Marketplace has organic local browsers. When someone messages "Is this available?" → agent responds with Stripe Payment Link.
 
-2. **Linq iMessage outbound** — Agent sends product showcases with Stripe Payment Links to contacts. Conversational sales — agent recommends, answers questions, closes.
+2. **Linq iMessage inbound** — Advertise iMessage number on store + FB listings ("Text us for deals"). When someone texts, Sales agent responds with product recs + Stripe Payment Link. No cold messaging allowed.
 
-3. **Social sharing** — Stripe Payment Links shared on Twitter/X, Reddit, Discord, group chats. FLUX-generated ad creatives make these shareable.
+3. **Social sharing** — Stripe Payment Links shared in group chats, Discord servers, Reddit. FLUX-generated ad creatives make these shareable.
 
 4. **Our store** — Your Next Store looks professional. Products auto-appear from Stripe. Send traffic here from everywhere else.
 
@@ -77,11 +77,11 @@ Hackathon: August 15, 2026, 10:45 AM – 6:45 PM (8 hours, selling window ~4 hrs
 ### Component 2: Storefront (Person B)
 **Purpose**: Professional-looking store that converts visitors to Stripe payments
 
-- Fork yournextstore.com → deploy on Vercel (one-click) or Render
+- One store. Fork yournextstore.com → deploy on Vercel (one-click)
 - Products pull from Stripe Dashboard automatically
 - Customize: brand name, colors, logo (FLUX-generated)
 - Mobile-first (it already is out of the box)
-- Multiple stores = multiple deploys with different Stripe product metadata tags
+- Must verify Stripe Checkout collects shipping address (needed for CJ fulfillment)
 
 **Code**: Almost zero — it's a fork + env vars. Customization is config-level.
 
@@ -128,9 +128,9 @@ CEO loop runs every 15 min:
 ### Component 5: Sales & Marketing (Person B)
 **Purpose**: Drive traffic to Stripe checkout. Close sales via iMessage.
 
-- **Linq Sales Agent**: webhook receives inbound iMessage → Claude processes → responds with product recommendation + Stripe Payment Link
-- **Linq Marketing Agent**: sends outbound messages with FLUX-generated product images + Stripe Payment Links
+- **Linq Sales Agent** (inbound only): webhook receives inbound iMessage → Claude processes → responds with product recommendation + Stripe Payment Link. No cold outbound messaging.
 - **iMessage App cards**: interactive product showcase in iMessage (Linq feature)
+- Drive inbound traffic to the number via store banner + FB Marketplace descriptions ("Text us: [number]")
 
 **Code**: Person B builds this as a separate small FastAPI service on Render. Claude API for conversation. Linq SDK for send/receive. Reads `catalog.json` for product data + payment links.
 
@@ -139,7 +139,7 @@ CEO loop runs every 15 min:
 
 - **FLUX 1.1 Pro** (via Replicate): lifestyle product images, ad creatives, store banners
 - **Kling 2.0 / Minimax** (via Replicate): 5-second product showcase videos
-- Generated content used in: Linq campaigns, store pages, social sharing
+- Generated content used in: store pages, FB Marketplace listings, social sharing
 
 **Code**: Replicate SDK calls. Integrated into agent backend.
 
@@ -192,7 +192,7 @@ CEO loop runs every 15 min:
 | Source replacement | Product dropped or Terac-rated <3/5 | Sourcing | "CJ API search: phone stands (replacing USB fan)" |
 | Reprice | Terac price data or zero sales at current price | CEO | "Earbuds $20→$12 — Terac says max willingness is $13" |
 | Shift channel focus | One channel has 3x engagement | CEO | "FB Marketplace driving 80% of store visits. Doubling listings there." |
-| Generate ad creative | New product added | Growth | "FLUX lifestyle image for phone stand → Linq campaign" |
+| Generate ad creative | New product added | Growth | "FLUX lifestyle image for phone stand → FB Marketplace + store" |
 | Generate video | High-margin product | Growth | "Kling 5s showcase → embed in iMessage" |
 | A/B test copy | Sales stall on a product | Growth | "Testing 'TikTok Trending' vs 'Best Seller' headline" |
 | Cross-list | Product selling on one channel | Growth | "Phone stand selling via store — listing on FB Marketplace too" |
@@ -235,7 +235,7 @@ Everything customer-facing. Owns the Chrome browser. No file overlap with `agent
 3. ⏳ While waiting for A's products: set up Band room + register agent names, configure Linq webhook URL, set up Replay account
 4. **12:00 PM — products land.** Plug real payment links into Linq handler. Verify products appear on store. Test Stripe Checkout end-to-end.
 5. Browser (claude-in-chrome): FB Marketplace listings — each product with images + "Order here: [store URL]"
-6. Linq outbound campaigns: product images + Stripe Payment Links via iMessage
+6. Advertise Linq iMessage number on store + FB listings ("Text us for deals")
 7. iMessage App cards for interactive product showcase
 8. Browser (claude-in-chrome): eBay Buy It Now listings (demo only)
 9. Browser: Replay QA on store → fix what it finds → screenshot clean report
@@ -262,7 +262,7 @@ Everything customer-facing. Owns the Chrome browser. No file overlap with `agent
 ```
 2. **Stripe** syncs automatically — A creates products, B's store reflects them. No code needed.
 3. **Band** — both post status updates. A: CEO decisions. B: sales/listing updates. Both read.
-4. **FLUX/Kling creatives** — A generates via Replicate, saves URLs. B uses in Linq campaigns + FB Marketplace updates.
+4. **FLUX/Kling creatives** — A generates via Replicate, saves URLs. B uses in FB Marketplace updates + store.
 
 ---
 
@@ -318,7 +318,7 @@ Everything customer-facing. Owns the Chrome browser. No file overlap with `agent
 
 ### Phase 3: Sell + Iterate (3:15 – 5:45, 2.5 hrs)
 - Agents run without human intervention
-- Marketing blitz: Linq campaigns, fresh FB Marketplace posts, social sharing
+- Marketing blitz: fresh FB Marketplace posts, social sharing, respond to all inbound Linq messages
 - CEO iterates: Terac → reprice → swap products → shift channel focus
 - Sourcing agent finds new products matching what's working
 - Growth agent generates new creatives + videos for top sellers
@@ -357,7 +357,7 @@ Everything customer-facing. Owns the Chrome browser. No file overlap with `agent
 |---------|------------|------|-----|
 | **Stripe** (required) | Payments, products, payment links | Phase 0-1 | A |
 | **Terac** (required) | 3 studies: product selection, pricing, store UX | Phase 1-3 | A launches, both consume |
-| **Linq** ($2,500) | iMessage Sales + Marketing agents, App cards | Phase 1-2 | B |
+| **Linq** ($2,500) | Inbound iMessage Sales agent + App cards (no cold outbound) | Phase 1-2 | B |
 | **Band** ($500) | Agent coordination room, CEO decision log | Phase 2 | A |
 | **Render** ($900) | Agent backend (A) + Linq webhook (B) deployed via Render Workflows | Phase 1-2 | Both |
 | **Replay** ($1,500) | Sign up, run QA on store, fix bugs, show clean report | Phase 3 | B |
