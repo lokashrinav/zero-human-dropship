@@ -1,8 +1,8 @@
 # ZERO HUMAN — Final Dashboard Live Integration Handoff
 
-Checkpoint: 2026-08-15 2:44 PM America/Los_Angeles
+Checkpoint: 2026-08-15 3:48 PM America/Los_Angeles
 Branch: `codex/b-dashboard-final`
-Production deployment: `dpl_S1u8VJRbrVBhRQvjuffT9FXzJA57` (Ready; production alias preserved)
+Production deployment: `dpl_Hsiy2qNNv3zKwY6cZmh9TwhaBjSx` (Ready; production alias preserved)
 
 ## Dashboard
 
@@ -18,7 +18,7 @@ All values are server-side Vercel Production variables. None use `NEXT_PUBLIC_`.
 - `CEO_DECISIONS_URL=https://without-thinks-harvest-huge.trycloudflare.com/api/decisions?limit=100`
 - `TERAC_FEEDBACK_URL=https://storefront-omega-three.vercel.app/api/terac-feedback`
 - `LINQ_BASE_URL=https://zero-human-linq-agent.onrender.com`
-- `STRIPE_REVENUE_URL=https://without-thinks-harvest-huge.trycloudflare.com/api/stats`
+- `STRIPE_REVENUE_URL` is intentionally unset. Person A's current stats contain only the documented self-test charge and cannot safely distinguish third-party revenue.
 
 The Person A Cloudflare tunnel is ephemeral. If it changes, replace both Person A URLs and redeploy; do not create a second CEO or decision feed.
 
@@ -26,13 +26,14 @@ The Person A Cloudflare tunnel is ephemeral. If it changes, replace both Person 
 
 - **CEO — LIVE:** Person A's public `/api/decisions` feed returns HTTP 200. The dashboard parses only real `CEO` cycle actions from the native audit format. Six real actions currently render; no outcome is added unless a source provides one.
 - **Terac — VERIFIED:** completed study `w14sbyed2iixiz76o5ass608`, 10 approved respondents / 100 ratings. USB-C Cable ranked highest at 3.9/5; Phone Ring Light and Portable Mini Fan tied lowest at 2.5/5. The real autonomous change moved USB-C Cable #2 → #1 and Magnetic Phone Mount #9 → #3.
-- **Linq — LIVE:** `https://zero-human-linq-agent.onrender.com/api/status` and `/api/events?cursor=0&limit=100` return HTTP 200. At this checkpoint the safe feed reports one real conversation, two recommendations, zero checkout links, and real `PRODUCT PAGE SENT` events. A complete trusted checkout-link flow was verified before the service restart.
-- **Stripe revenue — LIVE:** Person A's server-side Stripe stats report one successful $3.49 charge and one order. The public decision trail identifies it as a self-purchase end-to-end test transaction. No Stripe secret is stored in or serialized by the dashboard.
+- **Linq — LIVE:** `https://zero-human-linq-agent.onrender.com/api/status` and `/api/events?cursor=0&limit=100` return HTTP 200. Its durable counters were reset by the latest deployment and currently report zero conversations, recommendations, and checkout links. Historical demonstrations are not substituted for current API counters.
+- **Active stage — SELL:** the online Linq sales agent is the current operating stage. Diagnostic-only `catalog_reloaded` events no longer move the company loop back to Source.
+- **Stripe commerce — LIVE:** ten real products and Payment Links are live. Revenue remains **WAITING** because the only charge exposed by Person A is the documented $3.49 self-test and must be excluded.
 - **Pioneer — VERIFIED:** historical real GPT-OSS 120B inference PASS, Fastino GLiNER2 validation PASS, and three-product pipeline PASS. This is not presented as a continuously live service.
-- **Render — VERIFIED:** the responding Linq service is deployed at a public `.onrender.com` URL.
+- **Render hosting — LIVE:** the responding Linq service is deployed at a public `.onrender.com` URL. Render Workflows remain pending because code presence is not proof of an actual workflow run.
 - **Solari — VERIFIED:** Person A's public audit trail records a completed live storefront audit through the Solari cloud browser at 1:36 PM PT.
 - **Superserve — PENDING:** integration code exists, but neither the repository nor public audit feed proves a successful real sandbox run.
-- **Replay — PENDING:** the repository contains the QA checklist and Playwright results, but no actual Replay report/artifact.
+- **Replay — VERIFIED:** actual dashboard Replay run `ts-msuwwf79-zzu4` completed five journeys with no P0/P1 findings. Report: https://qa.replay.io/projects/proj-zero-human-control-room-vercel-app-msuwwep3/test-runs/ts-msuwwf79-zzu4
 - **Band — DISABLED:** intentionally disabled and not treated as a company failure.
 
 ## Person A operational proof audit
@@ -40,14 +41,14 @@ The Person A Cloudflare tunnel is ephemeral. If it changes, replace both Person 
 - **Fulfillment:** Stripe-to-order detection is verified by the $3.49 transaction. The public log says the daemon and alert watcher detected it, but real supplier fulfillment remains manual/Amazon and CJ is dormant; do not claim autonomous physical delivery.
 - **Tracked-link attribution:** `/api/revenue/stats` is publicly deployed and returns HTTP 200, but currently reports zero campaigns, clicks, conversions, and attributed revenue.
 - **FB Marketplace:** Person A's public audit trail reports 10/10 listings active plus a public store-link post. No independent Replay/browser artifact is committed.
-- **Product images:** ten JPG files exist in `product_images/`, but production catalog rows still have zero images. The newest conversion-agent audit says those files are generic/mismatched and must not be published as exact product proof.
+- **Product images:** the production catalog now returns product-specific image URLs for the ten live products.
 - `OPERATIONS_HANDOFF.md` and `dashboard/HANDOFF.md` were not present on current master.
 
 ## Revenue and catalog truth
 
-- Dashboard revenue is read only from Person A's safe server-side `/api/stats` response. Positive totals require a positive charge record.
-- A live feed with zero charges renders `$0.00` and `0` orders rather than a fixture.
-- The storefront catalog still exposes 10 active Payment Links, but it has not yet incorporated the CEO's newer reprices or valid exact product imagery. Catalog re-sync belongs to the storefront/CEO lanes.
+- Dashboard revenue remains null until a safe feed excludes documented self-tests and reports genuine third-party payments.
+- The storefront catalog exposes 10 active Payment Links, product pages, updated prices, and product-specific imagery.
+- The hero includes a prominent `OPEN LIVE STORE` link to the buyer-facing production storefront.
 
 ## Verification
 
@@ -56,7 +57,7 @@ The Person A Cloudflare tunnel is ephemeral. If it changes, replace both Person 
 - Existing Playwright suite with all real URLs: 12/12 PASS at 1440×900 and 390×844
 - Forced aggregate-feed failure: PASS; last safe snapshot remains visible with `FEED DEGRADED`
 - Secret serialization test: PASS
-- Vercel deployment: PASS; deployment `dpl_S1u8VJRbrVBhRQvjuffT9FXzJA57` is Ready and aliased to the existing production URL
+- Vercel deployment: PASS; deployment `dpl_Hsiy2qNNv3zKwY6cZmh9TwhaBjSx` is Ready and aliased to the existing production URL
 - Production aggregate API: PASS; HTTP 200 with `Cache-Control: no-store`
 - Production Playwright: 12/12 PASS at 1440×900 and 390×844
 - Production visual/console smoke: PASS at desktop and mobile; zero console errors or warnings

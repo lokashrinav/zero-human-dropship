@@ -29,6 +29,10 @@ test("renders the complete judge story with truthful data provenance", async ({ 
   await expect(
     page.getByRole("heading", { level: 1, name: /autonomous company/i }),
   ).toBeVisible();
+  await expect(page.getByRole("link", { name: "OPEN LIVE STORE" })).toHaveAttribute(
+    "href",
+    "https://storefront-omega-three.vercel.app/",
+  );
 
   const metricRegion = page.getByRole("region", { name: "Company metrics" });
   for (const metric of expectedMetrics) {

@@ -13,6 +13,7 @@ import { dashboardConfig } from "../config";
 import { fetchJson } from "../http";
 import { getPersonAProofs } from "../person-a-proof";
 import { getPioneerProof } from "../pioneer";
+import { getReplayProof } from "../replay";
 
 type CorePanels = {
 	revenue: PanelState<RevenueData>;
@@ -96,7 +97,7 @@ export const getSponsorProofs = async (
 ): Promise<SponsorProof[]> => {
 	const { bandUrl, bandToken, renderUrl, renderToken, replayUrl, replayToken } =
 		dashboardConfig.proof;
-	const [renderProbe, replay] = await Promise.all([
+ const [renderProbe, replayProbe] = await Promise.all([
 		probeProof({
 			name: "Render",
 			activeLabel: "WORKFLOW EXECUTION",
@@ -110,19 +111,20 @@ export const getSponsorProofs = async (
 			token: replayToken,
 			replay: true,
 		}),
-	]);
+ ]);
+ const replay = replayUrl ? replayProbe : getReplayProof();
 	const render =
 		panels.linq.meta.mode === "live" &&
 		(isRenderUrl(dashboardConfig.linq.baseUrl) ||
 			isRenderUrl(dashboardConfig.linq.statusUrl) ||
 			isRenderUrl(dashboardConfig.linq.eventsUrl))
-			? {
-					name: "Render",
-					status: "verified",
-					label: "VERIFIED",
-					summary: "LIVE LINQ SERVICE",
-					detail: "The configured Linq service is responding from a public onrender.com deployment.",
-				} satisfies SponsorProof
+     ? {
+     name: "Render",
+     status: "active",
+     label: "LIVE",
+     summary: "HOSTING LIVE · WORKFLOWS PENDING",
+     detail: "The public Linq service is responding from Render hosting. This does not claim verified Render Workflows usage.",
+    } satisfies SponsorProof
 			: renderProbe;
 	const liveCheckoutLinks = panels.catalog.data.products.filter(
 		(product) =>

@@ -245,6 +245,17 @@ a:focus-visible {
   line-height: 1.55;
 }
 
+.hero__actions {
+  display: flex;
+  margin-top: 22px;
+}
+
+.hero__actions .primary-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .hero__proof {
   display: grid;
   width: min(315px, 27vw);

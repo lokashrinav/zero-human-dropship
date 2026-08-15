@@ -40,11 +40,25 @@ type StageSignal = {
 	stage: AutonomousLoopStage;
 };
 
-const latestStage = (events: LinqEvent[], decisions: CeoDecision[]) => {
-	const signals: StageSignal[] = [
-		...events.map(({ timestamp, stage }) => ({ timestamp, stage })),
-		...decisions.map(({ timestamp, stage }) => ({ timestamp, stage })),
-	];
+const latestStage = (
+ events: LinqEvent[],
+ decisions: CeoDecision[],
+ salesAgentOnline: boolean,
+) => {
+ const liveSalesSignals: StageSignal[] = events
+   .filter((event) => event.type !== "other")
+   .map(({ timestamp, stage }) => ({ timestamp, stage }));
+ if (liveSalesSignals.length > 0) {
+   return liveSalesSignals.sort(
+     (left, right) => Date.parse(right.timestamp) - Date.parse(left.timestamp),
+   )[0]?.stage ?? "sell";
+ }
+ if (salesAgentOnline) return "sell";
+
+ const signals: StageSignal[] = decisions.map(({ timestamp, stage }) => ({
+   timestamp,
+   stage,
+ }));
 	return (
 		signals.sort(
 			(left, right) =>
@@ -75,7 +89,11 @@ export const getDashboardSnapshot = async (): Promise<DashboardSnapshot> => {
 	return {
 		generatedAt: new Date().toISOString(),
 		isReceivingLiveData: livePanels.length > 0,
-		activeStage: latestStage(linq.data.events, decisions.data.decisions),
+  activeStage: latestStage(
+   linq.data.events,
+   decisions.data.decisions,
+   linq.meta.mode === "live" && linq.data.online === true,
+  ),
 		metrics: {
 			revenueMinor: revenue.data.amountMinor,
 			revenueCurrency: revenue.data.currency,

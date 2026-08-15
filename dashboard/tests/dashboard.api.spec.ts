@@ -9,6 +9,7 @@ type PanelMeta = {
 type Snapshot = {
   generatedAt: string;
   isReceivingLiveData: boolean;
+  activeStage: string | null;
   metrics: {
     revenueMinor: number | null;
     orders: number | null;
@@ -89,6 +90,10 @@ test("aggregate endpoint returns an independently labeled snapshot", async ({ re
     status: "pending",
     label: "PENDING",
   });
+  expect(snapshot.sponsors.find((sponsor) => sponsor.name === "Replay")).toMatchObject({
+    status: "verified",
+    label: "VERIFIED",
+  });
   expect(snapshot.catalog.meta.mode).toBe("live");
   expect(snapshot.catalog.data.productCount).toBe(10);
   expect(snapshot.catalog.data.activeCount).toBe(10);
@@ -106,6 +111,7 @@ test("aggregate endpoint returns an independently labeled snapshot", async ({ re
     expect(snapshot.linq.data.recommendations).toBeGreaterThanOrEqual(0);
     expect(snapshot.linq.data.paymentLinksSent).toBeGreaterThanOrEqual(0);
     expect(snapshot.linq.data.events.length).toBeGreaterThan(0);
+    expect(snapshot.activeStage).toBe("sell");
   } else {
     expect(snapshot.linq.data.conversations).toBe(0);
     expect(snapshot.linq.data.events).toEqual([]);

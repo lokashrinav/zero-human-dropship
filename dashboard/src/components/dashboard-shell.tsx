@@ -547,6 +547,16 @@ export function DashboardShell({ initialSnapshot }: { initialSnapshot: Dashboard
           <div className="hero__kicker"><span className="pulse-dot" aria-hidden="true" /> AUTONOMOUS COMMERCE SYSTEM</div>
           <h1 id="page-title">AUTONOMOUS COMPANY <span>— LIVE</span></h1>
           <p>It finds demand, validates with people, sells, fulfills, and learns — without waiting for a human operator.</p>
+          <div className="hero__actions">
+            <a
+              className="primary-button"
+              href="https://storefront-omega-three.vercel.app/"
+              rel="noreferrer"
+              target="_blank"
+            >
+              OPEN LIVE STORE <ArrowUpRight aria-hidden="true" size={14} />
+            </a>
+          </div>
         </div>
         <div className="hero__proof" aria-label={`Current company activity: ${activeStageLabel}`}>
           <div className="hero__proof-icon"><Bot aria-hidden="true" size={24} /></div>

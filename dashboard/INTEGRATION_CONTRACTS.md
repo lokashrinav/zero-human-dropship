@@ -233,7 +233,7 @@ Alternatively, set server-only `STRIPE_SECRET_KEY`. Only keys beginning with
 server, subtracts refunds, and never sends the key to browser JavaScript. A test
 key leaves revenue pending instead of displaying a test dollar amount.
 
-The adapter also accepts Person A's safe HTTPS `/api/stats` response because
+The adapter also understands Person A's safe HTTPS `/api/stats` response because
 that server route reads Stripe with its server-only live key:
 
 ```json
@@ -244,7 +244,9 @@ that server route reads Stripe with its server-only live key:
 }
 ```
 
-Positive totals require a positive charge record. An endpoint error or
+Only configure that endpoint when it excludes documented self-tests. The
+current Person A response contains a $3.49 self-test, so production deliberately
+leaves `STRIPE_REVENUE_URL` unset. Positive totals require a positive charge record. An endpoint error or
 inconsistent totals are rejected. An authenticated live feed with zero charges
 renders `$0.00` and `0` orders; live products and Payment Links are still
 reported separately and are never counted as revenue.
@@ -264,15 +266,18 @@ Terac and Linq chips are derived from their panel state. Stripe is
 `REAL COMMERCE` when the verified catalog has active `buy.stripe.com` checkout
 links, and upgrades to `REAL REVENUE` only when revenue is verified. Pioneer is
 `VERIFIED` from the immutable evidence above. Band is intentionally `DISABLED`.
-Render is `VERIFIED` when the live Linq panel is backed by the configured public
-`.onrender.com` service. Otherwise it remains pending unless its configured
+Render hosting is `LIVE` when the live Linq panel is backed by the configured
+public `.onrender.com` service. This does not verify Render Workflows. Otherwise
+it remains pending unless its configured
 proof URL returns:
 
 ```json
 { "ok": true, "updatedAt": "2026-08-15T19:45:00.000Z" }
 ```
 
-Replay remains pending unless `REPLAY_VERIFICATION_URL` returns:
+Replay is `VERIFIED` from the completed dashboard run `ts-msuwwf79-zzu4`
+(five journeys, no P0/P1), recorded by the Replay QA lane. A future configured
+`REPLAY_VERIFICATION_URL` may instead return:
 
 ```json
 {
