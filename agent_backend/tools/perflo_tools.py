@@ -57,14 +57,19 @@ def balance() -> dict:
 # A full research+creative loop costs about a penny. $5 funds ~500 creatives.
 
 
-def do_task(query: str, confirm: bool = False) -> dict:
+def do_task(query: str, confirm: bool = False, input_json: dict | None = None) -> dict:
     """Run a task through Perflo: backend picks the best-fit x402 vendor and PAYS
-    for the call from the agent balance (inside the human-armed cap). The result
-    exists only because the payment cleared — that is the point.
+    for the call from the agent balance/credit (inside the human-armed cap). The
+    result exists only because the payment cleared — that is the point.
 
+    If the result is status=needs_input, re-run with input_json filled per its
+    'required' spec (e.g. image vendors want {"prompts": ["..."]}).
     If the backend flags the spend as needing approval (the judge-visible
     enforcement: CONFIRMATION_REQUIRED), re-run with confirm=True."""
-    args = ["do-task", query]
+    args = ["do-task"]
+    if input_json is not None:
+        args += ["-i", json.dumps(input_json)]
+    args.append(query)
     if confirm:
         args.append("--confirm")
     return _run(*args, timeout=600)
@@ -86,10 +91,15 @@ def check_contract(url: str) -> dict:
 
 
 def buy_creative(product_name: str, style: str = "clean studio product photo, white background") -> dict:
-    """Growth agent's creative pipeline: pay an x402 image vendor per creative."""
+    """Growth agent's creative pipeline: pay an x402 image vendor per creative.
+    First live purchase: txn ba377332, $12.08→$12.06 credit, verified good output."""
+    prompt = (
+        f"{style}: {product_name}. Square 1:1, e-commerce ready, "
+        "no text, no logos, no people."
+    )
     return do_task(
-        f"Generate a single square e-commerce product image: {style} of {product_name}. "
-        "No text, no logos, no people. Return the image URL."
+        "Generate one e-commerce product image",
+        input_json={"prompts": [prompt]},
     )
 
 
