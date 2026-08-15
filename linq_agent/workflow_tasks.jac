@@ -1,8 +1,13 @@
+import os;
 import from catalog_store { validate_catalog_text }
 
 
 def audit_catalog_for_workflow(catalog_json: str) -> dict[str, object] {
-    snapshot = validate_catalog_text(catalog_json, source_path="render_workflow_input");
+    snapshot = validate_catalog_text(
+        catalog_json,
+        source_path="render_workflow_input",
+        public_store_url=os.getenv("PUBLIC_STORE_URL") or ""
+    );
     return {
         "valid": True,
         "catalog_products": len(snapshot.products),

@@ -4,6 +4,7 @@ def _fixture_products -> list[Product] {
             name="Mini Phone Stand",
             images=[],
             stripe_id="prod_phone",
+            product_url="https://store.example.test/product/mini-phone-stand",
             payment_link="https://buy.stripe.com/test_fixture_phone",
             cost_cents=300,
             price_cents=900,
@@ -13,6 +14,7 @@ def _fixture_products -> list[Product] {
             name="Ten Dollar Cable",
             images=[],
             stripe_id="prod_cable",
+            product_url="https://store.example.test/product/ten-dollar-cable",
             payment_link="https://buy.stripe.com/test_fixture_cable",
             cost_cents=400,
             price_cents=1000,
@@ -22,6 +24,7 @@ def _fixture_products -> list[Product] {
             name="Reading Light",
             images=[],
             stripe_id="prod_light",
+            product_url="https://store.example.test/product/reading-light",
             payment_link="https://buy.stripe.com/test_fixture_light",
             cost_cents=500,
             price_cents=1200,
@@ -35,11 +38,14 @@ test "under ten grounds one exact product" {
     products = _fixture_products();
     plan = build_sales_plan("What's something cool under $10?", products);
     assert plan.product_ids == ["prod_phone"];
-    assert plan.should_send_checkout;
+    assert not plan.should_send_checkout;
     assert "$9.00" in plan.reply_text;
     assert "$10.00" not in plan.reply_text;
+    assert len(plan.reply_text) < 180;
+    assert "buy.stripe.com" not in plan.reply_text;
     selected = product_by_id(products, plan.product_ids[0]);
     assert selected is not None;
+    assert selected.product_url == "https://store.example.test/product/mini-phone-stand";
     assert selected.payment_link == "https://buy.stripe.com/test_fixture_phone";
 }
 
@@ -166,6 +172,14 @@ test "single prior buy it authorizes exact catalog checkout" {
     selected = product_by_id(products, plan.product_ids[0]);
     assert selected is not None;
     assert selected.payment_link == "https://buy.stripe.com/test_fixture_phone";
+}
+
+
+test "ill take it authorizes exact prior checkout" {
+    plan = build_sales_plan("I'll take it", _fixture_products(), ["prod_phone"]);
+    assert plan.intent == Intent.CHECKOUT_REQUEST;
+    assert plan.product_ids == ["prod_phone"];
+    assert plan.should_send_checkout;
 }
 
 
