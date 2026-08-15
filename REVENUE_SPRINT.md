@@ -1,6 +1,6 @@
 # REVENUE SPRINT — LIVE
 
-Updated: 2026-08-15 15:07 PDT
+Updated: 2026-08-15 15:08 PDT
 Operator: Person B revenue acquisition
 CEO owner: Person A only — this document does not authorize catalog, price, ordering, or strategy mutations.
 
@@ -124,6 +124,9 @@ None verified yet. No candidate is labeled HOT until the need is current, the pr
 1. Reddit, r/LenovoLegion, 2026-08-14: user asked for an affordable cooling pad for a new Legion 5 Pro. URL: https://www.reddit.com/r/LenovoLegion/comments/1voa2o2/cooling_pad_suggest/
    Match: Laptop Cooling Pad.
    Status: exact laptop size and subreddit commercial-link permission are not verified. Do not reply yet.
+2. Reddit, r/iphone, 2026-08-13: a new iPhone 17 Pro Max owner asked for a MagSafe vehicle mount for an older truck. URL: https://www.reddit.com/r/iphone/comments/1vnimuh/recommended_magsafe_vehicle_mount/
+   Match: Magnetic Phone Mount for Car; the catalog says magnetic, dashboard/vent compatible, and works with all phones.
+   Status: the buyer specifically needs resistance to rattling/shaking, which the catalog does not document, and commercial-link permission is not verified. Do not reply yet.
 
 ### SKIP
 
@@ -138,6 +141,15 @@ None verified yet. No candidate is labeled HOT until the need is current, the pr
 4. Reddit, r/UsbCHardware, 2026-08-04: https://www.reddit.com/r/UsbCHardware/comments/1vfqdd9/high_quality_super_short_usbc_to_usba_cable_needed/
    Need: 10–12 inch USB-A-to-C right-angle cable.
    Reason: the catalog cable is 6 feet and does not claim those connector/angle requirements.
+5. Reddit, r/laptops, 2026-08-12: https://www.reddit.com/r/laptops/comments/1vmgqcl/other_things_to_buy_for_my_laptop_for_college/
+   Need: portable cooling pad for a 16-inch Acer Predator Helios Neo 16S.
+   Reason: catalog item states a 15.6-inch maximum, so this is not an exact fit.
+6. Reddit, r/TheLaptopGuide, 2026-08-10: https://www.reddit.com/r/TheLaptopGuide/comments/1vkkw13/need_help_selecting_a_cooling_pad/
+   Need: 15.6-inch cooling pad in India with specific RPM, vacuum, and dust-filter tradeoffs.
+   Reason: requested specifications and compatible delivery region are not documented in the approved catalog.
+7. Reddit, r/motorcycle, 2026-08-14: https://www.reddit.com/r/motorcycle/comments/1vnvrf3/any_good_phone_mount_brands/
+   Need: vibration-damped motorcycle mount.
+   Reason: the approved product is a car dashboard/vent mount, not a motorcycle mount.
 
 ## Local channels
 
@@ -149,7 +161,7 @@ None verified yet. No candidate is labeled HOT until the need is current, the pr
 
 ## Live revenue watch
 
-Updated: 2026-08-15 15:01 PDT
+Updated: 2026-08-15 15:08 PDT
 
 - Genuine third-party revenue: **$0.00**
 - Genuine third-party orders: **0**
@@ -186,3 +198,4 @@ No money has been spent. Referral commissions are contingent liabilities only an
 - 15:04 PDT — rechecked all 21 campaigns: 0 clicks, 0 paid conversions, $0 attributed revenue.
 - 15:04 PDT — activated a 15-minute live-watch heartbeat for the remaining three-hour sprint window.
 - 15:07 PDT — audited the Linq source-of-truth handoff; held the phone CTA because deployment, webhook, and real inbound handling are not yet verified.
+- 15:08 PDT — screened four additional recent buyer-intent candidates; kept one WARM and rejected three unsupported matches. Rechecked revenue: zero genuine orders and zero tracked clicks.
