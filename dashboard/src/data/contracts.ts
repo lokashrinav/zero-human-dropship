@@ -134,12 +134,14 @@ export type TeracData = {
 export type CatalogProduct = {
 	id: string;
 	name: string;
+	description?: string;
 	priceMinor: number | null;
 	currency: string;
 	source: string;
 	active: boolean;
 	promoted: boolean;
 	url?: string;
+	productUrl?: string;
 	imageUrl?: string;
 };
 

@@ -39,6 +39,37 @@ test("renders the complete judge story with truthful data provenance", async ({ 
     await expect(metricRegion.getByText(new RegExp(`^${metric}$`, "i"))).toBeVisible();
   }
 
+  const gallery = page.getByRole("region", { name: "Shop the live company" });
+  await expect(gallery).toBeVisible();
+  await expect(gallery.locator("[data-product-id]" )).toHaveCount(10);
+  await expect(gallery.getByText(/^LIVE$/)).toHaveCount(10);
+  await expect(gallery.getByRole("link", { name: /^View product /i })).toHaveCount(10);
+  await expect(gallery.getByRole("link", { name: /^Buy now /i })).toHaveCount(10);
+  await expect(gallery.locator("img")).toHaveCount(10);
+  await expect(gallery.locator(".shop-card__image--fallback")).toHaveCount(0);
+  const renderedProductIds = await gallery.locator("[data-product-id]").evaluateAll((cards) =>
+    cards.map((card) => card.getAttribute("data-product-id")),
+  );
+  expect(new Set(renderedProductIds).size).toBe(10);
+
+  const viewProductHrefs = await gallery.getByRole("link", { name: /^View product /i }).evaluateAll(
+    (links) => links.map((link) => (link as HTMLAnchorElement).href),
+  );
+  expect(viewProductHrefs.every((href) => href.startsWith("https://storefront-omega-three.vercel.app/product/"))).toBe(true);
+  const buyNowHrefs = await gallery.getByRole("link", { name: /^Buy now /i }).evaluateAll(
+    (links) => links.map((link) => (link as HTMLAnchorElement).href),
+  );
+  expect(buyNowHrefs.every((href) => href.startsWith("https://buy.stripe.com/"))).toBe(true);
+
+  await expect(page.getByRole("link", { name: "OPEN FULL STORE" })).toHaveAttribute(
+    "href",
+    "https://storefront-omega-three.vercel.app/",
+  );
+  await expect(page.getByRole("link", { name: "TEXT AI SHOPPER" })).toHaveAttribute(
+    "href",
+    "sms:+14153050091",
+  );
+
   const workflow = page.getByLabel("Autonomous commerce workflow");
   await expect(workflow.getByText(/^SOURCE$/i)).toBeVisible();
   await expect(workflow.getByText(/^VALIDATE WITH HUMANS$/i)).toBeVisible();

@@ -1,8 +1,8 @@
 # ZERO HUMAN — Final Dashboard Live Integration Handoff
 
-Checkpoint: 2026-08-15 3:48 PM America/Los_Angeles
+Checkpoint: 2026-08-15 4:24 PM America/Los_Angeles
 Branch: `codex/b-dashboard-final`
-Production deployment: `dpl_Hsiy2qNNv3zKwY6cZmh9TwhaBjSx` (Ready; production alias preserved)
+Production deployment: `dpl_Hr9YuVwfLm8NmPfX227x4wqHPgwA` (Ready; production alias preserved)
 
 ## Dashboard
 
@@ -10,6 +10,14 @@ Production deployment: `dpl_Hsiy2qNNv3zKwY6cZmh9TwhaBjSx` (Ready; production ali
 - Storefront: https://storefront-omega-three.vercel.app
 - Aggregate feed: https://zero-human-control-room.vercel.app/api/dashboard
 - The approved UI and four-second polling/fallback architecture are unchanged.
+
+## Live product demo gallery
+
+- `#products` renders all 10 active products from the canonical live catalog; no product rows are hardcoded.
+- Every card carries the real product ID, name, price, description, image URL, product-page URL, active state, and trusted Stripe Payment Link.
+- `VIEW PRODUCT` opens the buyer-facing storefront page; `BUY NOW` appears only for `https://buy.stripe.com/` links.
+- All 10 product pages, 10 image sources, and 10 Stripe checkout pages returned HTTP 200 without submitting a purchase.
+- Hero/header shortcuts, `OPEN FULL STORE`, and `TEXT AI SHOPPER` provide the judge demo paths while all autonomy panels continue polling.
 
 ## Production integration configuration
 
@@ -57,9 +65,10 @@ The Person A Cloudflare tunnel is ephemeral. If it changes, replace both Person 
 - Existing Playwright suite with all real URLs: 12/12 PASS at 1440×900 and 390×844
 - Forced aggregate-feed failure: PASS; last safe snapshot remains visible with `FEED DEGRADED`
 - Secret serialization test: PASS
-- Vercel deployment: PASS; deployment `dpl_Hsiy2qNNv3zKwY6cZmh9TwhaBjSx` is Ready and aliased to the existing production URL
+- Vercel deployment: PASS; deployment `dpl_Hr9YuVwfLm8NmPfX227x4wqHPgwA` is Ready and aliased to the existing production URL
 - Production aggregate API: PASS; HTTP 200 with `Cache-Control: no-store`
 - Production Playwright: 12/12 PASS at 1440×900 and 390×844
 - Production visual/console smoke: PASS at desktop and mobile; zero console errors or warnings
+- Product gallery: PASS; 10 unique cards, 10 images, 10 product-page links, and 10 trusted Buy Now links
 
 Exact response contracts and native Person A normalization are documented in [`dashboard/INTEGRATION_CONTRACTS.md`](dashboard/INTEGRATION_CONTRACTS.md).

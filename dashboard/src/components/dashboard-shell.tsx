@@ -28,6 +28,7 @@ import {
   X,
   Zap,
 } from "lucide-react";
+import Image from "next/image";
 import { useEffect, useState, type ComponentType, type SVGProps } from "react";
 import type {
   AutonomousLoopStage,
@@ -155,6 +156,105 @@ function MetricCard({ metric }: { metric: Metric }) {
       </strong>
       <span>{metric.note}</span>
     </article>
+  );
+}
+
+const isTrustedPaymentLink = (value?: string) => {
+  if (!value) return false;
+  try {
+    const url = new URL(value);
+    return url.protocol === "https:" && url.hostname === "buy.stripe.com";
+  } catch {
+    return false;
+  }
+};
+
+function ProductImage({ product }: { product: CatalogProduct }) {
+  const [failed, setFailed] = useState(false);
+  if (!product.imageUrl || failed) {
+    return (
+      <div className="shop-card__image shop-card__image--fallback" aria-label={`No image available for ${product.name}`}>
+        <Box aria-hidden="true" size={28} />
+        <span>IMAGE PENDING</span>
+      </div>
+    );
+  }
+
+  return (
+    <div className="shop-card__image">
+      <Image
+        alt={product.name}
+        fill
+        onError={() => setFailed(true)}
+        sizes="(max-width: 520px) 45vw, (max-width: 980px) 30vw, 22vw"
+        src={product.imageUrl}
+      />
+    </div>
+  );
+}
+
+function LiveProductGallery({ products }: { products: CatalogProduct[] }) {
+  const activeProducts = products.filter((product) => product.active);
+  return (
+    <section className="panel shop-panel" id="products" aria-labelledby="products-title">
+      <div className="shop-panel__heading">
+        <div>
+          <p className="eyebrow">LIVE COMMERCE / BUYER LAUNCHER</p>
+          <h2 id="products-title">Shop the live company</h2>
+          <p>These are the actual products the autonomous company is selling right now.</p>
+        </div>
+        <div className="shop-panel__tools">
+          <StatusPill state="live" label={`${activeProducts.length} LIVE PRODUCTS`} compact />
+          <div className="shop-panel__quick-actions">
+            <a href="https://storefront-omega-three.vercel.app/" rel="noreferrer" target="_blank">
+              OPEN FULL STORE <ArrowUpRight aria-hidden="true" size={13} />
+            </a>
+            <a href="sms:+14153050091">
+              TEXT AI SHOPPER <MessageSquareText aria-hidden="true" size={13} />
+            </a>
+          </div>
+        </div>
+      </div>
+      <div className="shop-grid" aria-label="Live products">
+        {activeProducts.map((product) => {
+          const canBuy = isTrustedPaymentLink(product.url);
+          return (
+            <article className="shop-card" data-product-id={product.id} key={product.id}>
+              <ProductImage key={product.imageUrl ?? "no-image"} product={product} />
+              <div className="shop-card__body">
+                <div className="shop-card__status"><span>LIVE</span><small>{product.id}</small></div>
+                <h3>{product.name}</h3>
+                <strong className="shop-card__price">{formatMoney(product.priceMinor, product.currency)}</strong>
+                {product.description ? <p>{product.description}</p> : null}
+                <div className="shop-card__actions">
+                  {product.productUrl ? (
+                    <a
+                      aria-label={`View product ${product.name}`}
+                      href={product.productUrl}
+                      rel="noreferrer"
+                      target="_blank"
+                    >
+                      VIEW PRODUCT
+                    </a>
+                  ) : null}
+                  {canBuy ? (
+                    <a
+                      aria-label={`Buy now ${product.name}`}
+                      className="shop-card__buy"
+                      href={product.url}
+                      rel="noreferrer"
+                      target="_blank"
+                    >
+                      BUY NOW
+                    </a>
+                  ) : null}
+                </div>
+              </div>
+            </article>
+          );
+        })}
+      </div>
+    </section>
   );
 }
 
@@ -537,6 +637,9 @@ export function DashboardShell({ initialSnapshot }: { initialSnapshot: Dashboard
           <span className="brand__mark" aria-hidden="true">ZH</span>
           <span><strong>ZERO HUMAN</strong><small>CONTROL ROOM</small></span>
         </a>
+        <nav className="command-nav" aria-label="Control room shortcuts">
+          <a href="#products">SHOP LIVE</a>
+        </nav>
         <div className="command-header__status" aria-live="polite" aria-label="Data connection status">
           <StatusPill state={headerState} label={headerLabel} />
           <span className="sync-copy">{pollFailed ? "SHOWING LAST SAFE SNAPSHOT" : `UPDATED ${formatTime(snapshot.generatedAt)}`}</span>
@@ -548,6 +651,9 @@ export function DashboardShell({ initialSnapshot }: { initialSnapshot: Dashboard
           <h1 id="page-title">AUTONOMOUS COMPANY <span>— LIVE</span></h1>
           <p>It finds demand, validates with people, sells, fulfills, and learns — without waiting for a human operator.</p>
           <div className="hero__actions">
+            <a className="secondary-button" href="#products">
+              SHOP LIVE PRODUCTS <ArrowDown aria-hidden="true" size={14} />
+            </a>
             <a
               className="primary-button"
               href="https://storefront-omega-three.vercel.app/"
@@ -567,6 +673,7 @@ export function DashboardShell({ initialSnapshot }: { initialSnapshot: Dashboard
       <section className="metric-grid" aria-label="Company metrics">
         {metrics.map((metric) => <MetricCard key={metric.label} metric={metric} />)}
       </section>
+      <LiveProductGallery products={snapshot.catalog.data.products} />
       <AutonomousLoop activeStage={snapshot.activeStage} />
       <div className="dashboard-grid">
         <DecisionFeed snapshot={snapshot} />

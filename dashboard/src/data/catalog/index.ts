@@ -65,6 +65,9 @@ const parseProduct = (
 		asString(value.url) ??
 		asString(value.payment_link) ??
 		asString(value.payment_link_url);
+	const productUrl =
+		asString(value.productUrl) ?? asString(value.product_url);
+	const description = asString(value.description);
 	const images = asArray(value.images);
 	const imageUrl =
 		asString(value.imageUrl) ?? (images ? asString(images[0]) : undefined);
@@ -76,7 +79,9 @@ const parseProduct = (
 		source,
 		active,
 		promoted,
+		...(description ? { description } : {}),
 		...(url ? { url } : {}),
+		...(productUrl ? { productUrl } : {}),
 		...(imageUrl ? { imageUrl } : {}),
 	};
 };

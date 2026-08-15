@@ -50,13 +50,22 @@ type Snapshot = {
     data: {
       productCount: number;
       activeCount: number;
-      products: Array<{ active: boolean; url?: string }>;
+      products: Array<{
+        id: string;
+        name: string;
+        description?: string;
+        priceMinor: number | null;
+        active: boolean;
+        url?: string;
+        productUrl?: string;
+        imageUrl?: string;
+      }>;
     };
   };
   sponsors: Array<{ name: string; status: string; label: string }>;
 };
 
-test("aggregate endpoint returns an independently labeled snapshot", async ({ request }) => {
+test("aggregate endpoint returns an independently labeled snapshot", async ({ request }, testInfo) => {
   const response = await request.get("/api/dashboard");
   expect(response.status()).toBe(200);
   expect(response.headers()["cache-control"]).toContain("no-store");
@@ -104,6 +113,55 @@ test("aggregate endpoint returns an independently labeled snapshot", async ({ re
       product.url?.startsWith("https://buy.stripe.com/"),
     ),
   ).toBe(true);
+  const productIds = snapshot.catalog.data.products.map((product) => product.id);
+  expect(new Set(productIds).size).toBe(10);
+  expect(snapshot.catalog.data.products.every((product) => product.productUrl)).toBe(true);
+  expect(snapshot.catalog.data.products.every((product) => product.imageUrl)).toBe(true);
+  expect(snapshot.catalog.data.products.every((product) => product.description)).toBe(true);
+
+  const canonicalResponse = await request.get(
+    "https://storefront-omega-three.vercel.app/api/catalog",
+  );
+  expect(canonicalResponse.status()).toBe(200);
+  const canonical = (await canonicalResponse.json()) as Array<{
+    id: string;
+    name: string;
+    description: string;
+    price: number;
+    active: boolean;
+    payment_link: string;
+    product_url: string;
+    images: string[];
+  }>;
+  const activeCanonical = canonical.filter((product) => product.active);
+  expect(activeCanonical).toHaveLength(10);
+  for (const expected of activeCanonical) {
+    expect(snapshot.catalog.data.products).toContainEqual(
+      expect.objectContaining({
+        id: expected.id,
+        name: expected.name,
+        description: expected.description,
+        priceMinor: Math.round(expected.price * 100),
+        active: true,
+        url: expected.payment_link,
+        productUrl: expected.product_url,
+        imageUrl: expected.images[0],
+      }),
+    );
+  }
+  if (testInfo.project.name === "desktop-chromium") {
+    const targetResponses = await Promise.all(
+      activeCanonical.flatMap((product) => [
+        request.get(product.product_url),
+        request.get(product.images[0]),
+        request.get(product.payment_link),
+      ]),
+    );
+    expect(targetResponses).toHaveLength(30);
+    for (const targetResponse of targetResponses) {
+      expect(targetResponse.status()).toBe(200);
+    }
+  }
 
   if (snapshot.linq.meta.mode === "live") {
     expect(snapshot.linq.data.phoneNumber).toMatch(/415.?305.?0091/);
