@@ -30,6 +30,7 @@ CATALOG = [
         "name": "Mini Phone Stand",
         "images": ["https://images.example.test/phone-stand.jpg"],
         "stripe_id": "prod_phone",
+        "product_url": "https://store.example.test/product/mini-phone-stand",
         "payment_link": "https://buy.stripe.com/test_fixture_phone",
         "cost": 3,
         "price": 9,
@@ -39,6 +40,7 @@ CATALOG = [
         "name": "Ten Dollar Cable",
         "images": [],
         "stripe_id": "prod_cable",
+        "product_url": "https://store.example.test/product/ten-dollar-cable",
         "payment_link": "https://buy.stripe.com/test_fixture_cable",
         "cost": 4,
         "price": 10,
@@ -99,6 +101,7 @@ class LinqRuntimeTests(unittest.TestCase):
             {
                 "DATA_DIR": str(self.root / "data"),
                 "CATALOG_PATH": str(self.catalog_path),
+                "PUBLIC_STORE_URL": "https://store.example.test",
                 "LINQ_WEBHOOK_SECRET": "whsec_" + base64.b64encode(b"fixture-key").decode(),
             },
             clear=False,
@@ -308,7 +311,7 @@ class LinqRuntimeTests(unittest.TestCase):
         self.assertEqual(result["public_phone"], "")
         self.assertEqual(agent_runtime.PUBLIC_LINQ_PHONE, "")
 
-    def test_under_ten_reply_and_checkout_are_catalog_grounded(self) -> None:
+    def test_under_ten_reply_opens_grounded_product_page(self) -> None:
         calls: list[dict[str, object]] = []
 
         def fake_linq(
@@ -327,20 +330,89 @@ class LinqRuntimeTests(unittest.TestCase):
             result = agent_runtime.process_pending_event(str(queued["event_id"]))
         self.assertTrue(result["processed"])
         self.assertEqual(result["product_ids"], ["prod_phone"])
-        self.assertTrue(result["checkout_sent"])
+        self.assertFalse(result["checkout_sent"])
+        self.assertTrue(result["product_page_sent"])
         self.assertEqual(len(calls), 2)
         text_part = calls[0]["payload"]["message"]["parts"][0]
-        checkout_part = calls[1]["payload"]["message"]["parts"][0]
+        product_part = calls[1]["payload"]["message"]["parts"][0]
         self.assertIn("$9.00", text_part["value"])
+        self.assertNotIn("buy.stripe.com", text_part["value"])
+        self.assertEqual(product_part["type"], "link")
+        self.assertEqual(
+            product_part["value"], "https://store.example.test/product/mini-phone-stand"
+        )
+        event_types = self.event_types()
+        self.assertLess(event_types.index("product_selected"), event_types.index("product_page_sent"))
+        self.assertNotIn("checkout_link_sent", event_types)
+        self.assertFalse(any(event_type.startswith("band_") for event_type in event_types))
+
+    def test_link_experience_opens_storefront_product_page(self) -> None:
+        calls: list[dict[str, object]] = []
+
+        def fake_linq(
+            method: str,
+            path: str,
+            payload: dict[str, object] | None = None,
+            timeout_seconds: float = 6.0,
+        ) -> dict[str, object]:
+            del method, path, timeout_seconds
+            calls.append(payload or {})
+            return {"message": {"id": f"out_{len(calls)}"}}
+
+        os.environ["LINQ_API_KEY"] = "fixture-not-a-secret"
+        agent_runtime.LINK_EXPERIENCE_AVAILABLE = True
+        queued = agent_runtime.ingest_webhook(json.dumps(webhook_payload("evt_experience")))
+        with patch.object(agent_runtime, "_linq_request", side_effect=fake_linq):
+            result = agent_runtime.process_pending_event(str(queued["event_id"]))
+
+        self.assertTrue(result["imessage_card"])
+        experience = calls[1]["message"]["experience"]
+        self.assertEqual(experience["name"], "link")
+        self.assertEqual(experience["action"], "open")
+        self.assertEqual(
+            experience["params"]["url"],
+            "https://store.example.test/product/mini-phone-stand",
+        )
+        self.assertIn("View Mini Phone Stand", experience["params"]["title"])
+        self.assertNotIn("buy.stripe.com", json.dumps(calls))
+
+    def test_purchase_intent_after_discovery_sends_trusted_checkout(self) -> None:
+        calls: list[dict[str, object]] = []
+
+        def fake_linq(
+            method: str,
+            path: str,
+            payload: dict[str, object] | None = None,
+            timeout_seconds: float = 6.0,
+        ) -> dict[str, object]:
+            del method, path, timeout_seconds
+            calls.append(payload or {})
+            return {"message": {"id": f"out_{len(calls)}"}}
+
+        os.environ["LINQ_API_KEY"] = "fixture-not-a-secret"
+        first = agent_runtime.ingest_webhook(json.dumps(webhook_payload("evt_discovery")))
+        with patch.object(agent_runtime, "_linq_request", side_effect=fake_linq):
+            discovery = agent_runtime.process_pending_event(str(first["event_id"]))
+            second = agent_runtime.ingest_webhook(
+                json.dumps(webhook_payload("evt_purchase", "I'll take it"))
+            )
+            purchase = agent_runtime.process_pending_event(str(second["event_id"]))
+
+        self.assertTrue(discovery["product_page_sent"])
+        self.assertFalse(discovery["checkout_sent"])
+        self.assertTrue(purchase["checkout_sent"])
+        self.assertEqual(purchase["product_ids"], ["prod_phone"])
+        checkout_part = calls[3]["message"]["parts"][0]
         self.assertEqual(checkout_part["type"], "link")
         self.assertEqual(
             checkout_part["value"], "https://buy.stripe.com/test_fixture_phone"
         )
+        self.assertNotIn("buy.stripe.com", calls[2]["message"]["parts"][0]["value"])
         event_types = self.event_types()
-        self.assertLess(event_types.index("product_selected"), event_types.index("band_review_skipped"))
-        self.assertLess(event_types.index("band_review_skipped"), event_types.index("checkout_link_sent"))
+        self.assertIn("product_page_sent", event_types)
+        self.assertIn("checkout_link_sent", event_types)
 
-    def test_band_approve_precedes_grounded_checkout(self) -> None:
+    def test_band_approve_precedes_grounded_product_page(self) -> None:
         linq_calls: list[dict[str, object]] = []
         reviewed: list[band_gate.BandCandidate] = []
 
@@ -373,14 +445,18 @@ class LinqRuntimeTests(unittest.TestCase):
             result = agent_runtime.process_pending_event(str(queued["event_id"]))
 
         self.assertEqual(result["band_gate_status"], "approved")
-        self.assertTrue(result["checkout_sent"])
+        self.assertFalse(result["checkout_sent"])
+        self.assertTrue(result["product_page_sent"])
         self.assertEqual(len(reviewed), 1)
         review_json = json.dumps(reviewed[0].products)
         self.assertNotIn("payment_link", review_json)
         self.assertNotIn("buy.stripe.com", review_json)
         self.assertNotIn("cost", review_json)
-        checkout = linq_calls[1]["payload"]["message"]["parts"][0]
-        self.assertEqual(checkout["value"], "https://buy.stripe.com/test_fixture_phone")
+        product_page = linq_calls[1]["payload"]["message"]["parts"][0]
+        self.assertEqual(
+            product_page["value"],
+            "https://store.example.test/product/mini-phone-stand",
+        )
         event_types = self.event_types()
         ordered = [
             "inbound_message",
@@ -388,7 +464,7 @@ class LinqRuntimeTests(unittest.TestCase):
             "product_selected",
             "band_review_requested",
             "band_review_approved",
-            "checkout_link_sent",
+            "product_page_sent",
         ]
         positions = [event_types.index(event_type) for event_type in ordered]
         self.assertEqual(positions, sorted(positions))
@@ -615,9 +691,13 @@ class LinqRuntimeTests(unittest.TestCase):
 
         self.assertEqual(result["band_gate_status"], "approved_fallback")
         self.assertEqual(result["product_ids"], ["prod_phone"])
-        self.assertTrue(result["checkout_sent"])
-        checkout = linq_calls[1]["message"]["parts"][0]
-        self.assertEqual(checkout["value"], "https://buy.stripe.com/test_fixture_phone")
+        self.assertFalse(result["checkout_sent"])
+        self.assertTrue(result["product_page_sent"])
+        product_page = linq_calls[1]["message"]["parts"][0]
+        self.assertEqual(
+            product_page["value"],
+            "https://store.example.test/product/mini-phone-stand",
+        )
         event_types = self.event_types()
         self.assertEqual(event_types.count("product_selected"), 2)
         self.assertEqual(event_types.count("band_review_requested"), 2)
@@ -724,7 +804,7 @@ class LinqRuntimeTests(unittest.TestCase):
         ):
             result = process_linq_event(str(queued["event_id"]))
         self.assertTrue(result["processed"])
-        self.assertTrue(result["checkout_sent"])
+        self.assertTrue(result["product_page_sent"])
         self.assertGreater(len(list((self.root / "data" / "event_outbox").glob("*.json"))), 0)
 
     def test_rate_limit_stays_pending_for_recovery(self) -> None:

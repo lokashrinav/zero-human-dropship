@@ -84,11 +84,82 @@ def _validated_payment_link(item: dict[str, object]) -> str {
 }
 
 
+def _validated_store_base(public_store_url: str) -> str {
+    base = public_store_url.strip().rstrip("/");
+    parsed = urlparse(base);
+    if not base
+    or parsed.scheme != "https"
+    or not parsed.hostname
+    or parsed.username is not None
+    or parsed.password is not None
+    or parsed.path not in {"", "/"}
+    or parsed.query
+    or parsed.fragment {
+        raise ValueError("PUBLIC_STORE_URL must be an absolute HTTPS origin");
+    }
+    return base;
+}
+
+
+def _product_slug(name: str) -> str {
+    normalized = re.sub(r"^development product\s*[—-]\s*", "", name.casefold()) as str;
+    slug = re.sub(r"[^a-z0-9]+", "-", normalized).strip("-") as str;
+    if not slug {
+        raise ValueError("Catalog product name cannot produce a storefront slug");
+    }
+    return slug;
+}
+
+
+def _validated_product_url(
+    item: dict[str, object], name: str, public_store_url: str
+) -> str {
+    store_base = _validated_store_base(public_store_url)
+        if public_store_url.strip()
+        else "";
+    raw_url = item.get("product_url");
+    if raw_url is None {
+        if not store_base {
+            raise ValueError(
+                "Catalog requires product_url or a configured PUBLIC_STORE_URL"
+            );
+        }
+        return f"{store_base}/product/{_product_slug(name)}";
+    }
+    if not isinstance(raw_url, str) or not raw_url.strip() {
+        raise ValueError("Catalog field 'product_url' must be a non-empty string");
+    }
+    product_url = raw_url.strip();
+    parsed = urlparse(product_url);
+    if parsed.scheme != "https"
+    or not parsed.hostname
+    or not parsed.path.startswith("/product/")
+    or not parsed.path.removeprefix("/product/").strip("/")
+    or parsed.username is not None
+    or parsed.password is not None
+    or parsed.query
+    or parsed.fragment {
+        raise ValueError("product_url must be an absolute HTTPS product page URL");
+    }
+    if store_base and parsed.netloc != urlparse(store_base).netloc {
+        raise ValueError("product_url must use the configured storefront origin");
+    }
+    if "[" in product_url
+    or "]" in product_url
+    or "(" in product_url
+    or ")" in product_url {
+        raise ValueError("product_url must be a raw URL, not Markdown");
+    }
+    return product_url;
+}
+
+
 def validate_catalog_text(
     raw_text: str,
     source_path: str = "memory",
     allow_non_transactional: bool = False,
-    require_active: bool = False
+    require_active: bool = False,
+    public_store_url: str = ""
 ) -> CatalogSnapshot {
     parsed = json.loads(raw_text);
     if not isinstance(parsed, list) {
@@ -119,6 +190,7 @@ def validate_catalog_text(
         }
         description = _required_text(item, "description");
         images = _validated_images(item);
+        product_url = _validated_product_url(item, name, public_store_url);
         payment_link = _validated_payment_link(item);
         if not payment_link and not allow_non_transactional {
             raise ValueError(
@@ -138,6 +210,7 @@ def validate_catalog_text(
                     name=name,
                     images=images,
                     stripe_id=stripe_id,
+                    product_url=product_url,
                     payment_link=payment_link,
                     cost_cents=cost_cents,
                     price_cents=price_cents,
@@ -152,7 +225,10 @@ def validate_catalog_text(
     if not products {
         raise ValueError("Catalog must contain at least one active product");
     }
-    digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest() as str;
+    digest_input = (
+        raw_text + "\npublic_store_url=" + public_store_url.strip().rstrip("/")
+    );
+    digest = hashlib.sha256(digest_input.encode("utf-8")).hexdigest() as str;
     return CatalogSnapshot(
         products=products,
         version=f"sha256:{digest}",
@@ -162,7 +238,9 @@ def validate_catalog_text(
 }
 
 
-def load_catalog_file(path: str, production_mode: bool = False) -> CatalogSnapshot {
+def load_catalog_file(
+    path: str, production_mode: bool = False, public_store_url: str = ""
+) -> CatalogSnapshot {
     catalog_path = Path(path);
     if not catalog_path.is_file() {
         raise FileNotFoundError(f"Catalog not found: {path}");
@@ -173,6 +251,7 @@ def load_catalog_file(path: str, production_mode: bool = False) -> CatalogSnapsh
         allow_non_transactional=(
             not production_mode and catalog_path.name == "catalog.example.json"
         ),
-        require_active=production_mode
+        require_active=production_mode,
+        public_store_url=public_store_url
     );
 }

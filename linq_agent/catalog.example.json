@@ -3,6 +3,7 @@
     "name": "Pocket Cable Organizer",
     "images": [],
     "stripe_id": "prod_example_cable_organizer",
+    "product_url": "https://example.com/product/pocket-cable-organizer",
     "payment_link": "",
     "cost": 2.5,
     "price": 8.0,
@@ -12,6 +13,7 @@
     "name": "Mini Phone Stand",
     "images": [],
     "stripe_id": "prod_example_phone_stand",
+    "product_url": "https://example.com/product/mini-phone-stand",
     "payment_link": "",
     "cost": 3.0,
     "price": 9.0,
@@ -21,10 +23,10 @@
     "name": "USB Reading Light",
     "images": [],
     "stripe_id": "prod_example_reading_light",
+    "product_url": "https://example.com/product/usb-reading-light",
     "payment_link": "",
     "cost": 4.0,
     "price": 12.0,
     "description": "A flexible USB light for keyboards and travel. Example catalog entry only."
   }
 ]
-
