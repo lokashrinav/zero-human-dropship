@@ -18,6 +18,7 @@ obj Product {
     has name: str,
         images: list[str],
         stripe_id: str,
+        product_url: str,
         payment_link: str,
         cost_cents: int,
         price_cents: int,
@@ -37,7 +38,7 @@ obj ModelDecision {
 sem ModelDecision.intent = "One of greeting, discovery, product_search, product_question, checkout_request, acknowledgement, unknown, opt_out, resume.";
 sem ModelDecision.recommended_product_ids = "Zero to three stripe_id values copied exactly from the provided catalog candidates. Never invent an identifier.";
 sem ModelDecision.reply_text = "A concise suggestion with no URL, payment link, price, inventory claim, policy, or unsupported fact.";
-sem ModelDecision.should_send_checkout = "Whether the customer explicitly wants a grounded product recommendation or checkout. This is advisory only.";
+sem ModelDecision.should_send_checkout = "Whether the customer explicitly asks to buy or check out a grounded product. This is advisory only.";
 sem ModelDecision.reason = "A short classification reason without hidden chain of thought.";
 
 
@@ -230,7 +231,11 @@ def infer_intent(message: str, last_product_ids: list[str]) -> str {
             "check out",
             "payment link",
             "pay for",
-            "order it"
+            "order it",
+            "i want it",
+            "i'll take it",
+            "ill take it",
+            "i ll take it"
         ]
     ) {
         return Intent.CHECKOUT_REQUEST;
@@ -386,19 +391,48 @@ def price_text(price_cents: int) -> str {
 }
 
 
+def short_description(description: str, limit: int = 96) -> str {
+    cleaned = " ".join(description.split());
+    if not cleaned {
+        return "";
+    }
+    first_sentence = cleaned.split(".")[0].strip();
+    summary = f"{first_sentence}." if first_sentence else "";
+    if len(summary) <= limit {
+        return summary;
+    }
+    shortened = summary[:limit - 1].rstrip();
+    return shortened + "…";
+}
+
+
 def render_recommendations(products: list[Product]) -> str {
     if not products {
         return "I couldn't find that in our current catalog. Try a broader category or budget, and I'll check again.";
     }
-    lines: list[str] = ["Here are the best matches in our live catalog:"];
+    if len(products) == 1 {
+        product = products[0];
+        lines: list[str] = [
+            f"Best pick: {product.name} — {price_text(product.price_cents)}"
+        ];
+        summary = short_description(product.description);
+        if summary {
+            lines.append("");
+            lines.append(f"{summary} Want this one?");
+        }
+        return "\n".join(lines);
+    }
+    lines: list[str] = [];
     index = 1;
-    for product in products {
+    for product in products[:3] {
         lines.append(f"{index}. {product.name} — {price_text(product.price_cents)}");
-        if product.description {
-            lines.append(product.description[:180]);
+        summary = short_description(product.description);
+        if summary {
+            lines.append(f"   {summary}");
         }
         index += 1;
     }
+    lines.append("");
     lines.append(f"Best pick: {products[0].name}.");
     return "\n".join(lines);
 }
@@ -581,12 +615,11 @@ def build_sales_plan(
         }
     }
     product_ids = [product.stripe_id for product in ranked];
-    checkout = bool(ranked and ranked[0].payment_link);
     return SalesPlan(
         intent=Intent.PRODUCT_SEARCH,
         product_ids=product_ids,
         reply_text=render_recommendations(ranked),
-        should_send_checkout=checkout,
+        should_send_checkout=False,
         reason="grounded_catalog_match" if ranked else "no_catalog_match",
         used_model=used_model
     );

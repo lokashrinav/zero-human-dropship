@@ -1,6 +1,6 @@
 # Jac-first Linq autonomous sales agent
 
-An independently deployable, inbound-only iMessage sales service. A signed Linq webhook is acknowledged quickly, then Jac validates the live catalog, classifies the customer request, chooses up to three eligible products, optionally obtains a fail-closed Band Business Gate approval, sends an idempotent recommendation, attaches only a trusted Stripe Payment Link, and records durable dashboard events.
+An independently deployable, inbound-only iMessage sales service. A signed Linq webhook is acknowledged quickly, then Jac validates the live catalog, classifies the customer request, chooses up to three eligible products, optionally obtains a fail-closed Band Business Gate approval, sends an idempotent recommendation, opens the trusted storefront product page, and records dashboard events. A direct trusted Stripe Payment Link is reserved for explicit purchase intent.
 
 The Python surface is deliberately small: [`bridge.py`](./bridge.py) preserves the raw request body needed for Linq's Standard Webhooks signature and starts the ASGI server. Catalog rules, ranking, LLM validation, conversation state, Linq sends, idempotency, event recording, and checkout authorization are Jac.
 
@@ -16,9 +16,9 @@ cp .env.example .env
 jac x uvicorn bridge:app --host 0.0.0.0 --port 10000
 ```
 
-Populate environment variables through the shell or deployment secret manager. `.env` is ignored, and the service never logs secret values. `LINQ_API_KEY`, `LINQ_WEBHOOK_SECRET`, a checkout-ready catalog, and `PORT` are enough for deterministic operation; `ANTHROPIC_API_KEY`, `EVENT_SINK_URL`, and `PUBLIC_STORE_URL` are optional. The Band gate is disabled by default; enable it only by setting both `BAND_GATE_ENABLED=true` and `BAND_GATE_URL`. `LINQ_PHONE_NUMBER_ID` is intentionally absent because the current Partner v3 reply API uses the inbound chat UUID and subscription filters use optional E.164 phone numbers.
+Populate environment variables through the shell or deployment secret manager. `.env` is ignored, and the service never logs secret values. Production requires `LINQ_API_KEY`, `LINQ_WEBHOOK_SECRET`, `PUBLIC_STORE_URL`, a checkout-ready catalog, and `PORT`; `ANTHROPIC_API_KEY` and `EVENT_SINK_URL` are optional. The Band gate is disabled by default; enable it only by setting both `BAND_GATE_ENABLED=true` and `BAND_GATE_URL`. `LINQ_PHONE_NUMBER_ID` is intentionally absent because the current Partner v3 reply API uses the inbound chat UUID and subscription filters use optional E.164 phone numbers.
 
-`catalog.example.json` is intentionally non-transactional: its payment links are empty, not fake. Production accepts either `CATALOG_URL` (preferred when present, refreshed at most every 30 seconds) or `CATALOG_PATH`. With `PRODUCTION_MODE=true`, the example catalog is never used, every row must include a boolean `active` field, inactive rows are excluded, and every active row requires a real Stripe product ID and raw `https://buy.stripe.com/...` Payment Link. Images may be empty, but every supplied image must be an absolute HTTPS URL. The complete candidate catalog validates before an atomic swap; a malformed refresh leaves the last-known-good production catalog active.
+`catalog.example.json` is intentionally non-transactional: its payment links are empty, not fake. Production accepts either `CATALOG_URL` (preferred when present, refreshed at most every 30 seconds) or `CATALOG_PATH`. With `PRODUCTION_MODE=true`, the example catalog is never used, every row must include a boolean `active` field, inactive rows are excluded, and every active row requires a real Stripe product ID and raw `https://buy.stripe.com/...` Payment Link. `product_url` may be supplied by the catalog; otherwise Jac derives it deterministically as `${PUBLIC_STORE_URL}/product/<slug>` using the storefront's verified slug algorithm. Explicit product URLs must be same-origin storefront HTTPS URLs. Images may be empty, but every supplied image must be an absolute HTTPS URL. The complete candidate catalog validates before an atomic swap; a malformed refresh leaves the last-known-good production catalog active.
 
 ## Validate
 
@@ -40,6 +40,7 @@ Production catalog rows use this exact extension of the original contract:
   "name": "Real product",
   "images": ["https://..."],
   "stripe_id": "prod_...",
+  "product_url": "https://store.example/product/real-product",
   "payment_link": "https://buy.stripe.com/...",
   "cost": 4.5,
   "price": 9.0,
@@ -48,7 +49,7 @@ Production catalog rows use this exact extension of the original contract:
 }
 ```
 
-`cost` is optional internal metadata and defaults to zero/unknown when omitted; it is never exposed to the model, customer, Band gate, or public event API.
+`product_url` is optional in the input only when `PUBLIC_STORE_URL` is configured and the deterministic storefront route can be derived. Every validated in-memory product has both `product_url` and `payment_link`. `cost` is optional internal metadata and defaults to zero/unknown when omitted; it is never exposed to the model, customer, Band gate, or public event API.
 
 ## Linq v3 integration
 
@@ -68,7 +69,7 @@ curl --request POST 'https://api.linqapp.com/api/partner/v3/webhook-subscription
 
 Save the response's one-time `signing_secret` as `LINQ_WEBHOOK_SECRET`. Add `phone_numbers` only if an E.164 subscription filter is desired. There is no documented Partner v3 “test webhook” endpoint: test the real integration by sending an inbound message to the provisioned sandbox/number and inspect Linq delivery logs.
 
-Normal sends use `POST /api/partner/v3/chats/{chat.id}/messages`. The recommendation and checkout have separate deterministic idempotency keys. Checkout is either a sole rich `link` part copied byte-for-byte from the validated catalog or, when `GET /v3/experiences` proves the account supports `link/open`, a Linq-native Experience. In Experience mode the trusted URL is also present in the normal text reply, so an async card failure cannot break checkout. A direct `imessage_app` part is not fabricated: that requires a real Apple Messages extension team and bundle identity.
+Normal sends use `POST /api/partner/v3/chats/{chat.id}/messages`. The recommendation text, product-page action, and checkout action have separate deterministic idempotency keys. Discovery opens the validated `product_url` as a sole rich `link` part or, when `GET /v3/experiences` proves the account supports `link/open`, a Linq-native Experience titled `View <product> — <price>`. The normal prose contains no raw URL. Explicit purchase intent such as “buy it,” “checkout,” or “I'll take it” sends the validated Stripe `payment_link` instead. A direct `imessage_app` part is not fabricated: that requires a real Apple Messages extension team and bundle identity.
 
 Relevant official references: [webhook verification](https://docs.linqapp.com/guides/webhooks/), [event schema](https://docs.linqapp.com/guides/webhooks/events/), [subscriptions](https://docs.linqapp.com/guides/webhooks/subscriptions/), [send message](https://docs.linqapp.com/api/resources/chats/subresources/messages/methods/send/), [Experiences](https://docs.linqapp.com/guides/messaging/experiences/), and [inbound-first best practices](https://docs.linqapp.com/getting-started/best-practices/).
 
@@ -105,7 +106,7 @@ Band returns HTTP 2xx with exactly one deterministic decision:
 
 APPROVE permits the selected recommendation. BLOCK removes that primary product, selects the next deterministic eligible catalog product, and requests one more review. Missing configuration, timeout, non-2xx, malformed response, or a fallback that is not approved produces a neutral reply with no product, price, or checkout link. The same stable `review_id` is reused after Linq job recovery. Payment URLs, product cost, phone numbers, raw customer messages, secrets, prompts, and model output are never sent to Band.
 
-Dashboard order for an approved gated sale is `inbound_message` → `intent_detected` → `product_selected` → `band_review_requested` → `band_review_approved` → `product_recommended` → `checkout_link_sent`.
+Dashboard order for an approved gated discovery is `inbound_message` → `intent_detected` → `product_selected` → `band_review_requested` → `band_review_approved` → `product_recommended` → `product_page_sent`. Explicit purchase intent ends with `checkout_link_sent`. When Band is disabled, no `band_*` events are emitted.
 
 ## Safe live Linq authentication check
 
