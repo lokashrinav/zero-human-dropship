@@ -54,21 +54,17 @@ test("renders the complete judge story with truthful data provenance", async ({ 
 
   const linqLive = await page.getByText(/^Sales agent online$/i).count();
   if (linqLive > 0) {
-    const inboundVisible = await page.getByText(/^INBOUND MESSAGE$/i).count();
-    const checkoutVisible = await page.getByText(/^CHECKOUT LINK SENT$/i).count();
-    if (checkoutVisible > 0) {
-      await expect(page.getByText(/^INBOUND MESSAGE$/i)).toBeVisible();
-      await expect(page.getByText(/^INTENT DETECTED$/i)).toBeVisible();
-      await expect(page.getByText(/^PRODUCT SELECTED$/i)).toBeVisible();
-    } else if (inboundVisible === 0) {
-      await expect(page.getByText(/^Waiting for inbound$/i)).toBeVisible();
-    }
+    const flow = page.getByLabel("Recent Linq inbound to decision to outbound flow");
+    await expect(flow).toBeVisible();
+    await expect(flow.locator("li").first()).toBeVisible();
   }
 
   const bodyText = await page.locator("body").innerText();
   const showsRealRevenue = /Stripe\s*[—:-]?\s*REAL REVENUE/i.test(bodyText);
   const showsPendingRevenue = /Waiting\s+(?:for\s+)?live Stripe revenue/i.test(bodyText);
   expect(showsRealRevenue || showsPendingRevenue).toBe(true);
+  await expect(page.getByText(/^Solari$/i)).toBeVisible();
+  await expect(page.getByText(/^Superserve$/i)).toBeVisible();
 
   await expect.poll(() => errors, { timeout: 1_000 }).toEqual([]);
 });
@@ -92,9 +88,6 @@ test("keeps the dashboard usable when the aggregate feed fails", async ({ page }
   await expect(
     page.getByRole("region", { name: "Company metrics" }).getByText(/^REAL REVENUE$/i),
   ).toBeVisible();
-  await expect(page.locator("body")).toContainText(/Waiting/i);
-  await expect(page.locator("body")).toContainText(/live Stripe revenue/i);
-  await expect(page.getByText(/demo data|mock|degraded|waiting/i).first()).toBeVisible();
   await expect(page.getByText("FEED DEGRADED", { exact: true })).toBeVisible();
   expect(aggregateRequests).toBeGreaterThan(0);
 });

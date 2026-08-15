@@ -26,6 +26,7 @@ const eventTypes = new Set<LinqEventType>([
 	"sales_agent",
 	"product_selected",
 	"recommendation",
+	"product_page_sent",
 	"payment_link_sent",
 	"payment_completed",
 	"order_fulfilled",
@@ -47,6 +48,7 @@ const eventTypeAliases: Record<string, LinqEventType> = {
 	intent_detected: "sales_agent",
 	product_selected: "product_selected",
 	product_recommended: "recommendation",
+	product_page_sent: "product_page_sent",
 	checkout_link_sent: "payment_link_sent",
 	customer_response: "inbound_message",
 	conversion: "payment_completed",
@@ -61,7 +63,13 @@ const stageForEvent = (type: LinqEventType): AutonomousLoopStage => {
 
 const directionForEvent = (type: LinqEventType): LinqEvent["direction"] => {
 	if (type === "inbound_message" || type === "feedback_received") return "inbound";
-	if (type === "payment_link_sent" || type === "recommendation") return "outbound";
+	if (
+		type === "payment_link_sent" ||
+		type === "product_page_sent" ||
+		type === "recommendation"
+	) {
+		return "outbound";
+	}
 	return "internal";
 };
 

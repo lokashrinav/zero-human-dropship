@@ -76,11 +76,19 @@ test("aggregate endpoint returns an independently labeled snapshot", async ({ re
   }
 
   expect(snapshot.sponsors.map((sponsor) => sponsor.name).sort()).toEqual(
-    ["Band", "Linq", "Pioneer", "Render", "Replay", "Stripe", "Terac"],
+    ["Band", "Linq", "Pioneer", "Render", "Replay", "Solari", "Stripe", "Superserve", "Terac"],
   );
 
   const pioneer = snapshot.sponsors.find((sponsor) => sponsor.name === "Pioneer");
   expect(pioneer).toMatchObject({ status: "verified", label: "VERIFIED" });
+  expect(snapshot.sponsors.find((sponsor) => sponsor.name === "Solari")).toMatchObject({
+    status: "verified",
+    label: "VERIFIED",
+  });
+  expect(snapshot.sponsors.find((sponsor) => sponsor.name === "Superserve")).toMatchObject({
+    status: "pending",
+    label: "PENDING",
+  });
   expect(snapshot.catalog.meta.mode).toBe("live");
   expect(snapshot.catalog.data.productCount).toBe(10);
   expect(snapshot.catalog.data.activeCount).toBe(10);
@@ -137,9 +145,15 @@ test("never serializes fixture revenue as real revenue", async ({ request }) => 
   const snapshot = (await response.json()) as Snapshot;
 
   if (snapshot.revenue.meta.mode === "live") {
-    expect(snapshot.revenue.data.amountMinor).toBeGreaterThan(0);
-    expect(snapshot.revenue.data.orders).toBeGreaterThan(0);
-    expect(snapshot.revenue.data.statusText).toMatch(/live Stripe revenue/i);
+    expect(snapshot.revenue.data.amountMinor).toBeGreaterThanOrEqual(0);
+    expect(snapshot.revenue.data.orders).toBeGreaterThanOrEqual(0);
+    if ((snapshot.revenue.data.amountMinor ?? 0) > 0) {
+      expect(snapshot.revenue.data.orders).toBeGreaterThan(0);
+      expect(snapshot.revenue.data.statusText).toMatch(/live Stripe revenue/i);
+    } else {
+      expect(snapshot.revenue.data.orders).toBe(0);
+      expect(snapshot.revenue.data.statusText).toMatch(/no live Stripe revenue/i);
+    }
   } else {
     expect(snapshot.revenue.data.amountMinor).toBeNull();
     expect(snapshot.revenue.data.orders).toBeNull();

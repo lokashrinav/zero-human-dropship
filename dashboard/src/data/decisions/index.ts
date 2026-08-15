@@ -1,6 +1,8 @@
 import {
 	asArray,
 	asIsoDate,
+	asNonNegativeInteger,
+	asNumber,
 	asString,
 	getErrorMessage,
 	integrationMeta,
@@ -74,6 +76,94 @@ const parseDecision = (value: unknown): CeoDecision | undefined => {
 	};
 };
 
+const nativeKindForAction = (action: string): CeoDecision["kind"] => {
+	if (action === "reprice") return "repriced_product";
+	if (action === "shift_focus") return "changed_promotion";
+	if (action === "drop_product") return "removed_product";
+	return "other";
+};
+
+const nativeStageForAction = (action: string): AutonomousLoopStage => {
+	if (action === "shift_focus") return "sell";
+	if (action === "source_product") return "source";
+	return "learn";
+};
+
+const nativeTitleForAction = (action: string) => {
+	if (action === "reprice") return "REPRICED PRODUCT";
+	if (action === "shift_focus") return "SHIFTED CHANNEL FOCUS";
+	if (action === "no_action") return "HELD BUSINESS STATE";
+	if (action === "drop_product") return "REMOVED PRODUCT";
+	return action.replaceAll("_", " ").toUpperCase();
+};
+
+const nativeActionDescription = (value: Record<string, unknown>, action: string) => {
+	const status = asString(value.status)?.toUpperCase();
+	const suffix = status ? ` · ${status}` : "";
+	if (action === "reprice") {
+		const productId = asString(value.product_id);
+		const priceMinor = asNonNegativeInteger(value.new_price_cents);
+		if (productId && priceMinor !== undefined) {
+			return `Set ${productId} to $${(priceMinor / 100).toFixed(2)}${suffix}`;
+		}
+	}
+	if (action === "shift_focus") {
+		const channel = asString(value.channel);
+		if (channel) return `Dispatched ${channel.replaceAll("_", " ")}${suffix}`;
+	}
+	if (action === "no_action") return `Held catalog and pricing${suffix}`;
+	return `${action.replaceAll("_", " ")}${suffix}`;
+};
+
+const parseNativeCycle = (value: unknown): CeoDecision[] => {
+	if (!isRecord(value)) return [];
+	const agent = asString(value.agent);
+	const message = asString(value.message);
+	const timestampSeconds = asNumber(value.ts);
+	if (
+		!agent ||
+		!message ||
+		timestampSeconds === undefined ||
+		!/^CEO(?: AGENT)?$/i.test(agent) ||
+		!message.startsWith("Claude Code cycle:")
+	) {
+		return [];
+	}
+
+	const jsonStart = message.indexOf("{");
+	if (jsonStart < 0) return [];
+	let cycle: unknown;
+	try {
+		cycle = JSON.parse(message.slice(jsonStart));
+	} catch {
+		return [];
+	}
+	if (!isRecord(cycle)) return [];
+	const actions = asArray(cycle.actions) ?? [];
+	const timestamp = new Date(timestampSeconds * 1_000).toISOString();
+	return actions.flatMap((rawAction, index) => {
+		if (!isRecord(rawAction)) return [];
+		const actionName = asString(rawAction.action);
+		const reason = asString(rawAction.reason);
+		if (!actionName || !reason) return [];
+		return [{
+			id: `person-a-${Math.floor(timestampSeconds * 1_000)}-${index}-${actionName}`,
+			timestamp,
+			agent: "CEO AGENT",
+			title: nativeTitleForAction(actionName),
+			kind: nativeKindForAction(actionName),
+			reason,
+			action: nativeActionDescription(rawAction, actionName),
+			stage: nativeStageForAction(actionName),
+		} satisfies CeoDecision];
+	});
+};
+
+const parseDecisionEntries = (value: unknown): CeoDecision[] => {
+	const normalized = parseDecision(value);
+	return normalized ? [normalized] : parseNativeCycle(value);
+};
+
 const parseDecisions = (payload: unknown) => {
 	const values = isRecord(payload) ? asArray(payload.decisions) : asArray(payload);
 	if (!values) {
@@ -81,8 +171,7 @@ const parseDecisions = (payload: unknown) => {
 	}
 
 	const decisions = values
-		.map(parseDecision)
-		.filter((decision): decision is CeoDecision => decision !== undefined)
+		.flatMap(parseDecisionEntries)
 		.sort(
 			(left, right) =>
 				Date.parse(right.timestamp) - Date.parse(left.timestamp),

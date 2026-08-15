@@ -75,6 +75,8 @@ const sponsorRoles: Record<SponsorName, string> = {
   Band: "Agent coordination",
   Render: "Workflow execution",
   Replay: "QA verification",
+  Superserve: "Sandbox execution",
+  Solari: "Cloud browser audit",
 };
 
 const eventIcons: Partial<Record<LinqEvent["type"], Icon>> = {
@@ -82,18 +84,12 @@ const eventIcons: Partial<Record<LinqEvent["type"], Icon>> = {
   sales_agent: Bot,
   product_selected: Box,
   recommendation: Sparkles,
+  product_page_sent: Link2,
   payment_link_sent: Link2,
   payment_completed: CircleDollarSign,
   order_fulfilled: PackageCheck,
   feedback_received: UsersRound,
 };
-
-const linqFlowMilestones = new Set<LinqEvent["type"]>([
-  "inbound_message",
-  "sales_agent",
-  "product_selected",
-  "payment_link_sent",
-]);
 
 const formatMoney = (minor: number | null | undefined, currency = "USD") => {
   if (minor === null || minor === undefined) return "—";
@@ -253,6 +249,15 @@ function DecisionFeed({ snapshot }: { snapshot: DashboardSnapshot }) {
 
 function LinqFlow({ snapshot }: { snapshot: DashboardSnapshot }) {
   const { data, meta } = snapshot.linq;
+  const outboundMilestone = data.events.some((event) => event.type === "payment_link_sent")
+    ? "payment_link_sent"
+    : "product_page_sent";
+  const linqFlowMilestones = new Set<LinqEvent["type"]>([
+    "inbound_message",
+    "sales_agent",
+    "product_selected",
+    outboundMilestone,
+  ]);
   const flow = [...data.events]
     .filter((event) => linqFlowMilestones.has(event.type))
     .sort((left, right) => Date.parse(left.timestamp) - Date.parse(right.timestamp))

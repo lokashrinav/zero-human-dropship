@@ -1,71 +1,64 @@
-# ZERO HUMAN — Judge Dashboard Handoff
+# ZERO HUMAN — Final Dashboard Live Integration Handoff
 
-Checkpoint: 2026-08-15 2:21 PM America/Los_Angeles
-Production deployment: `dpl_7BNE4hJJjJeWgKBkkT1CqywFNnWF`
+Checkpoint: 2026-08-15 2:44 PM America/Los_Angeles
+Branch: `codex/b-dashboard-final`
+Production deployment: `dpl_S1u8VJRbrVBhRQvjuffT9FXzJA57` (Ready; production alias preserved)
 
 ## Dashboard
 
 - Production: https://zero-human-control-room.vercel.app
-- Local app: `/Users/aradhyamishra/zero-human-dropship-master/dashboard`
-- Stable route: `/`
-- Aggregate polling route: `/api/dashboard`
-- Refresh interval: 4 seconds while the page is visible
-
-## Verified production state
-
-- Dashboard: **LIVE on Vercel**; required alias points to a `READY` production deployment.
-- Catalog: **REAL / LIVE** from `https://storefront-omega-three.vercel.app/api/catalog` — 10/10 active products, prices $3.49–$8.99, and 10 distinct `buy.stripe.com` Payment Links.
-- Stripe commerce: **REAL COMMERCE** — catalog and checkout links are live.
-- Stripe revenue: **WAITING** — revenue and orders remain `null`. Vercel would not export the storefront's sensitive encrypted key, so the dashboard still needs either its own server-only `STRIPE_SECRET_KEY` or an attested `STRIPE_REVENUE_URL`. Products and Payment Links are not counted as revenue.
-- Pioneer: **VERIFIED REAL RUN** — GPT-OSS 120B inference PASS, Fastino GLiNER2 validation PASS, three-product pipeline PASS, top ranking `demo-cable (95)`, verified `2026-08-15T19:20:56.289815Z`. This is historical evidence, not a live Pioneer service.
-- Linq: **LIVE** at `https://zero-human-linq-agent.onrender.com` — public status/events endpoints are HTTP 200 and the agent is online at `+1 415-305-0091`. A complete real inbound conversation, catalog-grounded recommendation, and trusted Stripe checkout link were verified at `2026-08-15T20:56:57Z`. Render restarted at `2026-08-15T21:12:13Z`, clearing the service's in-memory history; at this checkpoint a fresh real flow reports 1 conversation, 1 recommendation, and 0 payment links sent. The dashboard renders current API values rather than fixed demo counts.
-- Terac: **VERIFIED / REAL HUMAN FEEDBACK** — real Terac MCP study `w14sbyed2iixiz76o5ass608` produced 10/10 approved responses and 100 ratings. USB-C Cable ranked first at 3.9/5; Laptop Cooling Pad ranked second at 3.8/5 and had the most most-likely selections (3). Phone Ring Light and Portable Mini Fan tied for lowest at 2.5/5. The immutable before snapshot, aggregate, after snapshot, and MCP audit live in `terac/`. Public feed: https://storefront-omega-three.vercel.app/api/terac-feedback.
-- Person A CEO decisions: **LIVE** — the data-backed `terac_reorder` decision moved USB-C Cable from #2 to #1 and Magnetic Phone Mount from #9 to #3 without changing prices, Payment Links, shipping, products, or claimed outcomes. Public feed: https://storefront-omega-three.vercel.app/api/ceo-decisions.
-- Band: **DISABLED** — intentionally not part of the active loop and not treated as an error.
-- Render: **PENDING PROOF CHIP** — Linq is publicly deployed on Render, but no independent Render status/verification feed is configured for the dashboard sponsor chip.
-- Replay: **PENDING** — Playwright QA passed, but no actual Replay verification artifact/endpoint exists.
-
-No unavailable source falls back to fabricated conversations, decisions, Terac results, revenue, or catalog values. A failed panel degrades independently and cannot blank the dashboard.
-
-## Safe static Pioneer proof
-
-The credential-free evidence adapter is `dashboard/src/data/pioneer/index.ts`. Its values were checked against `pioneer-product-intelligence/data/recent_runs.jsonl` and the model constants in `pioneer-product-intelligence/product_intelligence.jac`. It explicitly records `serviceLive: false` and contains no credential.
+- Storefront: https://storefront-omega-three.vercel.app
+- Aggregate feed: https://zero-human-control-room.vercel.app/api/dashboard
+- The approved UI and four-second polling/fallback architecture are unchanged.
 
 ## Production integration configuration
 
-All integration variables are server-side. Never prefix them with `NEXT_PUBLIC_`.
+All values are server-side Vercel Production variables. None use `NEXT_PUBLIC_`.
 
+- `CEO_DECISIONS_URL=https://without-thinks-harvest-huge.trycloudflare.com/api/decisions?limit=100`
 - `TERAC_FEEDBACK_URL=https://storefront-omega-three.vercel.app/api/terac-feedback`
-- `CEO_DECISIONS_URL=https://storefront-omega-three.vercel.app/api/ceo-decisions`
 - `LINQ_BASE_URL=https://zero-human-linq-agent.onrender.com`
-- Linq follow-up required: **none**; both public endpoints are connected and verified.
-- Terac/CEO follow-up required: **none**; both public feeds are connected and verified.
-- Stripe revenue one-line follow-up with a dedicated server-side key: `cd /Users/aradhyamishra/zero-human-dropship-master/dashboard && printf '%s' '<STRIPE_SECRET_KEY>' | npx vercel env add STRIPE_SECRET_KEY production --sensitive --yes && npx vercel deploy --prod --yes`
+- `STRIPE_REVENUE_URL=https://without-thinks-harvest-huge.trycloudflare.com/api/stats`
 
-The Linq adapter will call `GET /api/status` and `GET /api/events?cursor=0&limit=100`. Exact response contracts, catalog variants, Terac input, and revenue attestation are in [`dashboard/INTEGRATION_CONTRACTS.md`](dashboard/INTEGRATION_CONTRACTS.md).
+The Person A Cloudflare tunnel is ephemeral. If it changes, replace both Person A URLs and redeploy; do not create a second CEO or decision feed.
 
-## 60-second judge flow
+## Verified live state
 
-1. **0–8s:** Open production. Point to `AUTONOMOUS COMPANY — LIVE`, then the metric row: 10 products are live; revenue truthfully says waiting.
-2. **8–18s:** Open one promoted product name to show its real Stripe checkout. Say: “Ten live products and ten real Payment Links; products are never counted as revenue.”
-3. **18–30s:** Trace `SOURCE → VALIDATE WITH HUMANS → LIST → SELL → FULFILL → LEARN ↺`. Point to `SELL` as the active stage from the real Linq event stream.
-4. **30–40s:** Point to Pioneer `VERIFIED`: GPT-OSS 120B + Fastino GLiNER2 passed a real three-product run. Clarify that it is verified historical evidence, not an always-on service.
-5. **40–50s:** Show Linq `LIVE` at `+1 415-305-0091`. If the in-memory flow is present, trace `INBOUND MESSAGE → SALES AGENT → PRODUCT SELECTED → CHECKOUT LINK SENT`; after a Render restart, send a fresh inbound text to recreate the live flow.
-6. **50–57s:** Show the real 10-person Terac result and the CEO decision: USB-C Cable moved from #2 to #1 while products, prices, copy, availability, and checkout links stayed unchanged. Make no sales-improvement claim.
-7. **57–60s:** Sweep the sponsor chips: real/verified, pending, and disabled are visibly distinct.
+- **CEO — LIVE:** Person A's public `/api/decisions` feed returns HTTP 200. The dashboard parses only real `CEO` cycle actions from the native audit format. Six real actions currently render; no outcome is added unless a source provides one.
+- **Terac — VERIFIED:** completed study `w14sbyed2iixiz76o5ass608`, 10 approved respondents / 100 ratings. USB-C Cable ranked highest at 3.9/5; Phone Ring Light and Portable Mini Fan tied lowest at 2.5/5. The real autonomous change moved USB-C Cable #2 → #1 and Magnetic Phone Mount #9 → #3.
+- **Linq — LIVE:** `https://zero-human-linq-agent.onrender.com/api/status` and `/api/events?cursor=0&limit=100` return HTTP 200. At this checkpoint the safe feed reports one real conversation, two recommendations, zero checkout links, and real `PRODUCT PAGE SENT` events. A complete trusted checkout-link flow was verified before the service restart.
+- **Stripe revenue — LIVE:** Person A's server-side Stripe stats report one successful $3.49 charge and one order. The public decision trail identifies it as a self-purchase end-to-end test transaction. No Stripe secret is stored in or serialized by the dashboard.
+- **Pioneer — VERIFIED:** historical real GPT-OSS 120B inference PASS, Fastino GLiNER2 validation PASS, and three-product pipeline PASS. This is not presented as a continuously live service.
+- **Render — VERIFIED:** the responding Linq service is deployed at a public `.onrender.com` URL.
+- **Solari — VERIFIED:** Person A's public audit trail records a completed live storefront audit through the Solari cloud browser at 1:36 PM PT.
+- **Superserve — PENDING:** integration code exists, but neither the repository nor public audit feed proves a successful real sandbox run.
+- **Replay — PENDING:** the repository contains the QA checklist and Playwright results, but no actual Replay report/artifact.
+- **Band — DISABLED:** intentionally disabled and not treated as a company failure.
+
+## Person A operational proof audit
+
+- **Fulfillment:** Stripe-to-order detection is verified by the $3.49 transaction. The public log says the daemon and alert watcher detected it, but real supplier fulfillment remains manual/Amazon and CJ is dormant; do not claim autonomous physical delivery.
+- **Tracked-link attribution:** `/api/revenue/stats` is publicly deployed and returns HTTP 200, but currently reports zero campaigns, clicks, conversions, and attributed revenue.
+- **FB Marketplace:** Person A's public audit trail reports 10/10 listings active plus a public store-link post. No independent Replay/browser artifact is committed.
+- **Product images:** ten JPG files exist in `product_images/`, but production catalog rows still have zero images. The newest conversion-agent audit says those files are generic/mismatched and must not be published as exact product proof.
+- `OPERATIONS_HANDOFF.md` and `dashboard/HANDOFF.md` were not present on current master.
+
+## Revenue and catalog truth
+
+- Dashboard revenue is read only from Person A's safe server-side `/api/stats` response. Positive totals require a positive charge record.
+- A live feed with zero charges renders `$0.00` and `0` orders rather than a fixture.
+- The storefront catalog still exposes 10 active Payment Links, but it has not yet incorporated the CEO's newer reprices or valid exact product imagery. Catalog re-sync belongs to the storefront/CEO lanes.
 
 ## Verification
 
 - TypeScript: PASS
 - Next.js production build: PASS
-- Existing Playwright suite: 12/12 PASS locally at 1440×900 and 390×844
-- Existing Playwright suite: 12/12 PASS against production at 1440×900 and 390×844
-- Forced aggregate-feed 503: PASS; last safe snapshot remains visible with `FEED DEGRADED`
-- Production `/api/dashboard`: HTTP 200, `Cache-Control: no-store`
-- Production catalog state: 10 products, 10 active, 10 Stripe links
-- Production Linq state: online; complete 1/1/1 sales flow verified before restart, current post-restart checkpoint 1 conversation / 1 recommendation / 0 payment links sent
-- Production Terac/CEO state: 10-person study and 1 real `terac_reorder` decision; no fabricated outcome
-- Desktop visual QA: 1440×900, no overflow, no console errors
-- Mobile visual QA: 390×844, no overflow, no console errors
+- Existing Playwright suite with all real URLs: 12/12 PASS at 1440×900 and 390×844
+- Forced aggregate-feed failure: PASS; last safe snapshot remains visible with `FEED DEGRADED`
+- Secret serialization test: PASS
+- Vercel deployment: PASS; deployment `dpl_S1u8VJRbrVBhRQvjuffT9FXzJA57` is Ready and aliased to the existing production URL
+- Production aggregate API: PASS; HTTP 200 with `Cache-Control: no-store`
+- Production Playwright: 12/12 PASS at 1440×900 and 390×844
+- Production visual/console smoke: PASS at desktop and mobile; zero console errors or warnings
 
-Replay steps and evidence requirements remain in [`REPLAY_CHECKLIST.md`](REPLAY_CHECKLIST.md).
+Exact response contracts and native Person A normalization are documented in [`dashboard/INTEGRATION_CONTRACTS.md`](dashboard/INTEGRATION_CONTRACTS.md).

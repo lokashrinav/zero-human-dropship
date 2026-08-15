@@ -34,6 +34,7 @@ export type LinqEventType =
 	| "sales_agent"
 	| "product_selected"
 	| "recommendation"
+	| "product_page_sent"
 	| "payment_link_sent"
 	| "payment_completed"
 	| "order_fulfilled"
@@ -156,7 +157,9 @@ export type SponsorName =
 	| "Linq"
 	| "Band"
 	| "Render"
-	| "Replay";
+	| "Replay"
+	| "Superserve"
+	| "Solari";
 
 export type SponsorProof = {
 	name: SponsorName;

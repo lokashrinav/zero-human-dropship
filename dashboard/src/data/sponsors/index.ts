@@ -11,6 +11,7 @@ import type {
 } from "../contracts";
 import { dashboardConfig } from "../config";
 import { fetchJson } from "../http";
+import { getPersonAProofs } from "../person-a-proof";
 import { getPioneerProof } from "../pioneer";
 
 type CorePanels = {
@@ -81,12 +82,21 @@ const probeProof = async (options: ProbeOptions): Promise<SponsorProof> => {
 	}
 };
 
+const isRenderUrl = (value: string | undefined) => {
+	if (!value) return false;
+	try {
+		return new URL(value).hostname.endsWith(".onrender.com");
+	} catch {
+		return false;
+	}
+};
+
 export const getSponsorProofs = async (
 	panels: CorePanels,
 ): Promise<SponsorProof[]> => {
 	const { bandUrl, bandToken, renderUrl, renderToken, replayUrl, replayToken } =
 		dashboardConfig.proof;
-	const [render, replay] = await Promise.all([
+	const [renderProbe, replay] = await Promise.all([
 		probeProof({
 			name: "Render",
 			activeLabel: "WORKFLOW EXECUTION",
@@ -101,6 +111,19 @@ export const getSponsorProofs = async (
 			replay: true,
 		}),
 	]);
+	const render =
+		panels.linq.meta.mode === "live" &&
+		(isRenderUrl(dashboardConfig.linq.baseUrl) ||
+			isRenderUrl(dashboardConfig.linq.statusUrl) ||
+			isRenderUrl(dashboardConfig.linq.eventsUrl))
+			? {
+					name: "Render",
+					status: "verified",
+					label: "VERIFIED",
+					summary: "LIVE LINQ SERVICE",
+					detail: "The configured Linq service is responding from a public onrender.com deployment.",
+				} satisfies SponsorProof
+			: renderProbe;
 	const liveCheckoutLinks = panels.catalog.data.products.filter(
 		(product) =>
 			product.active && product.url?.startsWith("https://buy.stripe.com/"),
@@ -151,5 +174,6 @@ export const getSponsorProofs = async (
 		band,
 		render,
 		replay,
+		...getPersonAProofs(),
 	];
 };
