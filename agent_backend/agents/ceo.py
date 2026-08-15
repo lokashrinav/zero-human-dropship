@@ -10,8 +10,6 @@ import math
 import os
 from typing import Any
 
-import anthropic
-
 from tools.band_tools import post_message, read_recent_posts
 from tools.stripe_tools import (
     deactivate_product,
@@ -56,7 +54,9 @@ def _env_int(name: str, default: int) -> int:
         return default
 
 
-def _model_client() -> anthropic.Anthropic:
+def _model_client():
+    import anthropic  # Lazy: only the headless API loop needs it, not the Claude Code CLI.
+
     api_key = os.getenv("ANTHROPIC_API_KEY", "")
     if not api_key:
         raise RuntimeError("ANTHROPIC_API_KEY is not configured")
