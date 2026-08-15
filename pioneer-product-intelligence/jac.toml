@@ -1,0 +1,12 @@
+[project]
+name = "pioneer-product-intelligence"
+version = "0.1.0"
+description = "Headless Jac API service (server walkers, no client)"
+entry-point = "main.sv.jac"
+kind = "service"
+jac-version = "==0.34.7"
+
+[dependencies]
+
+[dev-dependencies]
+watchdog = ">=3.0.0"

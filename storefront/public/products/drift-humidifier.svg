@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1200" role="img" aria-labelledby="title desc">
+  <title id="title">Drift Mini Humidifier</title>
+  <desc id="desc">Minimal cylindrical humidifier releasing mist on a dark background.</desc>
+  <defs><radialGradient id="bg"><stop stop-color="#27322e"/><stop offset="1" stop-color="#070908"/></radialGradient><linearGradient id="body" x2="1" y2="1"><stop stop-color="#f0f2eb"/><stop offset=".5" stop-color="#99a49d"/><stop offset="1" stop-color="#404944"/></linearGradient><filter id="blur"><feGaussianBlur stdDeviation="22"/></filter></defs>
+  <rect width="1200" height="1200" fill="url(#bg)"/>
+  <path d="M520 330 C440 210 600 170 525 65 M610 325 C700 210 550 170 650 55 M700 345 C820 250 730 165 820 100" fill="none" stroke="#dfffa1" stroke-width="34" stroke-linecap="round" opacity=".35" filter="url(#blur)"/>
+  <ellipse cx="610" cy="860" rx="300" ry="85" fill="#000" opacity=".35"/>
+  <path d="M365 475 Q365 385 455 385 H765 Q855 385 855 475 V790 Q855 900 745 920 H475 Q365 900 365 790Z" fill="url(#body)"/>
+  <ellipse cx="610" cy="415" rx="245" ry="70" fill="#dce2dc"/><ellipse cx="610" cy="415" rx="115" ry="30" fill="#1f2823"/>
+  <rect x="465" y="790" width="290" height="12" rx="6" fill="#baff4e"/>
+  <text x="72" y="1095" fill="#eaf0e9" font-family="system-ui,sans-serif" font-size="42" letter-spacing="9">DRIFT / 03</text>
+</svg>

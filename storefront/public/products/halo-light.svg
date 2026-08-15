@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1200" role="img" aria-labelledby="title desc">
+  <title id="title">Halo Pocket Light</title>
+  <desc id="desc">Abstract silver pocket light glowing against a dark green background.</desc>
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="42%" r="70%"><stop offset="0" stop-color="#24352c"/><stop offset="1" stop-color="#090c0b"/></radialGradient>
+    <linearGradient id="metal" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f5f6ee"/><stop offset=".45" stop-color="#8d9991"/><stop offset="1" stop-color="#2d3531"/></linearGradient>
+    <filter id="glow"><feGaussianBlur stdDeviation="34"/></filter>
+  </defs>
+  <rect width="1200" height="1200" fill="url(#bg)"/>
+  <circle cx="600" cy="530" r="300" fill="#caff55" opacity=".18" filter="url(#glow)"/>
+  <g transform="rotate(-12 600 600)"><rect x="365" y="295" width="470" height="610" rx="150" fill="#050706" opacity=".35" transform="translate(22 35)"/><rect x="365" y="295" width="470" height="610" rx="150" fill="url(#metal)"/><rect x="410" y="340" width="380" height="420" rx="120" fill="#dfff91"/><ellipse cx="600" cy="510" rx="145" ry="120" fill="#fff" opacity=".78"/><circle cx="600" cy="825" r="30" fill="#151a17"/></g>
+  <text x="72" y="1095" fill="#eaf0e9" font-family="system-ui,sans-serif" font-size="42" letter-spacing="9">HALO / 01</text>
+</svg>

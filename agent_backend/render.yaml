@@ -24,9 +24,5 @@ services:
         sync: false
       - key: TERAC_API_KEY
         sync: false
-      - key: PIONEER_API_KEY
-        sync: false
-      - key: PIONEER_BASE_URL
-        sync: false
       - key: STORE_URL
         sync: false

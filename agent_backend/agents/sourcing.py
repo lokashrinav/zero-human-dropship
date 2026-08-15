@@ -6,7 +6,6 @@ import sys
 from tools.cj_tools import search_products, get_product_details
 from tools.stripe_tools import create_product
 from tools.band_tools import post_message
-from tools.pioneer_tools import generate_description
 
 
 MARKUP = 2.5  # 2.5x markup on CJ cost
@@ -40,14 +39,9 @@ async def source_products(queries: list[str], max_per_query: int = 5) -> list[di
                 price_cents = calculate_price(cost_usd)
                 cost_cents = int(cost_usd * 100)
 
-                try:
-                    description = await generate_description(details["name"], details.get("category", ""))
-                except Exception:
-                    description = details.get("description", "")[:500]
-
                 stripe_product = create_product(
                     name=details["name"][:100],
-                    description=description,
+                    description=details.get("description", "")[:500],
                     images=details["images"][:5],
                     price_cents=price_cents,
                     cost_cents=cost_cents,

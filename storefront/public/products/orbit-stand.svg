@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1200" role="img" aria-labelledby="title desc">
+  <title id="title">Orbit Stand</title>
+  <desc id="desc">Sculptural folding phone stand on a dark studio background.</desc>
+  <defs><linearGradient id="bg" x2="1" y2="1"><stop stop-color="#26302b"/><stop offset="1" stop-color="#060807"/></linearGradient><linearGradient id="metal" x2="1"><stop stop-color="#f1f3ed"/><stop offset=".48" stop-color="#7f8983"/><stop offset="1" stop-color="#303733"/></linearGradient></defs>
+  <rect width="1200" height="1200" fill="url(#bg)"/>
+  <ellipse cx="590" cy="870" rx="390" ry="105" fill="#000" opacity=".42"/>
+  <g transform="rotate(-8 600 600)"><path d="M430 820 L560 370 Q580 305 650 315 L755 330 Q810 340 790 400 L645 810Z" fill="url(#metal)"/><rect x="390" y="770" width="455" height="115" rx="52" fill="#dfe5df"/><rect x="455" y="745" width="340" height="55" rx="22" fill="#222824"/><circle cx="610" cy="600" r="92" fill="#baff51" opacity=".9"/><circle cx="610" cy="600" r="50" fill="#1b211d"/></g>
+  <text x="72" y="1095" fill="#eaf0e9" font-family="system-ui,sans-serif" font-size="42" letter-spacing="9">ORBIT / 04</text>
+</svg>

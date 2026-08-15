@@ -1,0 +1,30 @@
+[
+  {
+    "name": "Pocket Cable Organizer",
+    "images": [],
+    "stripe_id": "prod_example_cable_organizer",
+    "payment_link": "",
+    "cost": 2.5,
+    "price": 8.0,
+    "description": "A compact organizer for charging cables and earbuds. Example catalog entry only."
+  },
+  {
+    "name": "Mini Phone Stand",
+    "images": [],
+    "stripe_id": "prod_example_phone_stand",
+    "payment_link": "",
+    "cost": 3.0,
+    "price": 9.0,
+    "description": "A foldable desk stand for most phones. Example catalog entry only."
+  },
+  {
+    "name": "USB Reading Light",
+    "images": [],
+    "stripe_id": "prod_example_reading_light",
+    "payment_link": "",
+    "cost": 4.0,
+    "price": 12.0,
+    "description": "A flexible USB light for keyboards and travel. Example catalog entry only."
+  }
+]
+
