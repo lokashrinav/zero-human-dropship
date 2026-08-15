@@ -206,28 +206,18 @@ None verified yet. No candidate is labeled HOT until the need is current, the pr
 3. Reddit, r/Spigen, 2026-08-14: user is actively considering a dashboard magnetic holder for a Samsung S24 Ultra. URL: https://www.reddit.com/r/Spigen/comments/1vo23km/spigen_magnetic_phone_holder_for_hyundai_i20/
    Match: Magnetic Phone Mount for Car.
    Status: the buyer wants evidence about adhesive durability, dashboard residue, heavy-phone support, and rough-road performance. Those claims are not in the catalog, and the post is about a specific Spigen product. Do not substitute our product without evidence.
-4. Reddit, r/Volkswagen, 2026-08-12: user asked for a modern smartphone holder for a 2006 VW California. URL: https://www.reddit.com/r/Volkswagen/comments/1vmd6bj/looking_for_a_smartphonecompatible_version_of_this/
-   Match: Magnetic Phone Mount for Car is directionally relevant.
-   Status: the buyer prefers a vehicle-specific mount with charging; our generic holder does not claim charging or compatibility with the existing VW fixture. Do not reply yet.
-5. Reddit, r/Dell, 2026-08-15: user with a Dell 15 reports thermal throttling after a repaste. URL: https://www.reddit.com/r/Dell/comments/1vow2u5/thermal_throttling_after_repaste/
+4. Reddit, r/Dell, 2026-08-15: user with a Dell 15 reports thermal throttling after a repaste. URL: https://www.reddit.com/r/Dell/comments/1vow2u5/thermal_throttling_after_repaste/
    Match: Laptop Cooling Pad fits the stated 15-inch machine.
    Status: the immediate need is repair/diagnosis after a repaste, not a clear shopping request. A commercial reply could distract from corrective technical advice.
-6. Reddit, r/MSILaptops, 2026-08-12: user reports lag/audio issues on a 15.6-inch MSI Katana; one commenter suspects overheating. URL: https://www.reddit.com/r/MSILaptops/comments/1vlyp0p/can_anyone_help_with_this_brand_new_laptop_issue/
+5. Reddit, r/MSILaptops, 2026-08-12: user reports lag/audio issues on a 15.6-inch MSI Katana; one commenter suspects overheating. URL: https://www.reddit.com/r/MSILaptops/comments/1vlyp0p/can_anyone_help_with_this_brand_new_laptop_issue/
    Match: Laptop Cooling Pad fits 15.6 inches.
    Status: the cause is unresolved and may be RAM, GPU, software, or a warranty issue. Do not commercially diagnose it as overheating.
-7. Reddit, r/IndianGaming, 2026-08-13: new gaming-laptop owner is discussing first accessories; commenters recommend buying a cooling pad first. URL: https://www.reddit.com/r/IndianGaming/comments/1vnob6g/my_first_ever_gaming_machine_51k/
+6. Reddit, r/IndianGaming, 2026-08-13: new gaming-laptop owner is discussing first accessories; commenters recommend buying a cooling pad first. URL: https://www.reddit.com/r/IndianGaming/comments/1vnob6g/my_first_ever_gaming_machine_51k/
    Match: Laptop Cooling Pad is relevant to the discussion.
    Status: the original poster did not explicitly ask to buy one, and delivery-region compatibility is not documented. Treat as discussion, not a sales target.
-8. Reddit, r/GamingLaptops, 2026-08-14: recent owner reports strong performance gains from a purchased cooling pad. URL: https://www.reddit.com/r/GamingLaptops/comments/1vnvzlb/llano_v12_cooler_saved_my_thermal_throttling/
-   Match: cooling-pad category discussion.
-   Status: the author already bought a premium pad and is not a buyer. Useful demand evidence only; no commercial reply.
-9. Reddit, r/MSILaptops, 2026-08-14: an MSI GF65 Thin owner asks which cooling pad would work and whether anything is better than the Llano option they are considering. URL: https://www.reddit.com/r/MSILaptops/comments/1vnq69k/what_cooling_pad_would_work_for_my_laptop_msi/
+7. Reddit, r/MSILaptops, 2026-08-14: an MSI GF65 Thin owner asks which cooling pad would work and whether anything is better than the Llano option they are considering. URL: https://www.reddit.com/r/MSILaptops/comments/1vnq69k/what_cooling_pad_would_work_for_my_laptop_msi/
    Match: the catalog pad's 15.6-inch maximum matches the GF65 Thin form factor.
    Status: the buyer is actively comparing cooling products, but the catalog has no measured cooling-performance evidence and this community's commercial-link permission could not be verified. Do not reply yet.
-10. Reddit, r/LenovoLOQ, 2026-08-14: a LOQ owner asks which stand to choose and which cooling pad is compatible. URL: https://www.reddit.com/r/LenovoLOQ/comments/1vnz6vz/need_advice_for_getting_a_stand/
-   Match: the Laptop Cooling Pad is directionally relevant to the stated accessory search.
-   Status: the conversation ended with the poster accepting that a stand was enough in their air-conditioned room, and commercial-link permission is unverified. Treat as low-intent WARM; do not reply.
-
 ### SKIP
 
 1. Reddit, r/laptops, 2026-08-12: https://www.reddit.com/r/laptops/comments/1vmhhhl/suggestions_for_cooling_pad/
@@ -262,8 +252,17 @@ None verified yet. No candidate is labeled HOT until the need is current, the pr
 11. Reddit, r/Xiaomi, 2026-08-13: https://www.reddit.com/r/Xiaomi/comments/1vnorxw/xiaomi_cable/
    Need: proprietary Xiaomi 90W HyperCharge support.
    Reason: the catalog cable claims up to 60W and does not claim Xiaomi HyperCharge compatibility.
+12. Reddit, r/Volkswagen, 2026-08-12: https://www.reddit.com/r/Volkswagen/comments/1vmd6bj/looking_for_a_smartphonecompatible_version_of_this/
+   Need: a vehicle-specific mount with charging for a 2006 VW California.
+   Reason: the generic catalog holder does not claim charging or compatibility with the existing VW fixture.
+13. Reddit, r/GamingLaptops, 2026-08-14: https://www.reddit.com/r/GamingLaptops/comments/1vnvzlb/llano_v12_cooler_saved_my_thermal_throttling/
+   Need: none; the author already purchased a premium cooling pad.
+   Reason: useful category-demand evidence, but not a buyer.
+14. Reddit, r/LenovoLOQ, 2026-08-14: https://www.reddit.com/r/LenovoLOQ/comments/1vnz6vz/need_advice_for_getting_a_stand/
+   Need: stand/cooling-pad advice.
+   Reason: the conversation ended with the poster accepting that a stand was sufficient in their air-conditioned room; no active product need remains.
 
-Sweep outcome at 15:21 PDT: 0 HOT, 10 WARM, and 11 documented SKIP candidates. No candidate meets all three requirements of exact product fit, current purchase intent, and verified permission for a transparent commercial reply. A same-day r/GamingLaptops cooling-pad request was also rejected because that community explicitly disallows brand promotion in recommendation threads.
+Sweep outcome at 15:21 PDT: 0 HOT, 7 WARM, and 14 documented SKIP candidates. The quality threshold was not lowered to manufacture 10 leads. No candidate meets all three requirements of exact product fit, current purchase intent, and verified permission for a transparent commercial reply. A same-day r/GamingLaptops cooling-pad request was also rejected because that community explicitly disallows brand promotion in recommendation threads.
 
 ## Simple sales offers
 
@@ -326,4 +325,4 @@ No money has been spent. Referral commissions are contingent liabilities only an
 - 15:09 PDT — searched public Craigslist, Bluesky-indexed, and Threads-indexed results; found seller listings but no exact-match public buyer request eligible for a commercial reply.
 - 15:12 PDT — verified referral #1 end to end without purchasing: click recorded and redirect reached the correct attributed Stripe checkout.
 - 15:16 PDT — increased the verified referral bounty to $3, capped the initial 15-referrer liability at $45, and switched the live watcher to five-minute checks.
-- 15:21 PDT — expanded the fresh-intent queue to 10 WARM candidates. Rejected a same-day direct cooling-pad request where the community expressly prohibits brand promotion in recommendation threads; no commercial replies were posted.
+- 15:21 PDT — expanded the fresh-intent review to 21 candidates: 7 WARM and 14 SKIP. Rejected a same-day direct cooling-pad request where the community expressly prohibits brand promotion in recommendation threads; no commercial replies were posted.
