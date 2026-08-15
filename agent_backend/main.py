@@ -73,6 +73,31 @@ async def get_decisions(limit: int = 50):
     return read_local_log(limit)
 
 
+@app.get("/api/stats")
+async def get_stats():
+    """Revenue headline numbers for the dashboard. Zeros gracefully pre-keys."""
+    from tools.stripe_tools import get_sales_summary
+    try:
+        summary = get_sales_summary(since_hours=24)
+        return {
+            "gross_revenue_cents": summary.get("gross_revenue_cents", 0),
+            "orders": summary.get("orders", 0),
+            "units": summary.get("units", 0),
+            "by_product": summary.get("by_product", []),
+        }
+    except Exception as exc:
+        return {"gross_revenue_cents": 0, "orders": 0, "units": 0, "by_product": [], "error": str(exc)[:200]}
+
+
+# ── Dashboard (the presentation layer — judges watch this) ─────
+
+@app.get("/")
+async def dashboard():
+    from fastapi.responses import FileResponse
+    from pathlib import Path
+    return FileResponse(Path(__file__).parent / "static" / "dashboard.html")
+
+
 # ── Health check ───────────────────────────────────────────────
 
 @app.get("/health")
