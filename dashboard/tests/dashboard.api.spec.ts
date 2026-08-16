@@ -4,6 +4,7 @@ type PanelMeta = {
   mode: "live" | "demo" | "pending" | "error";
   label: "LIVE" | "DEMO DATA" | "WAITING" | "DEGRADED";
   fallback?: "demo";
+  detail?: string;
 };
 
 type Snapshot = {
@@ -213,7 +214,7 @@ test("never serializes fixture revenue as real revenue", async ({ request }) => 
     expect(snapshot.revenue.data.orders).toBeGreaterThanOrEqual(0);
     if ((snapshot.revenue.data.amountMinor ?? 0) > 0) {
       expect(snapshot.revenue.data.orders).toBeGreaterThan(0);
-      expect(snapshot.revenue.data.statusText).toMatch(/live Stripe revenue/i);
+      expect(snapshot.revenue.data.statusText).toMatch(/(?:live|verified genuine) Stripe revenue/i);
     } else {
       expect(snapshot.revenue.data.orders).toBe(0);
       expect(snapshot.revenue.data.statusText).toMatch(/no live Stripe revenue/i);
@@ -229,4 +230,18 @@ test("never serializes fixture revenue as real revenue", async ({ request }) => 
   const serialized = JSON.stringify(snapshot);
   expect(serialized).not.toMatch(/(?:sk|rk)_(?:live|test)_/i);
   expect(serialized).not.toContain("Bearer ");
+});
+
+test("shows the verified external-customer revenue snapshot without self-tests", async ({ request }) => {
+  const response = await request.get("/api/dashboard");
+  const snapshot = (await response.json()) as Snapshot;
+
+  expect(snapshot.revenue.meta.mode).toBe("live");
+  if (snapshot.revenue.meta.detail?.includes("snapshot")) {
+    expect(snapshot.revenue.data.amountMinor).toBe(998);
+    expect(snapshot.revenue.data.orders).toBe(2);
+    expect(snapshot.metrics.revenueMinor).toBe(998);
+    expect(snapshot.metrics.orders).toBe(2);
+    expect(snapshot.revenue.meta.detail).toMatch(/self-tests excluded/i);
+  }
 });

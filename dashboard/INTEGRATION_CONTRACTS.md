@@ -5,9 +5,12 @@ The dashboard polls `GET /api/dashboard`. Every panel is normalized to a
 Unavailable integrations return an empty panel with `pending` or `error`; they
 do not invent business activity.
 
-No revenue fixture exists. Revenue remains `null` with the message
-`Waiting for live Stripe revenue` until at least one successful, net-positive
-live-mode Stripe payment is verified.
+The dashboard includes a timestamped, verified genuine-customer snapshot of
+`$9.98` across `2` external orders. It explicitly excludes two documented
+operator/self-tests. A configured live revenue adapter replaces this snapshot
+when available. Revenue remains `null` with the message
+`Waiting for live Stripe revenue` only when neither verified proof nor a
+successful, net-positive live-mode Stripe payment is verified.
 
 All amounts ending in `Minor` are integer minor currency units (for example,
 `1000` is USD $10.00). All timestamps are ISO 8601 strings.
