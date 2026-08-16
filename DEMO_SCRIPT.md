@@ -1,53 +1,61 @@
-# KOVA — Demo Script (~2:30)
+# KOVA — Final Demo Script (~2:30)
 
-> Numbers are real as of 5:25 PM: $16.46 Stripe revenue, 4 orders, 2 real external customers. Update live totals right before you go on — pull from the dashboard.
-
----
-
-## [0:00–0:15] — COLD OPEN
-**SCREEN: storefront hero (storefront-omega-three.vercel.app)**
-
-> "Welcome to KOVA — an autonomous AI dropshipping company. Not an AI tool a human drives — a company. It sources its products, sets its prices, runs its marketing, sells, fulfills, and learns — with zero humans in the loop. Today it ran itself... and made real money."
-
-## [0:15–1:00] — THE ITERATION ENGINE (the killer 45 seconds)
-**SCREEN: the decision feed on the dashboard, scrolling today's history**
-
-> "Here's the part that matters: every 15 minutes, a brand-new AI CEO is born with zero memory. It reads the company diary — every decision every agent before it ever made — acts, writes its entry, and dies. The company is immortal; the agents are disposable."
-
-**Point at real feed entries as you talk:**
-> "Watch one day of self-iteration: Ten real humans on a Terac panel rated our catalog — the company reordered its own storefront and repriced three products from the data. Then Ops discovered true fulfillment costs were higher than believed — the CEO repriced again, inside hard-coded guardrails: max 35% per cycle, margin floors, three actions max. It renamed two products because their listings were inaccurate. It even found a bug in its own launcher script, patched it, and filed a note asking a human to restart it."
-
-> "When it hits something only a human can do — a password, funding a wallet — it doesn't stop. It files the exact fix on an escalation queue and keeps working. The business has literally never stopped today."
-
-## [1:00–1:45] — THE SURFACES (zero-human, one data layer)
-**SCREEN: split or quick cuts — storefront → FB Marketplace listing → dashboard**
-
-> "Everything you see was built and is operated by agents on one shared data layer:
-> — The **storefront**: ten live products, real Stripe checkout, product images the agents *bought* — I'll get to that.
-> — **Facebook Marketplace**: ten listings posted by an agent driving a real browser, funneling buyers to the store.
-> — And this **control room** you're watching: live revenue — **$16.46, four orders, two real customers who found us organically today** — every agent decision, every human-needed escalation. Judges can audit every dollar and every decision back to its reasoning."
-
-## [1:45–2:25] — THE INTEGRATIONS
-**SCREEN: dashboard sponsor panels / feed entries as props**
-
-> "The stack, briefly:
-> — **Stripe** is the ledger — the only revenue that counts is real money here.
-> — **Terac** twice over: real human panels as the company's market research — and when an agent hits a human-shaped wall, it can *hire* a Terac human with exact instructions.
-> — **Linq**: the company has a real iMessage number — text it right now (+1 415-305-0091) and an agent sells to you and sends a payment link.
-> — **Perflo**: the company has its own wallet. When it needed product creatives, it *paid* an x402 vendor half a cent per image from its own balance, under a spend cap a human armed once. Take the wallet away and the creative pipeline dies — money is load-bearing.
-> — **Solari** cloud browsers audit the store; **Pioneer** open-weight models write product intelligence; **CJ Dropshipping** — the company created real supplier orders for today's customers by itself."
-
-## [2:25–2:35] — CLOSE
-**SCREEN: back to the feed, live**
-
-> "KOVA priced, sold, fulfilled, hired, spent, and debugged itself today. Nobody prompted the decisions you just saw. And it's not a recording — it's still running right now."
-
-*(If a cycle fires during Q&A — point at it.)*
+> Update the revenue/order numbers from the dashboard RIGHT before going on. As of 6:25 PM: 5 paid orders, 3 real external buyers.
 
 ---
 
-## Live-demo insurance
-- Have the dashboard AND the local feed (`tail -f agent_backend/decision_log.jsonl`) open — if WiFi dies, the local feed still scrolls.
-- Best interactive moment: a judge texts the Linq number; the reply lands on-screen.
-- If asked "what CAN'T it do": answer honestly — passwords, 2FA, and arming money. It queues those for humans and keeps moving. That's a design decision, not a limitation.
-- If asked about the loss-making products: "It discovered its own negative margins from fulfillment data and corrected them at guardrail-max speed — that's the learning loop working, not a bug."
+## [0:00 – 0:15] — INTRO
+*(storefront on screen)*
+
+Welcome to KOVA.
+
+KOVA is an autonomous AI dropshipping business. It finds products, prices them, lists them, sells them, and fulfills them — and it improves that whole process on its own. We turned it on this morning. It's been running itself since, and it's made real money.
+
+## [0:15 – 1:40] — THE DEMO: WATCH IT RUN
+*(decision feed on screen)*
+
+This is the company's decision log, live. Fresh agents spin up continuously — each one reads everything the agents before it did, looks at current sales, makes its moves, and logs them. The agents use a library of skill files that improve over time — playbooks the main agent hands to subagents to get tasks done.
+
+Here's today, straight from the log. The company put its catalog in front of ten real people — a human panel through Terac — and used their ratings to reorder the store and change three prices. A few hours later, ops figured out our real fulfillment costs were higher than the agent believed — we were losing money on some items — so the next agent repriced everything, inside hard-coded limits it can't cross: never a huge jump at once, never below margin.
+
+And when it needs something only a human can do — a password, funding a wallet — it doesn't stop. It queues the task with the exact fix, either to us or to a hired Terac worker with written instructions, and keeps working.
+
+*(switch: storefront → Facebook → dashboard)*
+
+Now here's where the money actually flows. The company sells through three doors: the storefront, Facebook Marketplace — where an agent posted every listing through a real browser — and an iMessage line through Linq. Text that number right now and an agent will pitch you a product and send a payment link.
+
+Every checkout runs on Stripe, and a payment is the trigger for fulfillment: the moment it lands, an agent places the order on Amazon, shipped Prime, straight to the buyer's door. We never touch inventory. Today that's [CURRENT REVENUE] across [N] orders — [N] of them from strangers who found us on their own.
+
+## [1:40 – 2:20] — THE STACK
+*(dashboard sponsor panels)*
+
+Everything the company does runs through real services, the same ones a human-run business would use.
+
+Customers pay through Stripe — every sale is a real card payment landing in a real account.
+
+We use Terac in two directions. Real human panels serve as the company's market research, and when an agent gets stuck on a task that only a human can do, it can hire a Terac worker by writing out exact instructions.
+
+Through Linq, the company has its own iMessage number. If you text it right now, an agent will market a product to you and send you a payment link, which gives the company an inbound sales channel.
+
+Through Perflo, the company holds its own wallet. It paid another AI service five cents for a product photo, out of its own balance, under a spending cap that we set once. If you take that wallet away, the creative pipeline stops working.
+
+Behind the scenes, Solari's cloud browsers continuously audit the store that customers actually see, and Pioneer's open-weight models write the product intelligence. And when a customer pays, the company fulfills the order itself by placing it on Amazon, shipped directly to the buyer's door.
+
+The storefront was audited with Replay: its first run covered fifteen user journeys and surfaced nine findings — including a clipped hero layout and search inputs screen readers couldn't name — the agents fixed them, redeployed, and the final Replay run came back clean. The judge dashboard went through the same Replay audit and came back clean on the first pass — no fixes required, with the verified report on record.
+
+*(Only if teammate confirms: "The Linq sales service runs deployed on Render, with a Render Workflow that audits the catalog.")*
+
+## [2:20 – 2:30] — CLOSE
+*(back to the live feed)*
+
+Today KOVA priced, sold, fulfilled, and fixed itself. Nobody prompted the decisions you just saw — and it's still running right now.
+
+Thanks.
+
+---
+
+## Q&A insurance
+- **"What can't it do?"** — "Passwords, two-factor, and putting money in. It queues those for a human and keeps moving. That's a design decision — an agent that types your passwords isn't autonomy, it's a liability."
+- **"Why were products priced below cost?"** — "It discovered its own negative margins from real fulfillment data and corrected them the same afternoon. That's the learning loop working."
+- **"Is the Perflo thing real?"** — pull the ledger: transaction ba377332, $0.05 USDC over x402 to the image vendor, settled.
+- WiFi dies: `tail -f agent_backend/decision_log.jsonl` locally — the feed still scrolls.

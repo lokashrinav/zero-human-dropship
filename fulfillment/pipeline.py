@@ -127,12 +127,12 @@ CATALOG = {
         "accept": ["wireless earbuds", "bluetooth earbuds", "tws earbuds",
                    "wireless earphone", "bluetooth earphone", "tws earphone",
                    "wireless bluetooth headset"]},
-    "Phone Ring Light for Selfies": {
+    "Clip-On Selfie Light for Phone": {
         "cats": ["11D96803-A0A3-4175-B49B-2102EC285965",   # Photo Studio
                  "A2B55BEF-9B7D-44A0-8E80-A14FFFBBBD94",   # Camera & Photo Accessories
                  "9170B3F9-5B9C-4C39-8CD6-7DC00E481D47"],  # Holders & Stands
         "accept": ["ring light", "selfie light", "fill light"]},
-    "Cable Organizer Clips 10-Pack": {
+    "Cable Organizer Clips 18-Pack": {
         "cats": ["87CF251F-8D11-4DE0-A154-9694D9858EB3",   # Home Office Storage
                  "40CC2ED1-8998-4515-9139-787CC25D42A7"],  # Digital Cables
         "accept": ["cable organizer", "cable clip", "cord organizer",

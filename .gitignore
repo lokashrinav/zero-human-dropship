@@ -13,3 +13,5 @@ agent_backend/revenue_sprint.sqlite3
 agent_backend/tunnel_url.txt
 agent_backend/tunnel.log
 agent_backend/escalations.jsonl
+OPS_NOTES.md
+agent_backend/uvicorn.log
