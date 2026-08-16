@@ -1,0 +1,50 @@
+{
+  "Laptop Cooling Pad with Fan": {
+    "pid": "2604080315231602500",
+    "vid": "2604080315231603200",
+    "cj_name": "Foldable Height-adjustable Tablet Cooling Stand",
+    "cj_cost": 6.47
+  },
+  "USB-C Fast Charging Cable 6ft": {
+    "pid": "2603160107581614300",
+    "vid": "2603160107581614700",
+    "cj_name": "Data Cable",
+    "cj_cost": 0.17
+  },
+  "Screen Cleaner Spray Kit": {
+    "pid": "2407220527291604200",
+    "vid": "2407220527291604400",
+    "cj_name": "Tablet LCD Laptop Cleaning Mobile Phone Screen Cleaner",
+    "cj_cost": 0.56
+  },
+  "Foldable Phone Stand Adjustable": {
+    "pid": "2607231115091629200",
+    "vid": "2607231115101620000",
+    "cj_name": "Black Minimalist Suction-cup Non-slip Phone Case With A Detachable Portable Phone Stand",
+    "cj_cost": 0.15
+  },
+  "Wireless Earbuds with Charging Case": {
+    "pid": "2607281333111632000",
+    "vid": "2607281333111632700",
+    "cj_name": "New Bluetooth In-ear Digital-display Wireless Earbuds With Ultra-long Battery Life",
+    "cj_cost": 3.89
+  },
+  "Portable Mini Fan USB": {
+    "pid": "2606191014001605900",
+    "vid": "2606191014001606600",
+    "cj_name": "USB-charging Portable Handheld Mini Fan For Home Use",
+    "cj_cost": 0.72
+  },
+  "Magnetic Phone Mount for Car": {
+    "pid": "2607180648591615400",
+    "vid": "2607180648591616500",
+    "cj_name": "Best-selling Magnetic Phone Holder Foldable And Rotatable For Car Dashboards",
+    "cj_cost": 0.74
+  },
+  "LED Strip Lights RGB 16 Colors": {
+    "pid": "2408190939551626100",
+    "vid": "2408190939551626500",
+    "cj_name": "LED 24V Light Strip Set Low Voltage",
+    "cj_cost": 3.12
+  }
+}

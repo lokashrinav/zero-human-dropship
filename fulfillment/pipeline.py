@@ -46,12 +46,13 @@ def save_json(path, data):
 # ---------- CJ API ----------
 
 def cj_token():
-    key = ENV.get("CJ_API_KEY")
-    if not key:
-        return None
+    # A valid cached token works on its own; the API key is only needed to refresh.
     cached = load_json(TOKEN_FILE, {})
     if cached.get("token") and cached.get("expires", 0) > time.time() + 3600:
         return cached["token"]
+    key = ENV.get("CJ_API_KEY")
+    if not key:
+        return None
     # CJ caches tokens server-side for 24h and rate-limits at 1 QPS -- cache locally.
     r = requests.post(f"{CJ_BASE}/authentication/getAccessToken",
                       json={"apiKey": key}, timeout=30)
@@ -274,9 +275,13 @@ def fulfill(session, ledger, auto_pay):
     if not freight:
         raise RuntimeError("CJ returned no shipping options for this address")
     cheapest = min(freight, key=lambda f: float(f["logisticPrice"]))
+    # CJ requires the country NAME in shippingCountry alongside the code.
+    country_names = {"US": "United States", "CA": "Canada",
+                     "GB": "United Kingdom", "AU": "Australia"}
     order = cj_post("/shopping/order/createOrderV2", {
         "orderNumber": f"stripe-{session.id[-24:]}",
         "shippingCountryCode": addr["country"],
+        "shippingCountry": country_names.get(addr["country"], addr["country"]),
         "shippingProvince": addr["state"],
         "shippingCity": addr["city"],
         "shippingAddress": (addr["line1"] + (" " + addr["line2"] if addr["line2"] else "")),
@@ -316,7 +321,15 @@ def cmd_daemon(args):
         ledger = load_json(LEDGER_FILE, {})
         try:
             for s in stripe.checkout.Session.list(limit=60).data:
-                if s.payment_status != "paid" or s.id in ledger:
+                if s.payment_status != "paid":
+                    continue
+                entry = ledger.get(s.id)
+                # --once (ops-cycle) retries parked orders that a refreshed
+                # map/creds/code fix can unstick; "no address" needs a human.
+                retryable = args.once and entry and (
+                    entry.get("status") == "error"
+                    or entry.get("reason") in ("unmapped product", "no CJ creds"))
+                if entry and not retryable:
                     continue
                 try:
                     fulfill(s, ledger, args.auto_pay)

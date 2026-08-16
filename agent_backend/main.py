@@ -80,6 +80,83 @@ async def get_decisions(limit: int = 50):
     return read_local_log(limit)
 
 
+@app.get("/api/dashboard/decisions")
+async def dashboard_decisions(limit: int = 60):
+    """Decision feed in the judge dashboard's contract (INTEGRATION_CONTRACTS.md)."""
+    from datetime import datetime, timezone
+
+    from tools.band_tools import read_local_log
+
+    def _iso(ts: float) -> str:
+        return datetime.fromtimestamp(ts, tz=timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.000Z")
+
+    def _classify(agent: str, msg: str) -> tuple[str, str, str]:
+        m = msg.lower()
+        if "reprice" in m or "repriced" in m:
+            return "repriced_product", "REPRICED PRODUCT", "learn"
+        if "renamed" in m or "description" in m or "copy" in m:
+            return "changed_copy", "UPDATED PRODUCT COPY", "list"
+        if "listing" in m or "listed" in m or "marketplace" in m:
+            return "listed_product", "UPDATED LISTINGS", "list"
+        if "drop" in m and "product" in m:
+            return "removed_product", "REMOVED PRODUCT", "learn"
+        if "order" in m or "fulfill" in m or "shipping" in m:
+            return "other", "FULFILLMENT", "fulfill"
+        if "sale" in m or "revenue" in m or "payment" in m:
+            return "other", "SALES", "sell"
+        if "sourc" in m or "created product" in m or "cj " in m:
+            return "other", "SOURCING", "source"
+        if "terac" in m or "panel" in m or "study" in m:
+            return "other", "CUSTOMER RESEARCH", "validate"
+        return "other", "OPERATIONS", "learn"
+
+    entries = read_local_log(limit * 2)
+    decisions = []
+    for e in entries:
+        agent, msg = e.get("agent", ""), e.get("message", "")
+        if agent == "Supervisor" and ("cycle" in msg.lower() and "tunnel" not in msg.lower()):
+            continue  # heartbeat noise
+        kind, title, stage = _classify(agent, msg)
+        decisions.append({
+            "id": f"feed_{e['ts']}",
+            "timestamp": _iso(e["ts"]),
+            "agent": f"{agent.replace('Agent', '').upper()} AGENT" if agent != "ESCALATION" else "ESCALATION",
+            "kind": kind,
+            "title": title,
+            "reason": msg[:600],
+            "action": msg[:200],
+            "stage": stage,
+        })
+    decisions = decisions[-limit:][::-1]
+    updated = decisions[0]["timestamp"] if decisions else _iso(0)
+    return {"updatedAt": updated, "decisions": decisions}
+
+
+@app.get("/api/dashboard/revenue")
+async def dashboard_revenue():
+    """Live-mode attested revenue in the dashboard's contract: captured minus refunds."""
+    from datetime import datetime, timezone
+
+    charges = stripe.Charge.list(limit=100)
+    amount = 0
+    orders = 0
+    livemode = False
+    for c in charges.data:
+        if not c.paid:
+            continue
+        livemode = livemode or bool(c.livemode)
+        amount += c.amount - (c.amount_refunded or 0)
+        orders += 1
+    return {
+        "source": "stripe",
+        "livemode": livemode,
+        "amountMinor": amount,
+        "currency": "USD",
+        "orders": orders,
+        "updatedAt": datetime.now(tz=timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.000Z"),
+    }
+
+
 @app.get("/api/escalations")
 async def get_escalations():
     """Open human-needed items. The business keeps running; humans drain this."""
