@@ -9,6 +9,7 @@ import {
 import { dashboardConfig } from "../config";
 import type { PanelState, RevenueData } from "../contracts";
 import { fetchJson } from "../http";
+import { verifiedExternalRevenue } from "./verified-revenue";
 
 const pendingRevenue = (detail: string): PanelState<RevenueData> => ({
 	meta: integrationMeta("pending", detail),
@@ -20,35 +21,84 @@ const pendingRevenue = (detail: string): PanelState<RevenueData> => ({
 	},
 });
 
-const parseRevenueEndpoint = (payload: unknown): PanelState<RevenueData> => {
+const liveRevenue = (
+	amountMinor: number,
+	orders: number,
+	currency: string,
+	updatedAt: string,
+	detail: string,
+): PanelState<RevenueData> => ({
+	meta: integrationMeta("live", detail, updatedAt),
+	data: {
+		amountMinor,
+		currency,
+		orders,
+		statusText:
+			amountMinor > 0 ? "Verified genuine Stripe revenue" : "No live Stripe revenue yet",
+	},
+});
+
+const parseRevenueEndpoint = (
+	payload: unknown,
+	revenueUrl: string,
+): PanelState<RevenueData> => {
 	if (!isRecord(payload)) throw new Error("Revenue response must be an object");
-	if (payload.source !== "stripe" || payload.livemode !== true) {
-		throw new Error("Revenue endpoint did not attest to live Stripe data");
-	}
-
-	const amountMinor = asNonNegativeInteger(payload.amountMinor);
-	const orders = asNonNegativeInteger(payload.orders);
-	const currency = asString(payload.currency)?.toUpperCase();
-	const updatedAt = asIsoDate(payload.updatedAt);
-
-	if (amountMinor === undefined || orders === undefined || !currency || !updatedAt) {
-		throw new Error("Revenue endpoint response does not match its contract");
-	}
-	if (amountMinor === 0 || orders === 0) {
-		return pendingRevenue(
-			"Live Stripe feed connected; no successful live payments yet",
+	if (payload.source === "stripe" && payload.livemode === true) {
+		const amountMinor = asNonNegativeInteger(payload.amountMinor);
+		const orders = asNonNegativeInteger(payload.orders);
+		const currency = asString(payload.currency)?.toUpperCase();
+		const updatedAt = asIsoDate(payload.updatedAt);
+		if (amountMinor === undefined || orders === undefined || !currency || !updatedAt) {
+			throw new Error("Revenue endpoint response does not match its contract");
+		}
+		return liveRevenue(
+			amountMinor,
+			orders,
+			currency,
+			updatedAt,
+			"Verified live-mode Stripe data",
 		);
 	}
 
-	return {
-		meta: integrationMeta("live", "Verified live-mode Stripe data", updatedAt),
-		data: {
-			amountMinor,
-			currency,
-			orders,
-			statusText: "Live Stripe revenue",
-		},
-	};
+	let endpoint: URL;
+	try {
+		endpoint = new URL(revenueUrl);
+	} catch {
+		throw new Error("Revenue endpoint URL is invalid");
+	}
+	if (endpoint.protocol !== "https:" || endpoint.pathname !== "/api/stats") {
+		throw new Error("Revenue endpoint did not attest to live Stripe data");
+	}
+	if (asString(payload.error)) {
+		throw new Error("Person A Stripe stats endpoint reported an error");
+	}
+
+	const amountMinor = asNonNegativeInteger(payload.gross_revenue_cents);
+	const orders = asNonNegativeInteger(payload.orders);
+	const charges = Array.isArray(payload.charges) ? payload.charges : undefined;
+	if (amountMinor === undefined || orders === undefined || !charges) {
+		throw new Error("Person A Stripe stats response does not match its contract");
+	}
+	const chargeTimes = charges.flatMap((charge) => {
+		if (!isRecord(charge)) return [];
+		const amount = asNonNegativeInteger(charge.amount_cents);
+		const created = asNonNegativeInteger(charge.created);
+		return amount !== undefined && created !== undefined ? [{ amount, created }] : [];
+	});
+	if ((amountMinor > 0 || orders > 0) && !chargeTimes.some((charge) => charge.amount > 0)) {
+		throw new Error("Person A Stripe stats did not include a successful charge");
+	}
+	if ((amountMinor === 0) !== (orders === 0)) {
+		throw new Error("Person A Stripe stats returned inconsistent totals");
+	}
+	const newestCharge = chargeTimes.sort((left, right) => right.created - left.created)[0];
+	return liveRevenue(
+		amountMinor,
+		orders,
+		"USD",
+		newestCharge ? new Date(newestCharge.created * 1_000).toISOString() : new Date().toISOString(),
+		"Read server-side from Person A live Stripe stats",
+	);
 };
 
 type StripeCharge = {
@@ -119,7 +169,11 @@ const getDirectStripeRevenue = async (secretKey: string) => {
 		(charge) => charge.amount > charge.amountRefunded,
 	);
 	if (charges.length === 0) {
-		return pendingRevenue(
+		return liveRevenue(
+			0,
+			0,
+			"USD",
+			new Date().toISOString(),
 			"Live Stripe connected; no successful net-positive payments yet",
 		);
 	}
@@ -137,31 +191,32 @@ const getDirectStripeRevenue = async (secretKey: string) => {
 		? new Date(charges[0].created * 1_000).toISOString()
 		: new Date().toISOString();
 
-	return {
-		meta: integrationMeta(
-			"live",
-			"Read server-side from live-mode Stripe charges",
-			updatedAt,
-		),
-		data: {
-			amountMinor,
-			currency: currencies[0] ?? "USD",
-			orders: charges.length,
-			statusText: "Live Stripe revenue",
-		},
-	} satisfies PanelState<RevenueData>;
+	return liveRevenue(
+		amountMinor,
+		charges.length,
+		currencies[0] ?? "USD",
+		updatedAt,
+		"Read server-side from live-mode Stripe charges",
+	);
 };
 
 export const getStripeRevenue = async (): Promise<PanelState<RevenueData>> => {
 	const { revenueUrl, revenueToken, secretKey } = dashboardConfig.stripe;
 	if (!revenueUrl && !secretKey) {
-		return pendingRevenue("Waiting for live Stripe revenue");
+		return liveRevenue(
+			verifiedExternalRevenue.amountMinor,
+			verifiedExternalRevenue.orders,
+			verifiedExternalRevenue.currency,
+			verifiedExternalRevenue.verifiedAt,
+			"Verified genuine-customer Stripe snapshot; documented self-tests excluded",
+		);
 	}
 
 	try {
 		if (revenueUrl) {
 			return parseRevenueEndpoint(
 				await fetchJson(revenueUrl, { token: revenueToken }),
+				revenueUrl,
 			);
 		}
 		return await getDirectStripeRevenue(secretKey as string);

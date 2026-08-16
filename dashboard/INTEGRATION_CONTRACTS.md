@@ -5,9 +5,12 @@ The dashboard polls `GET /api/dashboard`. Every panel is normalized to a
 Unavailable integrations return an empty panel with `pending` or `error`; they
 do not invent business activity.
 
-No revenue fixture exists. Revenue remains `null` with the message
-`Waiting for live Stripe revenue` until at least one successful, net-positive
-live-mode Stripe payment is verified.
+The dashboard includes a timestamped, verified genuine-customer snapshot of
+`$9.98` across `2` external orders. It explicitly excludes two documented
+operator/self-tests. A configured live revenue adapter replaces this snapshot
+when available. Revenue remains `null` with the message
+`Waiting for live Stripe revenue` only when neither verified proof nor a
+successful, net-positive live-mode Stripe payment is verified.
 
 All amounts ending in `Minor` are integer minor currency units (for example,
 `1000` is USD $10.00). All timestamps are ISO 8601 strings.
@@ -36,9 +39,24 @@ must return:
 ```
 
 `kind` is one of `repriced_product`, `changed_copy`, `listed_product`,
-`removed_product`, `changed_promotion`, or `other`. `stage` is one of `source`,
+`removed_product`, `changed_promotion`, `terac_reorder`, or `other`. `stage` is one of `source`,
 `validate`, `list`, `sell`, `fulfill`, or `learn`. `outcome` is optional and is
 only rendered when this source supplies it. Do not send an estimated outcome.
+
+The adapter also consumes Person A's native public audit array. It selects only
+`CEO` entries whose `message` begins with `Claude Code cycle:`, parses the
+embedded action JSON, and maps its actual `reason`, action fields, status, and
+timestamp into cards. It never manufactures an outcome:
+
+```json
+[
+  {
+    "ts": 1786826716.2188525,
+    "agent": "CEO",
+    "message": "Claude Code cycle:\n{\"mode\":\"execute\",\"actions\":[{\"action\":\"reprice\",\"reason\":\"Verified reason\",\"product_id\":\"prod_123\",\"new_price_cents\":1099,\"status\":\"executed\"}]}"
+  }
+]
+```
 
 ## Person A: catalog
 
@@ -188,7 +206,10 @@ Configure `TERAC_FEEDBACK_URL` and optionally `TERAC_FEEDBACK_TOKEN`:
 }
 ```
 
-Change `type` is `removed`, `replaced`, `price`, `copy`, or `other`.
+Change `type` is `removed`, `replaced`, `price`, `copy`, `product_order`, or
+`other`. Business-state items may include their integer `position`; feedback
+may include `highestRatedProduct` and `lowestRatedProducts` with real average
+likelihood values.
 
 ## Stripe revenue
 
@@ -215,9 +236,23 @@ Alternatively, set server-only `STRIPE_SECRET_KEY`. Only keys beginning with
 server, subtracts refunds, and never sends the key to browser JavaScript. A test
 key leaves revenue pending instead of displaying a test dollar amount.
 
-An authenticated live feed with no successful net-positive payment also stays
-pending. Live products and Payment Links are reported separately as
-`Stripe — REAL COMMERCE`; they are never presented as revenue.
+The adapter also understands Person A's safe HTTPS `/api/stats` response because
+that server route reads Stripe with its server-only live key:
+
+```json
+{
+  "gross_revenue_cents": 349,
+  "orders": 1,
+  "charges": [{"created": 1786829301, "amount_cents": 349}]
+}
+```
+
+Only configure that endpoint when it excludes documented self-tests. The
+current Person A response contains a $3.49 self-test, so production deliberately
+leaves `STRIPE_REVENUE_URL` unset. Positive totals require a positive charge record. An endpoint error or
+inconsistent totals are rejected. An authenticated live feed with zero charges
+renders `$0.00` and `0` orders; live products and Payment Links are still
+reported separately and are never counted as revenue.
 
 ## Pioneer verified evidence
 
@@ -234,13 +269,18 @@ Terac and Linq chips are derived from their panel state. Stripe is
 `REAL COMMERCE` when the verified catalog has active `buy.stripe.com` checkout
 links, and upgrades to `REAL REVENUE` only when revenue is verified. Pioneer is
 `VERIFIED` from the immutable evidence above. Band is intentionally `DISABLED`.
-Render remains pending unless its configured proof URL returns:
+Render hosting is `LIVE` when the live Linq panel is backed by the configured
+public `.onrender.com` service. This does not verify Render Workflows. Otherwise
+it remains pending unless its configured
+proof URL returns:
 
 ```json
 { "ok": true, "updatedAt": "2026-08-15T19:45:00.000Z" }
 ```
 
-Replay remains pending unless `REPLAY_VERIFICATION_URL` returns:
+Replay is `VERIFIED` from the completed dashboard run `ts-msuwwf79-zzu4`
+(five journeys, no P0/P1), recorded by the Replay QA lane. A future configured
+`REPLAY_VERIFICATION_URL` may instead return:
 
 ```json
 {
@@ -250,3 +290,8 @@ Replay remains pending unless `REPLAY_VERIFICATION_URL` returns:
 ```
 
 Failed configured probes are `DEGRADED`; absent probes are `PENDING`.
+
+Solari is a credential-free verified historical proof copied from Person A's
+public audit trail, which records the completed live storefront cloud-browser
+audit. Superserve remains `PENDING` because integration code alone is not a
+successful sandbox run.

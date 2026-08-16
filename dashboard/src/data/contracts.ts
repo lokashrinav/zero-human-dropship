@@ -34,6 +34,7 @@ export type LinqEventType =
 	| "sales_agent"
 	| "product_selected"
 	| "recommendation"
+	| "product_page_sent"
 	| "payment_link_sent"
 	| "payment_completed"
 	| "order_fulfilled"
@@ -70,6 +71,7 @@ export type CeoDecision = {
 		| "listed_product"
 		| "removed_product"
 		| "changed_promotion"
+		| "terac_reorder"
 		| "other";
 	reason: string;
 	action: string;
@@ -84,6 +86,7 @@ export type DecisionsData = {
 export type BusinessStateItem = {
 	id: string;
 	name: string;
+	position?: number;
 	priceMinor?: number;
 	currency?: string;
 	copy?: string;
@@ -91,8 +94,14 @@ export type BusinessStateItem = {
 };
 
 export type TeracChange = {
-	type: "removed" | "replaced" | "price" | "copy" | "other";
+	type: "removed" | "replaced" | "price" | "copy" | "product_order" | "other";
 	description: string;
+};
+
+export type TeracRatedProduct = {
+	id: string;
+	name: string;
+	averageLikelihood: number;
 };
 
 export type TeracStudy = {
@@ -108,6 +117,8 @@ export type TeracStudy = {
 		result: string;
 		rating?: number;
 		ratingScale?: number;
+		highestRatedProduct?: TeracRatedProduct;
+		lowestRatedProducts?: TeracRatedProduct[];
 	};
 	changes: TeracChange[];
 	after: {
@@ -123,12 +134,14 @@ export type TeracData = {
 export type CatalogProduct = {
 	id: string;
 	name: string;
+	description?: string;
 	priceMinor: number | null;
 	currency: string;
 	source: string;
 	active: boolean;
 	promoted: boolean;
 	url?: string;
+	productUrl?: string;
 	imageUrl?: string;
 };
 
@@ -146,7 +159,9 @@ export type SponsorName =
 	| "Linq"
 	| "Band"
 	| "Render"
-	| "Replay";
+	| "Replay"
+	| "Superserve"
+	| "Solari";
 
 export type SponsorProof = {
 	name: SponsorName;

@@ -4,11 +4,13 @@ type PanelMeta = {
   mode: "live" | "demo" | "pending" | "error";
   label: "LIVE" | "DEMO DATA" | "WAITING" | "DEGRADED";
   fallback?: "demo";
+  detail?: string;
 };
 
 type Snapshot = {
   generatedAt: string;
   isReceivingLiveData: boolean;
+  activeStage: string | null;
   metrics: {
     revenueMinor: number | null;
     orders: number | null;
@@ -19,22 +21,52 @@ type Snapshot = {
   };
   linq: {
     meta: PanelMeta;
-    data: { conversations: number; events: unknown[]; phoneNumber: string | null };
+    data: {
+      conversations: number;
+      recommendations: number;
+      paymentLinksSent: number;
+      events: unknown[];
+      phoneNumber: string | null;
+    };
   };
-  decisions: { meta: PanelMeta; data: { decisions: unknown[] } };
-  terac: { meta: PanelMeta; data: { studies: unknown[] } };
+  decisions: {
+    meta: PanelMeta;
+    data: { decisions: Array<{ id: string; outcome?: string }> };
+  };
+  terac: {
+    meta: PanelMeta;
+    data: {
+      studies: Array<{
+        feedback: {
+          sampleSize: number;
+          highestRatedProduct?: { name: string; averageLikelihood: number };
+          lowestRatedProducts?: Array<{ name: string; averageLikelihood: number }>;
+        };
+        changes: Array<{ description: string }>;
+      }>;
+    };
+  };
   catalog: {
     meta: PanelMeta;
     data: {
       productCount: number;
       activeCount: number;
-      products: Array<{ active: boolean; url?: string }>;
+      products: Array<{
+        id: string;
+        name: string;
+        description?: string;
+        priceMinor: number | null;
+        active: boolean;
+        url?: string;
+        productUrl?: string;
+        imageUrl?: string;
+      }>;
     };
   };
   sponsors: Array<{ name: string; status: string; label: string }>;
 };
 
-test("aggregate endpoint returns an independently labeled snapshot", async ({ request }) => {
+test("aggregate endpoint returns an independently labeled snapshot", async ({ request }, testInfo) => {
   const response = await request.get("/api/dashboard");
   expect(response.status()).toBe(200);
   expect(response.headers()["cache-control"]).toContain("no-store");
@@ -55,11 +87,23 @@ test("aggregate endpoint returns an independently labeled snapshot", async ({ re
   }
 
   expect(snapshot.sponsors.map((sponsor) => sponsor.name).sort()).toEqual(
-    ["Band", "Linq", "Pioneer", "Render", "Replay", "Stripe", "Terac"],
+    ["Band", "Linq", "Pioneer", "Render", "Replay", "Solari", "Stripe", "Superserve", "Terac"],
   );
 
   const pioneer = snapshot.sponsors.find((sponsor) => sponsor.name === "Pioneer");
   expect(pioneer).toMatchObject({ status: "verified", label: "VERIFIED" });
+  expect(snapshot.sponsors.find((sponsor) => sponsor.name === "Solari")).toMatchObject({
+    status: "verified",
+    label: "VERIFIED",
+  });
+  expect(snapshot.sponsors.find((sponsor) => sponsor.name === "Superserve")).toMatchObject({
+    status: "pending",
+    label: "PENDING",
+  });
+  expect(snapshot.sponsors.find((sponsor) => sponsor.name === "Replay")).toMatchObject({
+    status: "verified",
+    label: "VERIFIED",
+  });
   expect(snapshot.catalog.meta.mode).toBe("live");
   expect(snapshot.catalog.data.productCount).toBe(10);
   expect(snapshot.catalog.data.activeCount).toBe(10);
@@ -70,12 +114,95 @@ test("aggregate endpoint returns an independently labeled snapshot", async ({ re
       product.url?.startsWith("https://buy.stripe.com/"),
     ),
   ).toBe(true);
+  const productIds = snapshot.catalog.data.products.map((product) => product.id);
+  expect(new Set(productIds).size).toBe(10);
+  expect(snapshot.catalog.data.products.every((product) => product.productUrl)).toBe(true);
+  expect(snapshot.catalog.data.products.every((product) => product.imageUrl)).toBe(true);
+  expect(snapshot.catalog.data.products.every((product) => product.description)).toBe(true);
 
-  expect(snapshot.linq.meta.mode).toBe("pending");
-  expect(snapshot.linq.data.conversations).toBe(0);
-  expect(snapshot.linq.data.events).toEqual([]);
-  expect(snapshot.decisions.data.decisions).toEqual([]);
-  expect(snapshot.terac.data.studies).toEqual([]);
+  const canonicalResponse = await request.get(
+    "https://storefront-omega-three.vercel.app/api/catalog",
+  );
+  expect(canonicalResponse.status()).toBe(200);
+  const canonical = (await canonicalResponse.json()) as Array<{
+    id: string;
+    name: string;
+    description: string;
+    price: number;
+    active: boolean;
+    payment_link: string;
+    product_url: string;
+    images: string[];
+  }>;
+  const activeCanonical = canonical.filter((product) => product.active);
+  expect(activeCanonical).toHaveLength(10);
+  for (const expected of activeCanonical) {
+    expect(snapshot.catalog.data.products).toContainEqual(
+      expect.objectContaining({
+        id: expected.id,
+        name: expected.name,
+        description: expected.description,
+        priceMinor: Math.round(expected.price * 100),
+        active: true,
+        url: expected.payment_link,
+        productUrl: expected.product_url,
+        imageUrl: expected.images[0],
+      }),
+    );
+  }
+  if (testInfo.project.name === "desktop-chromium") {
+    const targetResponses = await Promise.all(
+      activeCanonical.flatMap((product) => [
+        request.get(product.product_url),
+        request.get(product.images[0]),
+        request.get(product.payment_link),
+      ]),
+    );
+    expect(targetResponses).toHaveLength(30);
+    for (const targetResponse of targetResponses) {
+      expect(targetResponse.status()).toBe(200);
+    }
+  }
+
+  if (snapshot.linq.meta.mode === "live") {
+    expect(snapshot.linq.data.phoneNumber).toMatch(/415.?305.?0091/);
+    expect(snapshot.linq.data.conversations).toBeGreaterThanOrEqual(0);
+    expect(snapshot.linq.data.recommendations).toBeGreaterThanOrEqual(0);
+    expect(snapshot.linq.data.paymentLinksSent).toBeGreaterThanOrEqual(0);
+    expect(snapshot.linq.data.events.length).toBeGreaterThan(0);
+    expect(snapshot.activeStage).toBe("sell");
+  } else {
+    expect(snapshot.linq.data.conversations).toBe(0);
+    expect(snapshot.linq.data.events).toEqual([]);
+  }
+
+  if (snapshot.decisions.meta.mode === "live") {
+    expect(snapshot.decisions.data.decisions.length).toBeGreaterThan(0);
+  } else {
+    expect(snapshot.decisions.data.decisions).toEqual([]);
+  }
+
+  if (snapshot.terac.meta.mode === "live") {
+    const study = snapshot.terac.data.studies[0];
+    expect(study.feedback.sampleSize).toBe(10);
+    expect(study.feedback.highestRatedProduct).toMatchObject({
+      name: "USB-C Fast Charging Cable 6ft",
+      averageLikelihood: 3.9,
+    });
+    expect(study.feedback.lowestRatedProducts).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ name: "Phone Ring Light for Selfies", averageLikelihood: 2.5 }),
+        expect.objectContaining({ name: "Portable Mini Fan USB", averageLikelihood: 2.5 }),
+      ]),
+    );
+    expect(study.changes[0]?.description).toMatch(/USB-C Cable moved from position 2 to 1/i);
+    expect(snapshot.sponsors.find((sponsor) => sponsor.name === "Terac")).toMatchObject({
+      status: "verified",
+      label: "VERIFIED",
+    });
+  } else {
+    expect(snapshot.terac.data.studies).toEqual([]);
+  }
 });
 
 test("never serializes fixture revenue as real revenue", async ({ request }) => {
@@ -83,9 +210,15 @@ test("never serializes fixture revenue as real revenue", async ({ request }) => 
   const snapshot = (await response.json()) as Snapshot;
 
   if (snapshot.revenue.meta.mode === "live") {
-    expect(snapshot.revenue.data.amountMinor).toBeGreaterThan(0);
-    expect(snapshot.revenue.data.orders).toBeGreaterThan(0);
-    expect(snapshot.revenue.data.statusText).toMatch(/live Stripe revenue/i);
+    expect(snapshot.revenue.data.amountMinor).toBeGreaterThanOrEqual(0);
+    expect(snapshot.revenue.data.orders).toBeGreaterThanOrEqual(0);
+    if ((snapshot.revenue.data.amountMinor ?? 0) > 0) {
+      expect(snapshot.revenue.data.orders).toBeGreaterThan(0);
+      expect(snapshot.revenue.data.statusText).toMatch(/(?:live|verified genuine) Stripe revenue/i);
+    } else {
+      expect(snapshot.revenue.data.orders).toBe(0);
+      expect(snapshot.revenue.data.statusText).toMatch(/no live Stripe revenue/i);
+    }
   } else {
     expect(snapshot.revenue.data.amountMinor).toBeNull();
     expect(snapshot.revenue.data.orders).toBeNull();
@@ -97,4 +230,18 @@ test("never serializes fixture revenue as real revenue", async ({ request }) => 
   const serialized = JSON.stringify(snapshot);
   expect(serialized).not.toMatch(/(?:sk|rk)_(?:live|test)_/i);
   expect(serialized).not.toContain("Bearer ");
+});
+
+test("shows the verified external-customer revenue snapshot without self-tests", async ({ request }) => {
+  const response = await request.get("/api/dashboard");
+  const snapshot = (await response.json()) as Snapshot;
+
+  expect(snapshot.revenue.meta.mode).toBe("live");
+  if (snapshot.revenue.meta.detail?.includes("snapshot")) {
+    expect(snapshot.revenue.data.amountMinor).toBe(998);
+    expect(snapshot.revenue.data.orders).toBe(2);
+    expect(snapshot.metrics.revenueMinor).toBe(998);
+    expect(snapshot.metrics.orders).toBe(2);
+    expect(snapshot.revenue.meta.detail).toMatch(/self-tests excluded/i);
+  }
 });
